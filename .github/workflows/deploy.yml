@@ -55,6 +55,6 @@ jobs:
       - name: Deploy to Azure Web App
         uses: Azure/webapps-deploy@v2
         with:
-          app-name: r-systems-react-front
+          app-name: r-systems-react-front-dev-app
           publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
           images: ${{ env.REGISTRY }}/${{ env.APP_IMAGE_NAME }}:${{ env.APP_VERSION }}
