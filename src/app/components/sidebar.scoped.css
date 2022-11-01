@@ -1,0 +1,32 @@
+.header {
+  display: flex;
+  flex-direction: row;
+  padding: 1rem;
+}
+.header .title {
+  align-items: center;
+  display: flex;
+  margin-right: 2rem;
+}
+.navigation {
+  display: none;
+}
+.user-info {
+  display: none;
+}
+
+@media all and (min-width: 1200px) {
+  .header .title {
+    margin-right: 0;
+  }
+  .header .navigation-mobile {
+    display: none;
+  }
+  .navigation {
+    display: block;
+    flex-grow: 1;
+  }
+  .user-info {
+    display: block;
+  }
+}
