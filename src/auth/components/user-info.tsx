@@ -2,19 +2,26 @@ import { AccountInfo, InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import { Dialog, DialogTitle, Divider, IconButton } from "@mui/material";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
+import LogoutIcon from "@mui/icons-material/Logout";
 import { useState } from "react";
 import "./user-info.scoped.css";
 
 export default function UserInfo() {
-  const { inProgress, accounts } = useMsal();
-  const [open, setOpen] = useState<boolean>(false);
+  const { inProgress, accounts, instance } = useMsal();
+  const [isProfileWindowOpen, setIsProfileWindowOpen] = useState<boolean>(false);
 
-  const handleOpen = () => {
-    setOpen(true);
+  const handleProfileWindowOpening = () => {
+    setIsProfileWindowOpen(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleProfileWindowClosing = () => {
+    setIsProfileWindowOpen(false);
+  };
+
+  const handleLogout = () => {
+    instance.logoutRedirect({
+      postLogoutRedirectUri: "/login",
+    });
   };
 
   let account: AccountInfo | null = null;
@@ -28,11 +35,14 @@ export default function UserInfo() {
         <>
           <Divider variant="middle" />
           <div>
-            <IconButton color="primary" onClick={handleOpen}>
+            <IconButton color="primary" onClick={handleProfileWindowOpening}>
               <AccountBoxIcon fontSize="large" />
             </IconButton>
+            <IconButton color="primary" onClick={handleLogout} className="logout-button">
+              <LogoutIcon fontSize="large" />
+            </IconButton>
           </div>
-          <Dialog onClose={handleClose} open={open}>
+          <Dialog onClose={handleProfileWindowClosing} open={isProfileWindowOpen}>
             <DialogTitle>Profile</DialogTitle>
             <div className="dialog-content">
               <p>{account.username}</p>

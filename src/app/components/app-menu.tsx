@@ -2,7 +2,6 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-reac
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 import { linksNameMap } from "app/links-name-map";
-import SignOutListItemButton from "auth/components/sign-out-list-item-button";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import "./app-menu.scoped.css";
@@ -88,7 +87,6 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
         <ListItemButton component={NavLink} to={`/about`} onClick={handleMenuLinkClick}>
           <ListItemText primary={linksNameMap["/about"].name} />
         </ListItemButton>
-        <SignOutListItemButton></SignOutListItemButton>
       </AuthenticatedTemplate>
     </List>
   );
