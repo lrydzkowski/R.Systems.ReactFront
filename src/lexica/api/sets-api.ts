@@ -8,5 +8,5 @@ export function getSets(abortController: AbortController, accessToken: string) {
     signal: abortController.signal,
   };
 
-  return axios.get(`${baseUrl}sets`, requestConfig);
+  return axios.get(`${baseUrl}/sets`, requestConfig);
 }
