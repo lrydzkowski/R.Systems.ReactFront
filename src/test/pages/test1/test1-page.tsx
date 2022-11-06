@@ -1,10 +1,10 @@
 import AppBreadcrumbs from "app/components/app-breadcrumbs";
 
-export default function Test11Page() {
+export default function Test1Page() {
   return (
     <>
       <AppBreadcrumbs />
-      <p>Test11 Page</p>
+      <p>Test1 Page</p>
     </>
   );
 }

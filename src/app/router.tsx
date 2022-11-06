@@ -3,10 +3,10 @@ import RequireNotAuth from "auth/components/require-not-auth";
 import LoginPage from "auth/pages/login-page";
 import SetsPage from "lexica/pages/sets-page";
 import { createBrowserRouter, Navigate } from "react-router-dom";
-import Test11Page from "test/pages/test1/test11-page";
-import Test12Page from "test/pages/test1/test12-page";
-import Test21Page from "test/pages/test2/test21-page";
-import Test22Page from "test/pages/test2/test22-page";
+import Test1Page from "test/pages/test1/test1-page";
+import Test3Page from "test/pages/test3/test3-page";
+import Test2Page from "test/pages/test2/test2-page";
+import Test4Page from "test/pages/test4/test4-page";
 import App from "./app";
 import AboutPage from "./pages/about-page";
 import ErrorPage from "./pages/error-page";
@@ -16,10 +16,10 @@ import NotFoundPage from "./pages/not-found-page";
 export const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <ErrorPage />,
     element: <App />,
     children: [
       {
-        errorElement: <ErrorPage />,
         children: [
           {
             path: "login",
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "sets",
+            path: "lexica/sets",
             element: (
               <RequireAuth>
                 <SetsPage />
@@ -46,34 +46,34 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "test1/test1",
+            path: "test/test1",
             element: (
               <RequireAuth>
-                <Test11Page />
+                <Test1Page />
               </RequireAuth>
             ),
           },
           {
-            path: "test1/test2",
+            path: "test/test2",
             element: (
               <RequireAuth>
-                <Test12Page />
+                <Test2Page />
               </RequireAuth>
             ),
           },
           {
-            path: "test2/test1",
+            path: "test/test3",
             element: (
               <RequireAuth>
-                <Test21Page />
+                <Test3Page />
               </RequireAuth>
             ),
           },
           {
-            path: "test2/test2",
+            path: "test/test4",
             element: (
               <RequireAuth>
-                <Test22Page />
+                <Test4Page />
               </RequireAuth>
             ),
           },

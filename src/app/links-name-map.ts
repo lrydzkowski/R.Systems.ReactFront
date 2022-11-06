@@ -12,32 +12,32 @@ export const linksNameMap: { [key: string]: LinkInfo } = {
     name: "Home",
     validLink: true,
   },
-  "/sets": {
+  "/lexica": {
+    name: "Lexica",
+    validLink: false,
+  },
+  "/lexica/sets": {
     name: "Sets",
     validLink: true,
   },
-  "/test1": {
+  "/test": {
+    name: "Test",
+    validLink: false,
+  },
+  "/test/test1": {
     name: "Test1",
-    validLink: false,
-  },
-  "/test1/test1": {
-    name: "Test11",
     validLink: true,
   },
-  "/test1/test2": {
-    name: "Test12",
-    validLink: true,
-  },
-  "/test2": {
+  "/test/test2": {
     name: "Test2",
-    validLink: false,
-  },
-  "/test2/test1": {
-    name: "Test21",
     validLink: true,
   },
-  "/test2/test2": {
-    name: "Test22",
+  "/test/test3": {
+    name: "Test3",
+    validLink: true,
+  },
+  "/test/test4": {
+    name: "Test4",
     validLink: true,
   },
   "/about": {
