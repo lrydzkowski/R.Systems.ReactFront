@@ -10,11 +10,15 @@ export default function useProtectedListData<TData>(
     accessToken: string,
     requestParameters: object
   ) => Promise<AxiosResponse<TData>>,
-  pageNumber: number,
-  pageSize: number
+  page: number,
+  pageSize: number,
+  sortingFieldName: string,
+  sortingOrder: string,
+  searchQuery: string | null,
+  refreshKey: number
 ): IData<TData | null> {
-  const [processing, setProcessing] = useState<number>(0);
   const { instance, accounts } = useMsal();
+  const [processing, setProcessing] = useState<number>(0);
   const [data, setData] = useState<TData | null>(null);
 
   useEffect(() => {
@@ -22,7 +26,7 @@ export default function useProtectedListData<TData>(
     setProcessing((x) => x + 1);
     getAccessToken(instance, accounts)
       .then((accessToken) =>
-        getDataFunc(abortController, accessToken, { firstIndex: pageNumber * pageSize, numberOfRows: pageSize })
+        getDataFunc(abortController, accessToken, { page, pageSize, sortingFieldName, sortingOrder, searchQuery })
       )
       .then((response) => {
         setData(response.data);
@@ -35,7 +39,7 @@ export default function useProtectedListData<TData>(
       });
 
     return () => abortController.abort();
-  }, [instance, accounts, pageNumber, pageSize]);
+  }, [instance, accounts, page, pageSize, sortingFieldName, sortingOrder, searchQuery, refreshKey]);
 
   return {
     processing: processing > 0,

@@ -1,3 +1,8 @@
+.grid-toolbar .buttons {
+  flex-grow: unset !important;
+  margin-right: 2rem;
+}
+
 .MuiDataGrid-columnHeaders {
   background-color: #FBFBFB;
   border-top: 1px solid rgba(224, 224, 224, 1) !important;
@@ -23,4 +28,11 @@
 .MuiDataGrid-columnHeader:focus,
 .MuiDataGrid-columnHeader:focus-within {
   outline-offset: -2px !important;
+}
+
+.MuiDataGrid-footerContainer {
+  justify-content: left !important;
+}
+.MuiDataGrid-footerContainer .MuiTablePagination-root {
+  order: -1;
 }
