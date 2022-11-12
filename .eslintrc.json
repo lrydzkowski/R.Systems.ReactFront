@@ -8,8 +8,7 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:prettier/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
   "overrides": [
   ],
@@ -19,16 +18,10 @@
     "sourceType": "module"
   },
   "plugins": [
-    "react", "react-hooks", "@typescript-eslint", "prettier"
+    "react", "react-hooks", "@typescript-eslint"
   ],
   "rules": {
-    "react/react-in-jsx-scope": "off",
-    "prettier/prettier": [
-      "error",
-      {
-        "endOfLine": "crlf"
-      }
-    ]
+    "react/react-in-jsx-scope": "off"
   },
   "settings": {
     "import/resolver": {
