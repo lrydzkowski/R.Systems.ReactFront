@@ -3,27 +3,11 @@ import { ListInfo } from "app/models/list-info";
 import useProtectedListData from "auth/hooks/use-protected-list-data";
 import { getSets } from "lexica/api/sets-api";
 import { Set } from "lexica/models/set";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import CustomDataGridToolbar from "./custom-data-grid-toolbar";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import "./sets-list.css";
-
-const columns: GridColumns<Set> = [
-  {
-    field: "actions",
-    type: "actions",
-    width: 50,
-    getActions: () => [
-      <GridActionsCellItem
-        key="open"
-        icon={<OpenInNewIcon color="primary" />}
-        onClick={() => console.log("click")}
-        label="Open"
-      />,
-    ],
-  },
-  { field: "path", headerName: "File Path", flex: 1 },
-];
+import { useNavigate } from "react-router-dom";
 
 export default function SetsList() {
   const [page, setPage] = useState<number>(0);
@@ -32,6 +16,26 @@ export default function SetsList() {
   const [sortingOrder, setSortingOrder] = useState<string>("desc");
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const navigate = useNavigate();
+  const columns = useMemo<GridColumns<Set>>(
+    () => [
+      {
+        field: "actions",
+        type: "actions",
+        width: 50,
+        getActions: (params) => [
+          <GridActionsCellItem
+            key="open"
+            icon={<OpenInNewIcon color="primary" />}
+            onClick={() => navigate(`/lexica/sets/${encodeURIComponent(params.row.path)}`)}
+            label="Open"
+          />,
+        ],
+      },
+      { field: "path", headerName: "File Path", flex: 1 },
+    ],
+    []
+  );
   const setsData = useProtectedListData<ListInfo<Set>>(
     getSets,
     page + 1,

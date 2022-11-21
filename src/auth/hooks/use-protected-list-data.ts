@@ -8,7 +8,8 @@ export default function useProtectedListData<TData>(
   getDataFunc: (
     abortController: AbortController,
     accessToken: string,
-    requestParameters: object
+    requestParameters: object,
+    urlParts: string[]
   ) => Promise<AxiosResponse<TData>>,
   page: number,
   pageSize: number,
@@ -26,7 +27,7 @@ export default function useProtectedListData<TData>(
     setProcessing((x) => x + 1);
     getAccessToken(instance, accounts)
       .then((accessToken) =>
-        getDataFunc(abortController, accessToken, { page, pageSize, sortingFieldName, sortingOrder, searchQuery })
+        getDataFunc(abortController, accessToken, { page, pageSize, sortingFieldName, sortingOrder, searchQuery }, [])
       )
       .then((response) => {
         setData(response.data);

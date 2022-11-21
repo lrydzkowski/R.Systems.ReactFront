@@ -4,7 +4,7 @@ import "./sets-page.scoped.css";
 
 export default function SetsPage() {
   return (
-    <div className="set-page-content">
+    <div className="sets-page-content">
       <AppBreadcrumbs />
       <div className="sets-list">
         <SetsList />

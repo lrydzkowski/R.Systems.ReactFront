@@ -12,6 +12,7 @@ import AboutPage from "./pages/about-page";
 import ErrorPage from "./pages/error-page";
 import HomePage from "./pages/home-page";
 import NotFoundPage from "./pages/not-found-page";
+import SetPage from "lexica/pages/set-page";
 
 export const router = createBrowserRouter([
   {
@@ -42,6 +43,14 @@ export const router = createBrowserRouter([
             element: (
               <RequireAuth>
                 <SetsPage />
+              </RequireAuth>
+            ),
+          },
+          {
+            path: "lexica/sets/:setPath",
+            element: (
+              <RequireAuth>
+                <SetPage />
               </RequireAuth>
             ),
           },

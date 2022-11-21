@@ -8,8 +8,10 @@ export default function useProtectedData<TData>(
   getDataFunc: (
     abortController: AbortController,
     accessToken: string,
-    requestParameters: object
-  ) => Promise<AxiosResponse<TData>>
+    requestParameters: object,
+    urlParts: string[]
+  ) => Promise<AxiosResponse<TData>>,
+  urlParts: string[]
 ): IData<TData | null> {
   const [processing, setProcessing] = useState<number>(0);
   const { instance, accounts } = useMsal();
@@ -19,7 +21,7 @@ export default function useProtectedData<TData>(
     const abortController = new AbortController();
     setProcessing((x) => x + 1);
     getAccessToken(instance, accounts)
-      .then((accessToken) => getDataFunc(abortController, accessToken, {}))
+      .then((accessToken) => getDataFunc(abortController, accessToken, {}, urlParts))
       .then((response) => {
         setData(response.data);
       })
