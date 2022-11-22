@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import reportWebVitals from "report-web-vitals";
 import { MsalProvider } from "@azure/msal-react";
 import { RouterProvider } from "react-router-dom";
-import { router } from "app/router";
+import { router } from "app/routing/router";
 import { publicClientApplication } from "auth/auth-configuration";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";

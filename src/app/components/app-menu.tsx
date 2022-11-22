@@ -1,7 +1,7 @@
 import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-react";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
-import { linksNameMap } from "app/links-name-map";
+import { linksNameMap } from "app/routing/links-name-map";
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import "./app-menu.scoped.css";

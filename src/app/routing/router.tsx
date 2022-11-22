@@ -7,12 +7,13 @@ import Test1Page from "test/pages/test1/test1-page";
 import Test3Page from "test/pages/test3/test3-page";
 import Test2Page from "test/pages/test2/test2-page";
 import Test4Page from "test/pages/test4/test4-page";
-import App from "./app";
-import AboutPage from "./pages/about-page";
-import ErrorPage from "./pages/error-page";
-import HomePage from "./pages/home-page";
-import NotFoundPage from "./pages/not-found-page";
+import App from "../app";
+import AboutPage from "../pages/about-page";
+import ErrorPage from "../pages/error-page";
+import HomePage from "../pages/home-page";
+import NotFoundPage from "../pages/not-found-page";
 import SetPage from "lexica/pages/set-page";
+import PageWithBreadcrumbs from "app/components/page-with-breadcrumbs";
 
 export const router = createBrowserRouter([
   {
@@ -26,7 +27,9 @@ export const router = createBrowserRouter([
             path: "login",
             element: (
               <RequireNotAuth>
-                <LoginPage />
+                <PageWithBreadcrumbs>
+                  <LoginPage />
+                </PageWithBreadcrumbs>
               </RequireNotAuth>
             ),
           },
@@ -34,7 +37,9 @@ export const router = createBrowserRouter([
             path: "home",
             element: (
               <RequireAuth>
-                <HomePage />
+                <PageWithBreadcrumbs>
+                  <HomePage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -42,7 +47,9 @@ export const router = createBrowserRouter([
             path: "lexica/sets",
             element: (
               <RequireAuth>
-                <SetsPage />
+                <PageWithBreadcrumbs>
+                  <SetsPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -50,7 +57,9 @@ export const router = createBrowserRouter([
             path: "lexica/sets/:setPath",
             element: (
               <RequireAuth>
-                <SetPage />
+                <PageWithBreadcrumbs>
+                  <SetPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -58,7 +67,9 @@ export const router = createBrowserRouter([
             path: "test/test1",
             element: (
               <RequireAuth>
-                <Test1Page />
+                <PageWithBreadcrumbs>
+                  <Test1Page />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -66,7 +77,9 @@ export const router = createBrowserRouter([
             path: "test/test2",
             element: (
               <RequireAuth>
-                <Test2Page />
+                <PageWithBreadcrumbs>
+                  <Test2Page />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -74,7 +87,9 @@ export const router = createBrowserRouter([
             path: "test/test3",
             element: (
               <RequireAuth>
-                <Test3Page />
+                <PageWithBreadcrumbs>
+                  <Test3Page />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -82,7 +97,9 @@ export const router = createBrowserRouter([
             path: "test/test4",
             element: (
               <RequireAuth>
-                <Test4Page />
+                <PageWithBreadcrumbs>
+                  <Test4Page />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },
@@ -90,7 +107,9 @@ export const router = createBrowserRouter([
             path: "about",
             element: (
               <RequireAuth>
-                <AboutPage />
+                <PageWithBreadcrumbs>
+                  <AboutPage />
+                </PageWithBreadcrumbs>
               </RequireAuth>
             ),
           },

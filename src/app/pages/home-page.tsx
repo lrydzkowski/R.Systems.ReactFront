@@ -1,11 +1,9 @@
-import AppBreadcrumbs from "app/components/app-breadcrumbs";
 import HomePageCard from "app/components/home-page-card";
 import "./home-page.scoped.css";
 
 export default function HomePage() {
   return (
     <>
-      <AppBreadcrumbs />
       <div className="cards">
         <div className="card">
           <HomePageCard
