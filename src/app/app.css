@@ -25,6 +25,7 @@ body {
   background-color: #ffffff;
   display: flex;
   flex-direction: row;
+  flex-shrink: 0;
   overflow: auto;
   padding-bottom: 6px;
   width: 100%;

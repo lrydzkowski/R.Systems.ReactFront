@@ -1,5 +1,6 @@
-import { Typography } from "@mui/material";
+import { AppBar } from "@mui/material";
 import UserInfo from "auth/components/user-info";
+import Header from "./header";
 import Navigation from "./navigation";
 import NavigationMobile from "./navigation-mobile";
 import "./sidebar.scoped.css";
@@ -7,14 +8,14 @@ import "./sidebar.scoped.css";
 export default function Sidebar() {
   return (
     <>
-      <div className="header">
+      <AppBar position="static" className="header">
         <div className="title">
-          <Typography variant="h1">R.Systems</Typography>
+          <Header />
         </div>
         <div className="navigation-mobile">
           <NavigationMobile />
         </div>
-      </div>
+      </AppBar>
       <div className="navigation">
         <Navigation />
       </div>

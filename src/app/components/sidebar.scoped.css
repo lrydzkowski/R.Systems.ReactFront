@@ -1,5 +1,5 @@
 .header {
-  background-color: #1976d2;
+  box-shadow: none;
   display: flex;
   flex-direction: row;
   padding: 1rem;
@@ -8,12 +8,6 @@
   align-items: center;
   display: flex;
   margin-right: 2rem;
-}
-.header .title h1 {
-  color: #fff;
-  font-size: 1.6rem;
-  font-weight: 500;
-  line-height: 2rem;
 }
 .navigation {
   display: none;
