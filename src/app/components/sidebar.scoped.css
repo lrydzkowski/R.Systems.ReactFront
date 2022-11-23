@@ -26,6 +26,7 @@
   .navigation {
     display: block;
     flex-grow: 1;
+    overflow: auto;
   }
   .user-info {
     display: block;
