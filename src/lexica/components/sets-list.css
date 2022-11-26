@@ -1,10 +1,5 @@
-.grid-toolbar .buttons {
-  flex-grow: unset !important;
-  margin-right: 2rem;
-}
-
 .MuiDataGrid-columnHeaders {
-  background-color: #FBFBFB;
+  background-color: #fbfbfb;
   border-top: 1px solid rgba(224, 224, 224, 1) !important;
   z-index: 2;
 }
@@ -14,7 +9,7 @@
 }
 
 .odd {
-  background-color: #FBFBFB;
+  background-color: #fbfbfb;
   z-index: 1;
 }
 

@@ -1,9 +1,10 @@
 .grid-toolbar {
   display: flex;
-  padding: 4px;
+  padding: 0px;
+  padding-bottom: 4px;
 }
 .grid-toolbar .buttons {
-  flex-grow: 1;
+  margin-right: 2rem;
 }
 .MuiFormControl-root {
   padding-bottom: 0;
