@@ -8,6 +8,7 @@ import CustomDataGridToolbar from "./custom-data-grid-toolbar";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import "./sets-list.css";
 import { useNavigate } from "react-router-dom";
+import DialogError from "app/components/dialog-error";
 
 export default function SetsList() {
   const [page, setPage] = useState<number>(0);
@@ -16,6 +17,7 @@ export default function SetsList() {
   const [sortingOrder, setSortingOrder] = useState<string>("desc");
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const navigate = useNavigate();
   const columns = useMemo<GridColumns<Set>>(
     () => [
@@ -43,7 +45,10 @@ export default function SetsList() {
     sortingFieldName,
     sortingOrder,
     searchQuery,
-    refreshKey
+    refreshKey,
+    () => {
+      setIsErrorOpen(true);
+    }
   );
 
   return (
@@ -68,6 +73,7 @@ export default function SetsList() {
           toolbar: {
             quickFilterProps: { debounceMs: 500 },
             handleRefresh: () => setRefreshKey((x) => x + 1),
+            isProcessing: setsData.processing,
           },
         }}
         disableColumnFilter
@@ -95,6 +101,11 @@ export default function SetsList() {
           },
         }}
       />
+      <DialogError
+        isErrorOpen={isErrorOpen}
+        errorMsg="An unexpected error has occurred in getting the list of sets."
+        setIsErrorOpen={(state) => setIsErrorOpen(state)}
+      ></DialogError>
     </>
   );
 }

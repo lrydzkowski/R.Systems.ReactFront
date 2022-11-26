@@ -1,7 +1,8 @@
 import { useMsal } from "@azure/msal-react";
+import { ErrorCodes } from "app/api/error-codes";
 import { IData } from "app/models/data";
 import { getAccessToken } from "auth/services/get-access-token";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
 export default function useProtectedListData<TData>(
@@ -16,7 +17,8 @@ export default function useProtectedListData<TData>(
   sortingFieldName: string,
   sortingOrder: string,
   searchQuery: string | null,
-  refreshKey: number
+  refreshKey: number,
+  onError: (error: AxiosError) => void
 ): IData<TData | null> {
   const { instance, accounts } = useMsal();
   const [processing, setProcessing] = useState<number>(0);
@@ -32,8 +34,11 @@ export default function useProtectedListData<TData>(
       .then((response) => {
         setData(response.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((error: AxiosError) => {
+        if (error.code === ErrorCodes.cancelled) {
+          return;
+        }
+        onError(error);
       })
       .finally(() => {
         setProcessing((x) => x - 1);

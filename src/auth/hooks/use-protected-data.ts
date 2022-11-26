@@ -1,7 +1,8 @@
 import { useMsal } from "@azure/msal-react";
+import { ErrorCodes } from "app/api/error-codes";
 import { IData } from "app/models/data";
 import { getAccessToken } from "auth/services/get-access-token";
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
 export default function useProtectedData<TData>(
@@ -11,7 +12,9 @@ export default function useProtectedData<TData>(
     requestParameters: object,
     urlParts: string[]
   ) => Promise<AxiosResponse<TData>>,
-  urlParts: string[]
+  urlParts: string[],
+  refreshKey: number,
+  onError: (error: AxiosError) => void
 ): IData<TData | null> {
   const [processing, setProcessing] = useState<number>(0);
   const { instance, accounts } = useMsal();
@@ -25,15 +28,18 @@ export default function useProtectedData<TData>(
       .then((response) => {
         setData(response.data);
       })
-      .catch((error) => {
-        console.log(error);
+      .catch((error: AxiosError) => {
+        if (error.code === ErrorCodes.cancelled) {
+          return;
+        }
+        onError(error);
       })
       .finally(() => {
         setProcessing((x) => x - 1);
       });
 
     return () => abortController.abort();
-  }, [instance, accounts]);
+  }, [instance, accounts, refreshKey]);
 
   return {
     processing: processing > 0,

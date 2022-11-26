@@ -1,24 +1,46 @@
+import { Button } from "@mui/material";
 import useProtectedData from "auth/hooks/use-protected-data";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import { getSets } from "lexica/api/sets-api";
 import { Set } from "lexica/models/set";
+import { useState } from "react";
+import "./set-details.scoped.css";
 
 export default function SetDetails(props: { setPath: string }) {
-  const setData = useProtectedData<Set>(getSets, [props.setPath]);
+  const [error, setError] = useState<string>("");
+  const [refreshKey, setRefreshKey] = useState<number>(0);
+  const setData = useProtectedData<Set>(getSets, [props.setPath], refreshKey, () => {
+    setError("An unexpected error has occurred in getting sets.");
+  });
 
-  console.log(setData);
+  const handleRefresh = () => {
+    setRefreshKey((x) => x + 1);
+    setError("");
+  };
 
   return (
     <>
-      {setData.processing && <p>Loading...</p>}
-      <pre>
-        {!setData.processing &&
-          setData?.data !== null &&
-          setData.data.entries.map((entry, index) => (
-            <p key={index}>
-              {entry.words.join(", ")} - {entry.translations.join(", ")}
-            </p>
-          ))}
-      </pre>
+      <div className="buttons">
+        <Button variant="text" startIcon={<RefreshIcon />} onClick={handleRefresh} disabled={setData.processing}>
+          Refresh
+        </Button>
+      </div>
+      {setData.processing ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          {error.length > 0 && <p className="error">{error}</p>}
+          {setData?.data !== null && (
+            <pre>
+              {setData.data.entries.map((entry, index) => (
+                <p key={index}>
+                  {entry.words.join(", ")} - {entry.translations.join(", ")}
+                </p>
+              ))}
+            </pre>
+          )}
+        </>
+      )}
     </>
   );
 }

@@ -5,3 +5,6 @@
 .grid-toolbar .buttons {
   flex-grow: 1;
 }
+.MuiFormControl-root {
+  padding-bottom: 0;
+}
