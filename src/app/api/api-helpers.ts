@@ -1,6 +1,6 @@
 import { AxiosRequestConfig } from "axios";
 
-export function BuildRequestConfig(
+export function buildRequestConfig(
   abortController: AbortController,
   accessToken: string,
   requestParameters: object
@@ -14,7 +14,7 @@ export function BuildRequestConfig(
   return requestConfig;
 }
 
-export function BuildUrl(baseUrl: string, urlParts: string[]): string {
+export function buildUrl(baseUrl: string, urlParts: string[]): string {
   let url = baseUrl;
   for (const urlPart of urlParts) {
     url += `/${encodeURIComponent(urlPart)}`;

@@ -3,14 +3,14 @@ import "./custom-data-grid-toolbar.scoped.css";
 
 interface ICustomDataGridToolbarProps {
   quickFilterProps: GridToolbarQuickFilterProps;
-  children: JSX.Element;
+  buttons: JSX.Element;
 }
 
-export default function CustomDataGridToolbar({ quickFilterProps, children }: ICustomDataGridToolbarProps) {
+export default function CustomDataGridToolbar(props: ICustomDataGridToolbarProps) {
   return (
     <GridToolbarContainer className="grid-toolbar">
-      {children}
-      <GridToolbarQuickFilter {...quickFilterProps} />
+      {props.buttons}
+      <GridToolbarQuickFilter {...props.quickFilterProps} />
     </GridToolbarContainer>
   );
 }

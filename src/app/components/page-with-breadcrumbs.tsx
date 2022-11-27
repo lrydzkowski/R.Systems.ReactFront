@@ -2,7 +2,11 @@ import { Divider } from "@mui/material";
 import AppBreadcrumbs from "./app-breadcrumbs";
 import "./page-with-breadcrumbs.scoped.css";
 
-export default function PageWithBreadcrumbs(props: { children: JSX.Element }) {
+interface IPageWithBreadcrumbsProps {
+  children: JSX.Element;
+}
+
+export default function PageWithBreadcrumbs(props: IPageWithBreadcrumbsProps) {
   return (
     <>
       <div className="content-top">

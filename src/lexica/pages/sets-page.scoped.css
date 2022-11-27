@@ -1,8 +1,0 @@
-.sets-page-content {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-.sets-list {
-  flex-grow: 1;
-}

@@ -1,7 +1,11 @@
 import { useIsAuthenticated } from "@azure/msal-react";
 import { Navigate, useLocation } from "react-router-dom";
 
-export default function RequireAuth({ children }: { children: JSX.Element }) {
+interface IRequireAuthProps {
+  children: JSX.Element;
+}
+
+export default function RequireAuth(props: IRequireAuthProps) {
   const isAuthenticated = useIsAuthenticated();
   const location = useLocation();
 
@@ -9,5 +13,5 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  return children;
+  return props.children;
 }

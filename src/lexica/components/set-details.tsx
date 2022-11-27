@@ -6,7 +6,11 @@ import { Set } from "lexica/models/set";
 import { useState } from "react";
 import "./set-details.scoped.css";
 
-export default function SetDetails(props: { setPaths: string }) {
+interface ISetDetailsProps {
+  setPaths: string;
+}
+
+export default function SetDetails(props: ISetDetailsProps) {
   const [error, setError] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {

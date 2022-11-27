@@ -1,11 +1,13 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material";
 import "./dialog-error.scoped.css";
 
-export default function DialogError(props: {
+interface IDialogErrorProps {
   isErrorOpen: boolean;
   errorMsg: string;
   setIsErrorOpen: (state: boolean) => void;
-}) {
+}
+
+export default function DialogError(props: IDialogErrorProps) {
   return (
     <Dialog open={props.isErrorOpen}>
       <DialogTitle className="alert-dialog-title">Error</DialogTitle>

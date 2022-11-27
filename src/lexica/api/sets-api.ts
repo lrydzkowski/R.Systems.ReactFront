@@ -1,4 +1,4 @@
-import { BuildRequestConfig, BuildUrl } from "app/api/api-helpers";
+import { buildRequestConfig, buildUrl } from "app/api/api-helpers";
 import axios, { AxiosRequestConfig } from "axios";
 
 const baseUrl = process.env.REACT_APP_LEXICA_API_URL;
@@ -9,8 +9,8 @@ export function getSets(
   requestParameters: object,
   urlParts: string[]
 ) {
-  const requestConfig: AxiosRequestConfig = BuildRequestConfig(abortController, accessToken, requestParameters);
-  const url: string = BuildUrl(`${baseUrl}/sets`, urlParts);
+  const requestConfig: AxiosRequestConfig = buildRequestConfig(abortController, accessToken, requestParameters);
+  const url: string = buildUrl(`${baseUrl}/sets`, urlParts);
 
   return axios.get(url, requestConfig);
 }

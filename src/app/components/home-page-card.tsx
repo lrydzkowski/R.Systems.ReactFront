@@ -1,19 +1,17 @@
 import { Card, CardActionArea, CardContent, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
-export default function HomePageCard({
-  title,
-  subtitle,
-  redirectUrl,
-}: {
+interface IHomePageCardProps {
   title: string;
   subtitle: string;
   redirectUrl: string;
-}) {
+}
+
+export default function HomePageCard(props: IHomePageCardProps) {
   const navigate = useNavigate();
 
   const redirectToPage = () => {
-    navigate(redirectUrl);
+    navigate(props.redirectUrl);
   };
 
   return (
@@ -21,10 +19,10 @@ export default function HomePageCard({
       <CardActionArea onClick={redirectToPage}>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            {title}
+            {props.title}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            {subtitle}
+            {props.subtitle}
           </Typography>
         </CardContent>
       </CardActionArea>

@@ -11,13 +11,13 @@ import useProtectedListData from "auth/hooks/use-protected-list-data";
 import { getSets } from "lexica/api/sets-api";
 import { Set } from "lexica/models/set";
 import { useMemo, useState } from "react";
-import CustomDataGridToolbar from "./custom-data-grid-toolbar";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
-import "./sets-list.css";
 import { useNavigate } from "react-router-dom";
 import DialogError from "app/components/dialog-error";
 import { Button } from "@mui/material";
+import CustomDataGridToolbar from "table/components/custom-data-grid-toolbar";
+import "./sets-list.css";
 
 export default function SetsList() {
   const [page, setPage] = useState<number>(0);
@@ -25,6 +25,7 @@ export default function SetsList() {
   const [sortingFieldName, setSortingFieldName] = useState<string>("path");
   const [sortingOrder, setSortingOrder] = useState<string>("desc");
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const [selectedPath, setSelectedPaths] = useState<string[]>([]);
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -59,7 +60,6 @@ export default function SetsList() {
       setIsErrorOpen(true);
     }
   );
-  const [selectedPath, setSelectedPaths] = useState<string[]>([]);
 
   const handleRefresh = () => setRefreshKey((x) => x + 1);
 
@@ -92,7 +92,7 @@ export default function SetsList() {
         componentsProps={{
           toolbar: {
             quickFilterProps: { debounceMs: 500 },
-            children: (
+            buttons: (
               <div className="buttons">
                 <Button
                   variant="text"
