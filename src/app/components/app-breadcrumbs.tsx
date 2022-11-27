@@ -27,7 +27,7 @@ export default function AppBreadcrumbs() {
 
           return last || !linksNameMap[to].validLink ? (
             <Typography color="text.primary" key={to}>
-              {name}
+              {name.replaceAll("|", " ")}
             </Typography>
           ) : (
             <Link underline="hover" color="inherit" component={RouterLink} to={to} key={to}>

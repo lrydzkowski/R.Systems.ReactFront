@@ -6,10 +6,10 @@ import { Set } from "lexica/models/set";
 import { useState } from "react";
 import "./set-details.scoped.css";
 
-export default function SetDetails(props: { setPath: string }) {
+export default function SetDetails(props: { setPaths: string }) {
   const [error, setError] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const setData = useProtectedData<Set>(getSets, [props.setPath], refreshKey, () => {
+  const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {
     setError("An unexpected error has occurred in getting sets.");
   });
 
@@ -32,11 +32,13 @@ export default function SetDetails(props: { setPath: string }) {
           {error.length > 0 && <p className="error">{error}</p>}
           {setData?.data !== null && (
             <pre>
-              {setData.data.entries.map((entry, index) => (
-                <p key={index}>
-                  {entry.words.join(", ")} - {entry.translations.join(", ")}
-                </p>
-              ))}
+              {setData.data.map((set) =>
+                set.entries.map((entry, index) => (
+                  <p key={index}>
+                    {entry.words.join(", ")} - {entry.translations.join(", ")}
+                  </p>
+                ))
+              )}
             </pre>
           )}
         </>

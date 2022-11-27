@@ -54,7 +54,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets/:setPath",
+            path: "lexica/sets/:setPaths",
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>

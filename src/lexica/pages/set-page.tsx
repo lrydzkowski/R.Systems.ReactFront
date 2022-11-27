@@ -3,18 +3,16 @@ import { useNavigate, useParams } from "react-router";
 import "./set-page.scoped.css";
 
 export default function SetPage() {
-  const { setPath } = useParams();
+  const { setPaths: setPaths } = useParams();
   const navigate = useNavigate();
 
-  if (!setPath) {
+  if (!setPaths) {
     navigate("/lexica/sets");
   }
 
-  console.log(setPath);
-
   return (
     <>
-      <Set setPath={setPath as string} />
+      <Set setPaths={setPaths as string} />
     </>
   );
 }

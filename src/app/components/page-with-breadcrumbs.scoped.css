@@ -1,8 +1,9 @@
 .breadcrumbs-container {
   align-items: center;
   display: flex;
-  height: 2rem;
+  min-height: 2rem;
   margin-bottom: 1rem;
+  word-break: break-all;
 }
 .breadcrumbs-divider {
   margin-bottom: 1rem;

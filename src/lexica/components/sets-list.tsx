@@ -1,14 +1,23 @@
-import { DataGrid, GridActionsCellItem, GridColumns, GridFilterModel, GridSortModel } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridActionsCellItem,
+  GridColumns,
+  GridFilterModel,
+  GridRowId,
+  GridSortModel,
+} from "@mui/x-data-grid";
 import { ListInfo } from "app/models/list-info";
 import useProtectedListData from "auth/hooks/use-protected-list-data";
 import { getSets } from "lexica/api/sets-api";
 import { Set } from "lexica/models/set";
 import { useMemo, useState } from "react";
 import CustomDataGridToolbar from "./custom-data-grid-toolbar";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import "./sets-list.css";
 import { useNavigate } from "react-router-dom";
 import DialogError from "app/components/dialog-error";
+import { Button } from "@mui/material";
 
 export default function SetsList() {
   const [page, setPage] = useState<number>(0);
@@ -50,6 +59,17 @@ export default function SetsList() {
       setIsErrorOpen(true);
     }
   );
+  const [selectedPath, setSelectedPaths] = useState<string[]>([]);
+
+  const handleRefresh = () => setRefreshKey((x) => x + 1);
+
+  const handleOpen = () => {
+    if (selectedPath.length === 0) {
+      return;
+    }
+
+    navigate(`/lexica/sets/${encodeURIComponent(selectedPath.join("|"))}`);
+  };
 
   return (
     <>
@@ -72,8 +92,26 @@ export default function SetsList() {
         componentsProps={{
           toolbar: {
             quickFilterProps: { debounceMs: 500 },
-            handleRefresh: () => setRefreshKey((x) => x + 1),
-            isProcessing: setsData.processing,
+            children: (
+              <div className="buttons">
+                <Button
+                  variant="text"
+                  startIcon={<RefreshIcon />}
+                  onClick={handleRefresh}
+                  disabled={setsData.processing}
+                >
+                  Refresh
+                </Button>
+                <Button
+                  variant="text"
+                  startIcon={<OpenInNewIcon />}
+                  onClick={handleOpen}
+                  disabled={setsData.processing || selectedPath.length === 0}
+                >
+                  Open
+                </Button>
+              </div>
+            ),
           },
         }}
         disableColumnFilter
@@ -100,6 +138,9 @@ export default function SetsList() {
             sortModel: [{ field: "path", sort: "desc" }],
           },
         }}
+        onSelectionModelChange={(gridSelectionModel: GridRowId[]) =>
+          setSelectedPaths(gridSelectionModel.map((x) => x.toString()))
+        }
       />
       <DialogError
         isErrorOpen={isErrorOpen}
