@@ -14,6 +14,9 @@ import HomePage from "../pages/home-page";
 import NotFoundPage from "../pages/not-found-page";
 import SetPage from "lexica/pages/set-page";
 import PageWithBreadcrumbs from "app/components/page-with-breadcrumbs";
+import SpellingModePage from "lexica/pages/spelling-mode-page";
+import FullModePage from "lexica/pages/full-mode-page";
+import OnlyOpenQuestionsModePage from "lexica/pages/only-open-questions-mode-page";
 
 export const router = createBrowserRouter([
   {
@@ -54,11 +57,41 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets/:setPaths",
+            path: "lexica/sets/content/:setPaths",
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
                   <SetPage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
+          {
+            path: "lexica/sets/spelling-mode/:setPaths",
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <SpellingModePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
+          {
+            path: "lexica/sets/full-mode/:setPaths",
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <FullModePage />
+                </PageWithBreadcrumbs>
+              </RequireAuth>
+            ),
+          },
+          {
+            path: "lexica/sets/only-open-questions-mode/:setPaths",
+            element: (
+              <RequireAuth>
+                <PageWithBreadcrumbs>
+                  <OnlyOpenQuestionsModePage />
                 </PageWithBreadcrumbs>
               </RequireAuth>
             ),

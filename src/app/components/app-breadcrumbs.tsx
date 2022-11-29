@@ -24,8 +24,9 @@ export default function AppBreadcrumbs() {
           const last = index === pathnames.length - 1;
           const to = `/${pathnames.slice(0, index + 1).join("/")}`;
           const name = to in linksNameMap ? linksNameMap[to].name : decodeURIComponent(pathnames[index]);
+          const isValidLink = to in linksNameMap ? linksNameMap[to].validLink : false;
 
-          return last || !linksNameMap[to].validLink ? (
+          return last || !isValidLink ? (
             <Typography color="text.primary" key={to}>
               {name.replaceAll("|", " ")}
             </Typography>

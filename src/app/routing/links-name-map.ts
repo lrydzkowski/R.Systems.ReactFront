@@ -20,6 +20,22 @@ export const linksNameMap: { [key: string]: LinkInfo } = {
     name: "Sets",
     validLink: true,
   },
+  "/lexica/sets/content": {
+    name: "Content",
+    validLink: false,
+  },
+  "/lexica/sets/spelling-mode": {
+    name: "Spelling Mode",
+    validLink: false,
+  },
+  "/lexica/sets/full-mode": {
+    name: "Full Mode",
+    validLink: false,
+  },
+  "/lexica/sets/only-open-questions-mode": {
+    name: "Only Open Questions Mode",
+    validLink: false,
+  },
   "/test": {
     name: "Test",
     validLink: false,

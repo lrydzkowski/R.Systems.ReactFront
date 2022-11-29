@@ -18,6 +18,13 @@ import DialogError from "app/components/dialog-error";
 import { Button } from "@mui/material";
 import CustomDataGridToolbar from "table/components/custom-data-grid-toolbar";
 import "./sets-list.css";
+import ChooseModeDialog from "./choose-mode-dialog";
+import LearningModeService from "lexica/services/learning-mode-service";
+
+enum SelectedType {
+  RowSelection,
+  RowButton,
+}
 
 export default function SetsList() {
   const [page, setPage] = useState<number>(0);
@@ -25,10 +32,13 @@ export default function SetsList() {
   const [sortingFieldName, setSortingFieldName] = useState<string>("path");
   const [sortingOrder, setSortingOrder] = useState<string>("desc");
   const [searchQuery, setSearchQuery] = useState<string | null>(null);
-  const [selectedPath, setSelectedPaths] = useState<string[]>([]);
+  const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
+  const [selectedPath, setSelectedPath] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<SelectedType | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const navigate = useNavigate();
+  const [openChooseModeDialog, setOpenChooseModeDialog] = useState<boolean>(false);
   const columns = useMemo<GridColumns<Set>>(
     () => [
       {
@@ -39,7 +49,7 @@ export default function SetsList() {
           <GridActionsCellItem
             key="open"
             icon={<OpenInNewIcon color="primary" />}
-            onClick={() => navigate(`/lexica/sets/${encodeURIComponent(params.row.path)}`)}
+            onClick={() => openSet(params.row.path)}
             label="Open"
           />,
         ],
@@ -63,12 +73,53 @@ export default function SetsList() {
 
   const handleRefresh = () => setRefreshKey((x) => x + 1);
 
-  const handleOpen = () => {
-    if (selectedPath.length === 0) {
+  const openSet = (path: string) => {
+    setSelectedPath(path);
+    setSelectedType(SelectedType.RowButton);
+    setOpenChooseModeDialog(true);
+  };
+
+  const openSets = () => {
+    if (selectedPaths.length === 0) {
       return;
     }
 
-    navigate(`/lexica/sets/${encodeURIComponent(selectedPath.join("|"))}`);
+    setSelectedType(SelectedType.RowSelection);
+    setOpenChooseModeDialog(true);
+  };
+
+  const handleChooseModeDialogClose = (selectedMode: string | null) => {
+    setOpenChooseModeDialog(false);
+    setSelectedType(null);
+    if (selectedMode === null) {
+      return;
+    }
+
+    const path: string | null = LearningModeService.getPath(selectedMode);
+    if (path === null) {
+      return;
+    }
+
+    switch (selectedType) {
+      case SelectedType.RowButton:
+        if (selectedPath == null) {
+          return;
+        }
+
+        navigate("/" + path.replace(":setPaths", encodePaths([selectedPath])));
+        break;
+      case SelectedType.RowSelection:
+        if (selectedPaths.length === 0) {
+          return;
+        }
+
+        navigate("/" + path.replace(":setPaths", encodePaths(selectedPaths)));
+        break;
+    }
+  };
+
+  const encodePaths = (paths: string[]): string => {
+    return encodeURIComponent(paths.join("|"));
   };
 
   return (
@@ -105,8 +156,8 @@ export default function SetsList() {
                 <Button
                   variant="text"
                   startIcon={<OpenInNewIcon />}
-                  onClick={handleOpen}
-                  disabled={setsData.processing || selectedPath.length === 0}
+                  onClick={() => openSets()}
+                  disabled={setsData.processing || selectedPaths.length === 0}
                 >
                   Open
                 </Button>
@@ -147,6 +198,7 @@ export default function SetsList() {
         errorMsg="An unexpected error has occurred in getting the list of sets."
         setIsErrorOpen={(state) => setIsErrorOpen(state)}
       ></DialogError>
+      <ChooseModeDialog open={openChooseModeDialog} onClose={handleChooseModeDialogClose} />
     </>
   );
 }
