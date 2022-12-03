@@ -1,0 +1,35 @@
+.mode-container {
+  display: flex;
+  flex-direction: column;
+}
+.mode-container .row {
+  display: flex;
+  flex-direction: row;
+  max-width: 35rem;
+}
+.mode-container .row .left-col {
+  flex-grow: 1;
+}
+.mode-container .row .right-col {
+  display: flex;
+  align-items: flex-end;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding-left: 1rem;
+  width: 7rem;
+}
+.answer-field-row {
+  margin-bottom: 1rem;
+}
+.question {
+  font-size: 1.2rem;
+}
+.correct-answer {
+  color: green;
+}
+.wrong-answer {
+  color: red;
+}
+.answer {
+  font-weight: bold;
+}

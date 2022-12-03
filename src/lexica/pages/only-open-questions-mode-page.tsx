@@ -1,3 +1,4 @@
+import OnlyOpenQuestionsMode from "lexica/components/only-open-questions-mode";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function OnlyOpenQuestionsModePage() {
@@ -8,5 +9,5 @@ export default function OnlyOpenQuestionsModePage() {
     navigate("/lexica/sets");
   }
 
-  return <p>{setPaths}</p>;
+  return <OnlyOpenQuestionsMode setPaths={setPaths as string} />;
 }
