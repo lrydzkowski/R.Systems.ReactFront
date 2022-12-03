@@ -1,4 +1,4 @@
-import { AppBar } from "@mui/material";
+import { AppBar, Divider } from "@mui/material";
 import UserInfo from "auth/components/user-info";
 import Header from "./header";
 import Navigation from "./navigation";
@@ -16,6 +16,9 @@ export default function Sidebar() {
           <NavigationMobile />
         </div>
       </AppBar>
+      <div className="divider">
+        <Divider variant="middle" />
+      </div>
       <div className="navigation">
         <Navigation />
       </div>

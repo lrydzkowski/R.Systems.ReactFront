@@ -1,5 +1,7 @@
 .header {
+  background-color: #ffffff;
   box-shadow: none;
+  color: #2b5fa9;
   display: flex;
   flex-direction: row;
   padding: 1rem;
@@ -8,6 +10,10 @@
   align-items: center;
   display: flex;
   margin-right: 2rem;
+}
+.divider {
+  height: 1px;
+  width: 100%;
 }
 .navigation {
   display: none;
@@ -23,6 +29,9 @@
   .header .navigation-mobile {
     display: none;
   }
+  /* .mobile-divider {
+    display: none;
+  } */
   .navigation {
     display: block;
     flex-grow: 1;

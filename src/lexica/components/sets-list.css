@@ -6,7 +6,7 @@
 }
 
 .MuiDataGrid-columnHeaders {
-  background-color: #fbfbfb;
+  background-color: #fdfdfd;
   border-top: 1px solid rgba(224, 224, 224, 1) !important;
   z-index: 2;
 }
@@ -16,7 +16,7 @@
 }
 
 .odd {
-  background-color: #fbfbfb;
+  background-color: #fdfdfd;
   z-index: 1;
 }
 
