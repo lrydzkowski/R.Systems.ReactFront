@@ -5,18 +5,19 @@ import useProtectedData from "auth/hooks/use-protected-data";
 import { getSets } from "lexica/common/api/sets-api";
 import { Entry } from "lexica/common/models/entry";
 import { Set } from "lexica/common/models/set";
-import { OpenQuestion } from "./models/open-question";
-import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
-import "./only-open-questions-mode.scoped.css";
+import { Question } from "./models/question";
+import { FullModeService } from "./full-mode-service";
+import "./full-mode.scoped.css";
+import { QuestionType } from "./models/question-type";
 
-interface IOnlyOpenQuestionsModeProps {
+interface IFullModeProps {
   setPaths: string;
 }
 
-export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps) {
+export default function FullMode(props: IFullModeProps) {
   const [error, setError] = useState<string>("");
-  const [currentQuestion, setCurrentQuestion] = useState<OpenQuestion | null>(null);
-  const [service, setService] = useState<OnlyOpenQuestionsModeService | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
+  const [service, setService] = useState<FullModeService | null>(null);
   const [givenAnswer, setGivenAnswer] = useState<string>("");
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
   const [isFinished, setIsFinished] = useState<boolean>(false);
@@ -40,7 +41,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
       entries.push(...set.entries);
     }
 
-    const service = new OnlyOpenQuestionsModeService(entries);
+    const service = new FullModeService(entries);
     setService(service);
     setCurrentQuestion(service.getNextQuestion());
     setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
@@ -88,7 +89,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
       return;
     }
 
-    setCurrentQuestion(nextQuestion as OpenQuestion);
+    setCurrentQuestion(nextQuestion as Question);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
   };
@@ -121,25 +122,28 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
               <div className="row">
                 <p className="question">{currentQuestion.getQuestion()}</p>
               </div>
-              <div className="row answer-field-row">
-                <div className="left-col">
-                  <div className="answerField">
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      value={givenAnswer}
-                      onChange={handleChange}
-                      disabled={isAnswerFormDisabled()}
-                      inputRef={answerFieldRef}
-                    />
+              {currentQuestion.getQuestionType() === QuestionType.Closed && <p>Closed</p>}
+              {currentQuestion.getQuestionType() === QuestionType.Open && (
+                <div className="row answer-field-row">
+                  <div className="left-col">
+                    <div className="answerField">
+                      <TextField
+                        fullWidth
+                        variant="standard"
+                        value={givenAnswer}
+                        onChange={handleChange}
+                        disabled={isAnswerFormDisabled()}
+                        inputRef={answerFieldRef}
+                      />
+                    </div>
+                  </div>
+                  <div className="right-col">
+                    <Button fullWidth variant="outlined" type="submit" disabled={isAnswerFormDisabled()}>
+                      Answer
+                    </Button>
                   </div>
                 </div>
-                <div className="right-col">
-                  <Button fullWidth variant="outlined" type="submit" disabled={isAnswerFormDisabled()}>
-                    Answer
-                  </Button>
-                </div>
-              </div>
+              )}
             </form>
           )}
           {isCorrectAnswer !== null && (

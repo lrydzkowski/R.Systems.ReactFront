@@ -1,10 +1,11 @@
 import { Entry } from "lexica/common/models/entry";
 import { generateRandomInteger } from "lexica/common/services/generate-random-integer";
 import { shuffleArray } from "lexica/common/services/shuffle-array";
-import { OpenQuestion } from "./models/open-question";
+import { Question } from "./models/question";
 import { QuestionResult } from "./models/question-result";
+import { QuestionType } from "./models/question-type";
 
-export class OnlyOpenQuestionsModeService {
+export class FullModeService {
   private entries: Entry[] = [];
   private results: QuestionResult[] = [];
   private index = 0;
@@ -17,7 +18,7 @@ export class OnlyOpenQuestionsModeService {
     this.entries = entries;
     for (let index = 0; index < this.entries.length; index++) {
       this.results.push(new QuestionResult(index));
-      this.statistics.allQuestionsToAsk += 4;
+      this.statistics.allQuestionsToAsk += 6;
     }
   }
 
@@ -29,34 +30,43 @@ export class OnlyOpenQuestionsModeService {
     return this.statistics.allQuestionsToAsk;
   }
 
-  getNextQuestion(): OpenQuestion | null {
+  getNextQuestion(): Question | null {
     if (this.isFinished()) {
       return null;
     }
 
-    let question: OpenQuestion | null = null;
+    let question: Question | null = null;
     while (question === null) {
       if (this.index === this.results.length) {
         this.resetIndex();
       }
 
       const result = this.results[this.index];
-      const availableQuestionAbouts = result.getAvailableQuestionAbouts();
+      const availableQuestionType: string = result.getAvailableQuestionType();
+      const availableQuestionAbouts: string[] = result.getAvailableQuestionAbouts(availableQuestionType);
       if (availableQuestionAbouts.length === 0) {
         this.index++;
         continue;
       }
 
       const questionAbout = availableQuestionAbouts[generateRandomInteger(0, availableQuestionAbouts.length)];
-      question = OpenQuestion.fromEntry(this.entries[result.getEntryIndex()], questionAbout);
+      question = Question.fromEntry(
+        this.entries[result.getEntryIndex()],
+        availableQuestionType === QuestionType.Closed ? [] : this.entries,
+        questionAbout
+      );
     }
 
     return question;
   }
 
-  verifyAnswer(question: OpenQuestion, givenAnswer: string): boolean {
+  verifyAnswer(question: Question, givenAnswer: string): boolean {
     const isCorrect: boolean = question.isAnswerCorrect(givenAnswer);
-    this.statistics.correctAnswers += this.results[this.index].updateResult(question.getQuestionAbout(), isCorrect);
+    this.statistics.correctAnswers += this.results[this.index].updateResult(
+      question.getQuestionType(),
+      question.getQuestionAbout(),
+      isCorrect
+    );
     this.index++;
 
     return isCorrect;

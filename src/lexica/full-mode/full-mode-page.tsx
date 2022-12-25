@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
+import FullMode from "./full-mode";
 
 export default function FullModePage() {
   const { setPaths } = useParams();
@@ -8,5 +9,5 @@ export default function FullModePage() {
     navigate("/lexica/sets");
   }
 
-  return <p>{setPaths}</p>;
+  return <FullMode setPaths={setPaths as string} />;
 }

@@ -1,8 +1,8 @@
-import { Entry } from "../common/models/entry";
+import { Entry } from "../../common/models/entry";
 import { QuestionAbout } from "./question-about";
 
 export class OpenQuestion {
-  constructor(public question: string, public answer: string, public questionType: string) {}
+  constructor(private question: string, private answer: string, private questionAbout: string) {}
 
   static fromEntry(entry: Entry, questionAbout: string): OpenQuestion {
     const words = entry.words.join(", ");
@@ -14,7 +14,7 @@ export class OpenQuestion {
       case QuestionAbout.Words:
         return new OpenQuestion(translations, words, QuestionAbout.Words);
       default:
-        throw new Error(`The type of question = ${questionAbout} is not handled.`);
+        throw new Error(`Question about = ${questionAbout} is not handled.`);
     }
   }
 
@@ -24,5 +24,17 @@ export class OpenQuestion {
     }
 
     return false;
+  }
+
+  getQuestion(): string {
+    return this.question;
+  }
+
+  getAnswer(): string {
+    return this.answer;
+  }
+
+  getQuestionAbout(): string {
+    return this.questionAbout;
   }
 }

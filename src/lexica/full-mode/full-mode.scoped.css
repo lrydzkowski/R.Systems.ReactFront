@@ -1,0 +1,49 @@
+.mode-container {
+  display: flex;
+  flex-direction: column;
+}
+.mode-container .row {
+  display: flex;
+  flex-direction: row;
+  max-width: 35rem;
+}
+.mode-container .row.results {
+  margin-bottom: 1rem;
+}
+.mode-container .row .left-col {
+  flex-grow: 1;
+}
+.mode-container .row .right-col {
+  display: flex;
+  align-items: flex-end;
+  flex-grow: 0;
+  flex-shrink: 0;
+  padding-left: 1rem;
+  width: 7rem;
+}
+.mode-container .summary p.the-end {
+  font-size: 1.2rem;
+  color: green;
+  margin-bottom: 1rem;
+}
+.mode-container .summary button {
+  margin-right: 0.5rem;
+}
+.answer-field-row {
+  margin-bottom: 1rem;
+}
+.question {
+  font-size: 1.2rem;
+}
+.results {
+  line-height: 1.2rem;
+}
+.correct-answer {
+  color: green;
+}
+.wrong-answer {
+  color: red;
+}
+.answer {
+  font-weight: bold;
+}
