@@ -1,4 +1,4 @@
-import OnlyOpenQuestionsMode from "lexica/common/components/only-open-questions-mode";
+import OnlyOpenQuestionsMode from "./only-open-questions-mode";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function OnlyOpenQuestionsModePage() {

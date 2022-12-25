@@ -2,9 +2,9 @@ import { Button, TextField } from "@mui/material";
 import useProtectedData from "auth/hooks/use-protected-data";
 import { getSets } from "lexica/common/api/sets-api";
 import { Entry } from "lexica/common/models/entry";
-import { OpenQuestion } from "lexica/only-open-questions-mode/open-question";
+import { OpenQuestion } from "./open-question";
 import { Set } from "lexica/common/models/set";
-import { OnlyOpenQuestionsModeService } from "lexica/only-open-questions-mode/only-open-questions-mode-service";
+import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
 import React, { useEffect, useRef, useState } from "react";
 import "./only-open-questions-mode.scoped.css";
 import { useNavigate } from "react-router-dom";
@@ -22,9 +22,10 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   const [isFinished, setIsFinished] = useState<boolean>(false);
   const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
   const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
+  const [refreshKey, setRefreshKey] = useState<number>(0);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
-  const setData = useProtectedData<Set[]>(getSets, [props.setPaths], 0, () => {
+  const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {
     setError("An unexpected error has occurred in getting sets.");
   });
   const navigate = useNavigate();
@@ -93,7 +94,10 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   };
 
   const repeatMode = (): void => {
-    console.log("repeatMode");
+    setRefreshKey((x) => x + 1);
+    setGivenAnswer("");
+    setIsCorrectAnswer(null);
+    setIsFinished(false);
   };
 
   const redirectToList = (): void => {

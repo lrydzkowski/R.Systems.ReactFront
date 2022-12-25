@@ -1,6 +1,6 @@
 import { Entry } from "lexica/common/models/entry";
 import { shuffleArray } from "lexica/common/services/shuffle-array";
-import { OpenQuestion } from "lexica/only-open-questions-mode/open-question";
+import { OpenQuestion } from "./open-question";
 import { QuestionResult } from "./question-result";
 
 export class OnlyOpenQuestionsModeService {
