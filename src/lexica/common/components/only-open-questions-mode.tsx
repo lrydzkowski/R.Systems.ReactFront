@@ -1,11 +1,13 @@
 import { Button, TextField } from "@mui/material";
 import useProtectedData from "auth/hooks/use-protected-data";
-import { getSets } from "lexica/api/sets-api";
-import { OpenQuestion } from "lexica/models/open-question";
-import { Set } from "lexica/models/set";
-import { OnlyOpenQuestionsModeService } from "lexica/services/only-open-questions-mode-service";
+import { getSets } from "lexica/common/api/sets-api";
+import { Entry } from "lexica/common/models/entry";
+import { OpenQuestion } from "lexica/only-open-questions-mode/open-question";
+import { Set } from "lexica/common/models/set";
+import { OnlyOpenQuestionsModeService } from "lexica/only-open-questions-mode/only-open-questions-mode-service";
 import React, { useEffect, useRef, useState } from "react";
 import "./only-open-questions-mode.scoped.css";
+import { useNavigate } from "react-router-dom";
 
 interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
@@ -17,21 +19,31 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   const [service, setService] = useState<OnlyOpenQuestionsModeService | null>(null);
   const [givenAnswer, setGivenAnswer] = useState<string>("");
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
-  const [stepNumber, setStepNumber] = useState<number>(0);
+  const [isFinished, setIsFinished] = useState<boolean>(false);
+  const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
+  const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
   const setData = useProtectedData<Set[]>(getSets, [props.setPaths], 0, () => {
     setError("An unexpected error has occurred in getting sets.");
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (setData.data === null) {
       return;
     }
 
-    const service = new OnlyOpenQuestionsModeService(setData.data[0].entries);
+    const entries: Entry[] = [];
+    for (const set of setData.data) {
+      entries.push(...set.entries);
+    }
+
+    const service = new OnlyOpenQuestionsModeService(entries);
     setService(service);
     setCurrentQuestion(service.getNextQuestion());
+    setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
+    setNumberOfAllQuestionsToAsk(service.getNumberOfAllQuestionsToAsk());
   }, [setData.data]);
 
   useEffect(() => {
@@ -52,8 +64,13 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
   const handleAnswer = (event: React.FormEvent) => {
     event.preventDefault();
-    const isCorrectAnswer = currentQuestion?.isAnswerCorrect(givenAnswer);
+    if (service === null || currentQuestion === null) {
+      return;
+    }
+
+    const isCorrectAnswer = service?.verifyAnswer(currentQuestion, givenAnswer);
     setIsCorrectAnswer(isCorrectAnswer as boolean);
+    setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
   };
 
   const isAnswerFormDisabled = (): boolean => {
@@ -63,13 +80,24 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   const showNextQuestion = (): void => {
     const nextQuestion = service?.getNextQuestion();
     if (nextQuestion === null) {
+      setCurrentQuestion(null);
+      setIsCorrectAnswer(null);
+      setIsFinished(true);
+
       return;
     }
 
     setCurrentQuestion(nextQuestion as OpenQuestion);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
-    setStepNumber((x) => x + 1);
+  };
+
+  const repeatMode = (): void => {
+    console.log("repeatMode");
+  };
+
+  const redirectToList = (): void => {
+    navigate("/lexica/sets");
   };
 
   return (
@@ -81,6 +109,11 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
           {error.length > 0 && <p className="error">{error}</p>}
           {currentQuestion !== null && (
             <form onSubmit={handleAnswer}>
+              <div className="row results">
+                <p>
+                  {numberOfCorrectAnswers} / {numberOfAllQuestionsToAsk}
+                </p>
+              </div>
               <div className="row">
                 <p className="question">{currentQuestion.question}</p>
               </div>
@@ -93,7 +126,6 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
                       value={givenAnswer}
                       onChange={handleChange}
                       disabled={isAnswerFormDisabled()}
-                      // onKeyDown={handleKeyDown}
                       inputRef={answerFieldRef}
                     />
                   </div>
@@ -125,6 +157,17 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
                   Continue
                 </Button>
               </div>
+            </div>
+          )}
+          {isFinished && (
+            <div className="summary">
+              <p className="the-end">The end!</p>
+              <Button type="button" onClick={repeatMode}>
+                Repeat
+              </Button>
+              <Button type="button" onClick={redirectToList}>
+                Sets
+              </Button>
             </div>
           )}
         </div>

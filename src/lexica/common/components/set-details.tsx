@@ -1,8 +1,8 @@
 import { Button } from "@mui/material";
 import useProtectedData from "auth/hooks/use-protected-data";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { getSets } from "lexica/api/sets-api";
-import { Set } from "lexica/models/set";
+import { getSets } from "lexica/common/api/sets-api";
+import { Set } from "lexica/common/models/set";
 import { useState } from "react";
 import "./set-details.scoped.css";
 

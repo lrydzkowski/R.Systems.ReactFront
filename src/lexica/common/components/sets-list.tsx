@@ -8,8 +8,8 @@ import {
 } from "@mui/x-data-grid";
 import { ListInfo } from "app/models/list-info";
 import useProtectedListData from "auth/hooks/use-protected-list-data";
-import { getSets } from "lexica/api/sets-api";
-import { Set } from "lexica/models/set";
+import { getSets } from "lexica/common/api/sets-api";
+import { Set } from "lexica/common/models/set";
 import { useMemo, useState } from "react";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -19,7 +19,7 @@ import { Button } from "@mui/material";
 import CustomDataGridToolbar from "table/components/custom-data-grid-toolbar";
 import "./sets-list.css";
 import ChooseModeDialog from "./choose-mode-dialog";
-import LearningModeService from "lexica/services/learning-mode-service";
+import LearningModeService from "lexica/common/services/learning-mode-service";
 
 enum SelectedType {
   RowSelection,

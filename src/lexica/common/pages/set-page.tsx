@@ -1,4 +1,4 @@
-import Set from "lexica/components/set-details";
+import Set from "lexica/common/components/set-details";
 import { useNavigate, useParams } from "react-router";
 
 export default function SetPage() {

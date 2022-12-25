@@ -1,7 +1,7 @@
 import RequireAuth from "auth/components/require-auth";
 import NotRequireAuth from "auth/components/not-require-auth";
 import LoginPage from "auth/pages/login-page";
-import SetsPage from "lexica/pages/sets-page";
+import SetsPage from "lexica/common/pages/sets-page";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Test1Page from "test/pages/test1-page";
 import Test3Page from "test/pages/test3-page";
@@ -12,11 +12,11 @@ import AboutPage from "../pages/about-page";
 import ErrorPage from "../pages/error-page";
 import HomePage from "../pages/home-page";
 import NotFoundPage from "../pages/not-found-page";
-import SetPage from "lexica/pages/set-page";
+import SetPage from "lexica/common/pages/set-page";
 import PageWithBreadcrumbs from "app/components/page-with-breadcrumbs";
-import SpellingModePage from "lexica/pages/spelling-mode-page";
-import FullModePage from "lexica/pages/full-mode-page";
-import OnlyOpenQuestionsModePage from "lexica/pages/only-open-questions-mode-page";
+import SpellingModePage from "lexica/spelling-mode/spelling-mode-page";
+import FullModePage from "lexica/full-mode/full-mode-page";
+import OnlyOpenQuestionsModePage from "lexica/only-open-questions-mode/only-open-questions-mode-page";
 
 export const router = createBrowserRouter([
   {

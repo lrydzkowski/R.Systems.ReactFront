@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, List, ListItem, ListItemText } from "@mui/material";
-import { LearningModes } from "lexica/models/learning-modes";
+import { LearningModes } from "lexica/common/models/learning-modes";
 
 export interface ChooseModeDialogProps {
   open: boolean;
