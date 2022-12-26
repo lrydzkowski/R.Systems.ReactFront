@@ -16,6 +16,7 @@ export class FullModeService {
 
   constructor(entries: Entry[]) {
     this.entries = entries;
+    shuffleArray(this.entries);
     for (let index = 0; index < this.entries.length; index++) {
       this.results.push(new QuestionResult(index));
       this.statistics.allQuestionsToAsk += 6;
@@ -52,7 +53,7 @@ export class FullModeService {
       const questionAbout = availableQuestionAbouts[generateRandomInteger(0, availableQuestionAbouts.length)];
       question = Question.fromEntry(
         this.entries[result.getEntryIndex()],
-        availableQuestionType === QuestionType.Closed ? [] : this.entries,
+        availableQuestionType === QuestionType.Closed ? this.entries : [],
         questionAbout
       );
     }

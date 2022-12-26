@@ -6,8 +6,10 @@ export class QuestionResult {
 
   constructor(
     private entryIndex: number,
-    private expectedNumOfClosedCorrectAnswers = 1,
-    private expectedNumOfOpenCorrectAnswers = 2
+    private expectedCorrectAnswers = {
+      [QuestionType.Closed]: 1,
+      [QuestionType.Open]: 2,
+    }
   ) {
     this.resetResults(QuestionType.Closed);
     this.resetResults(QuestionType.Open);
@@ -19,15 +21,15 @@ export class QuestionResult {
 
   public isFinished(): boolean {
     if (
-      this.results[QuestionType.Closed][QuestionAbout.Words] < this.expectedNumOfClosedCorrectAnswers ||
-      this.results[QuestionType.Closed][QuestionAbout.Translations] < this.expectedNumOfClosedCorrectAnswers
+      this.results[QuestionType.Closed][QuestionAbout.Words] < this.expectedCorrectAnswers[QuestionType.Closed] ||
+      this.results[QuestionType.Closed][QuestionAbout.Translations] < this.expectedCorrectAnswers[QuestionType.Closed]
     ) {
       return false;
     }
 
     if (
-      this.results[QuestionType.Open][QuestionAbout.Words] < this.expectedNumOfOpenCorrectAnswers ||
-      this.results[QuestionType.Open][QuestionAbout.Translations] < this.expectedNumOfOpenCorrectAnswers
+      this.results[QuestionType.Open][QuestionAbout.Words] < this.expectedCorrectAnswers[QuestionType.Open] ||
+      this.results[QuestionType.Open][QuestionAbout.Translations] < this.expectedCorrectAnswers[QuestionType.Open]
     ) {
       return false;
     }
@@ -37,15 +39,15 @@ export class QuestionResult {
 
   public getAvailableQuestionType(): string {
     if (
-      this.results[QuestionType.Closed][QuestionAbout.Words] < this.expectedNumOfClosedCorrectAnswers ||
-      this.results[QuestionType.Closed][QuestionAbout.Translations] < this.expectedNumOfClosedCorrectAnswers
+      this.results[QuestionType.Closed][QuestionAbout.Words] < this.expectedCorrectAnswers[QuestionType.Closed] ||
+      this.results[QuestionType.Closed][QuestionAbout.Translations] < this.expectedCorrectAnswers[QuestionType.Closed]
     ) {
       return QuestionType.Closed;
     }
 
     if (
-      this.results[QuestionType.Open][QuestionAbout.Words] < this.expectedNumOfOpenCorrectAnswers ||
-      this.results[QuestionType.Open][QuestionAbout.Translations] < this.expectedNumOfOpenCorrectAnswers
+      this.results[QuestionType.Open][QuestionAbout.Words] < this.expectedCorrectAnswers[QuestionType.Open] ||
+      this.results[QuestionType.Open][QuestionAbout.Translations] < this.expectedCorrectAnswers[QuestionType.Open]
     ) {
       return QuestionType.Open;
     }
@@ -55,11 +57,11 @@ export class QuestionResult {
 
   public getAvailableQuestionAbouts(questionType: string): string[] {
     const availableQuestionAbouts: string[] = [];
-    if (this.results[questionType][QuestionAbout.Words] < this.expectedNumOfClosedCorrectAnswers) {
+    if (this.results[questionType][QuestionAbout.Words] < this.expectedCorrectAnswers[questionType]) {
       availableQuestionAbouts.push(QuestionAbout.Words);
     }
 
-    if (this.results[questionType][QuestionAbout.Translations] < this.expectedNumOfClosedCorrectAnswers) {
+    if (this.results[questionType][QuestionAbout.Translations] < this.expectedCorrectAnswers[questionType]) {
       availableQuestionAbouts.push(QuestionAbout.Translations);
     }
 

@@ -2,6 +2,9 @@
   display: flex;
   flex-direction: column;
 }
+.mode-container .closed-question-form {
+  margin-bottom: 1.5rem;
+}
 .mode-container .row {
   display: flex;
   flex-direction: row;
@@ -20,6 +23,10 @@
   flex-shrink: 0;
   padding-left: 1rem;
   width: 7rem;
+}
+.mode-container .row .radio-buttons {
+  margin-left: 0.2rem;
+  margin-bottom: 1rem;
 }
 .mode-container .summary p.the-end {
   font-size: 1.2rem;

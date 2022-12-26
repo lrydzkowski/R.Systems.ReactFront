@@ -1,5 +1,6 @@
 import { Entry } from "lexica/common/models/entry";
 import { generateRandomInteger } from "lexica/common/services/generate-random-integer";
+import { shuffleArray } from "lexica/common/services/shuffle-array";
 import { QuestionAbout } from "./question-about";
 import { QuestionType } from "./question-type";
 
@@ -15,7 +16,7 @@ export class Question {
   static fromEntry(entry: Entry, allEntries: Entry[], questionAbout: string): Question {
     const words = entry.words.join(", ");
     const translations = entry.translations.join(", ");
-    const possibleAnswers: string[] = [];
+    let possibleAnswers: string[] = [];
 
     switch (questionAbout) {
       case QuestionAbout.Translations: {
@@ -24,16 +25,14 @@ export class Question {
             .map((entry) => entry.translations.join(", "))
             .flat()
             .filter((translation) => translation !== translations);
-          for (let index = 0; index < 4; index++) {
-            possibleAnswers.push(allTranslations[generateRandomInteger(0, allTranslations.length)]);
-          }
+          possibleAnswers = Question.createPossibleAnswers(allTranslations, translations);
         }
 
         return new Question(
           words,
           translations,
           possibleAnswers,
-          possibleAnswers.length === 0 ? QuestionType.Closed : QuestionType.Open,
+          possibleAnswers.length > 0 ? QuestionType.Closed : QuestionType.Open,
           questionAbout
         );
       }
@@ -43,16 +42,14 @@ export class Question {
             .map((entry) => entry.words.join(", "))
             .flat()
             .filter((word) => word !== words);
-          for (let index = 0; index < 4; index++) {
-            possibleAnswers.push(allWords[generateRandomInteger(0, allWords.length)]);
-          }
+          possibleAnswers = Question.createPossibleAnswers(allWords, words);
         }
 
         return new Question(
-          words,
           translations,
+          words,
           possibleAnswers,
-          possibleAnswers.length === 0 ? QuestionType.Closed : QuestionType.Open,
+          possibleAnswers.length > 0 ? QuestionType.Closed : QuestionType.Open,
           questionAbout
         );
       }
@@ -87,5 +84,31 @@ export class Question {
 
   getQuestionAbout(): string {
     return this.questionAbout;
+  }
+
+  private static createPossibleAnswers(possibleValues: string[], correctValue: string): string[] {
+    const possibleAnswers = [];
+    if (possibleValues.length < 3) {
+      for (const possibleValue of possibleValues) {
+        possibleAnswers.push(possibleValue);
+      }
+      possibleAnswers.push(correctValue);
+      shuffleArray(possibleAnswers);
+
+      return possibleAnswers;
+    }
+
+    for (let index = 0; index < 3; index++) {
+      let possibleAnswer = "";
+      do {
+        possibleAnswer = possibleValues[generateRandomInteger(0, possibleValues.length)];
+      } while (possibleAnswers.indexOf(possibleAnswer) !== -1);
+      possibleAnswers.push(possibleAnswer);
+    }
+
+    possibleAnswers.push(correctValue);
+    shuffleArray(possibleAnswers);
+
+    return possibleAnswers;
   }
 }

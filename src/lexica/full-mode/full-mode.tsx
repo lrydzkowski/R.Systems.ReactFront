@@ -1,4 +1,4 @@
-import { Button, TextField } from "@mui/material";
+import { Button, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useProtectedData from "auth/hooks/use-protected-data";
@@ -24,6 +24,7 @@ export default function FullMode(props: IFullModeProps) {
   const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
   const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const answerClosedQuestionButtonRef = useRef<HTMLButtonElement>(null);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
   const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {
@@ -32,8 +33,17 @@ export default function FullMode(props: IFullModeProps) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.addEventListener("keydown", handleKeyboardAnswer);
+
+    return function cleanup() {
+      window.removeEventListener("keydown", handleKeyboardAnswer);
+    };
+  }, [currentQuestion]);
+
+  useEffect(() => {
     if (setData.data === null) {
       return;
+      1;
     }
 
     const entries: Entry[] = [];
@@ -49,7 +59,17 @@ export default function FullMode(props: IFullModeProps) {
   }, [setData.data]);
 
   useEffect(() => {
-    answerFieldRef.current?.focus();
+    if (currentQuestion === null) {
+      return;
+    }
+
+    if (currentQuestion.getQuestionType() === QuestionType.Closed) {
+      answerClosedQuestionButtonRef.current?.focus();
+    }
+
+    if (currentQuestion.getQuestionType() === QuestionType.Open) {
+      answerFieldRef.current?.focus();
+    }
   }, [currentQuestion]);
 
   useEffect(() => {
@@ -62,6 +82,22 @@ export default function FullMode(props: IFullModeProps) {
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setGivenAnswer(event.target.value);
+  };
+
+  const handleKeyboardAnswer = (event: KeyboardEvent): void => {
+    if (currentQuestion?.getQuestionType() !== QuestionType.Closed) {
+      return;
+    }
+
+    const possibleAnswers = currentQuestion.getPossibleAnswers();
+    for (let index = 1; index <= possibleAnswers.length; index++) {
+      if (event.key !== index.toString()) {
+        continue;
+      }
+
+      setGivenAnswer(possibleAnswers[index - 1]);
+      break;
+    }
   };
 
   const handleAnswer = (event: React.FormEvent) => {
@@ -113,7 +149,7 @@ export default function FullMode(props: IFullModeProps) {
         <div className="mode-container">
           {error.length > 0 && <p className="error">{error}</p>}
           {currentQuestion !== null && (
-            <form onSubmit={handleAnswer}>
+            <>
               <div className="row results">
                 <p>
                   {numberOfCorrectAnswers} / {numberOfAllQuestionsToAsk}
@@ -122,29 +158,64 @@ export default function FullMode(props: IFullModeProps) {
               <div className="row">
                 <p className="question">{currentQuestion.getQuestion()}</p>
               </div>
-              {currentQuestion.getQuestionType() === QuestionType.Closed && <p>Closed</p>}
-              {currentQuestion.getQuestionType() === QuestionType.Open && (
-                <div className="row answer-field-row">
-                  <div className="left-col">
-                    <div className="answerField">
-                      <TextField
-                        fullWidth
-                        variant="standard"
-                        value={givenAnswer}
+              {currentQuestion.getQuestionType() === QuestionType.Closed && (
+                <div>
+                  <form className="closed-question-form" onSubmit={handleAnswer}>
+                    <div className="row">
+                      <RadioGroup
+                        name="radio-buttons-group"
+                        className="radio-buttons"
                         onChange={handleChange}
-                        disabled={isAnswerFormDisabled()}
-                        inputRef={answerFieldRef}
-                      />
+                        value={givenAnswer}
+                      >
+                        {currentQuestion.getPossibleAnswers().map((possibleAnswer, index) => (
+                          <FormControlLabel
+                            key={index}
+                            value={possibleAnswer}
+                            control={<Radio />}
+                            label={possibleAnswer}
+                            disabled={isAnswerFormDisabled()}
+                          />
+                        ))}
+                      </RadioGroup>
                     </div>
-                  </div>
-                  <div className="right-col">
-                    <Button fullWidth variant="outlined" type="submit" disabled={isAnswerFormDisabled()}>
-                      Answer
-                    </Button>
-                  </div>
+                    <div className="row">
+                      <Button
+                        variant="outlined"
+                        type="submit"
+                        disabled={isAnswerFormDisabled()}
+                        ref={answerClosedQuestionButtonRef}
+                      >
+                        Answer
+                      </Button>
+                    </div>
+                  </form>
                 </div>
               )}
-            </form>
+              {currentQuestion.getQuestionType() === QuestionType.Open && (
+                <form onSubmit={handleAnswer}>
+                  <div className="row answer-field-row">
+                    <div className="left-col">
+                      <div className="answerField">
+                        <TextField
+                          fullWidth
+                          variant="standard"
+                          value={givenAnswer}
+                          onChange={handleChange}
+                          disabled={isAnswerFormDisabled()}
+                          inputRef={answerFieldRef}
+                        />
+                      </div>
+                    </div>
+                    <div className="right-col">
+                      <Button fullWidth variant="outlined" type="submit" disabled={isAnswerFormDisabled()}>
+                        Answer
+                      </Button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </>
           )}
           {isCorrectAnswer !== null && (
             <div className="row">
