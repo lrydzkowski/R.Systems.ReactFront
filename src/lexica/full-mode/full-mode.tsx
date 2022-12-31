@@ -27,7 +27,6 @@ export default function FullMode(props: IFullModeProps) {
   const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
   const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  // const [recordingRequestKey, setRecordingRequestKey] = useState<number>(0);
   const answerClosedQuestionButtonRef = useRef<HTMLButtonElement>(null);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
@@ -60,10 +59,6 @@ export default function FullMode(props: IFullModeProps) {
     setCurrentQuestion(nextQuestion);
     setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
     setNumberOfAllQuestionsToAsk(service.getNumberOfAllQuestionsToAsk());
-
-    if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-      playRecord(nextQuestion.getQuestion());
-    }
   }, [setData.data]);
 
   useEffect(() => {
@@ -78,6 +73,10 @@ export default function FullMode(props: IFullModeProps) {
     if (currentQuestion.getQuestionType() === QuestionType.Open) {
       answerFieldRef.current?.focus();
     }
+
+    if (currentQuestion.getQuestionAbout() === QuestionAbout.Translations) {
+      playRecord(currentQuestion.getQuestion());
+    }
   }, [currentQuestion]);
 
   useEffect(() => {
@@ -86,6 +85,10 @@ export default function FullMode(props: IFullModeProps) {
     }
 
     continueButtonRef.current?.focus();
+
+    if (currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
+      playRecord(currentQuestion.getAnswer());
+    }
   }, [isCorrectAnswer]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -117,10 +120,6 @@ export default function FullMode(props: IFullModeProps) {
     const isCorrectAnswer = service?.verifyAnswer(currentQuestion, givenAnswer);
     setIsCorrectAnswer(isCorrectAnswer as boolean);
     setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
-
-    if (currentQuestion.getQuestionAbout() === QuestionAbout.Words) {
-      playRecord(currentQuestion.getAnswer());
-    }
   };
 
   const isAnswerFormDisabled = (): boolean => {
@@ -140,10 +139,6 @@ export default function FullMode(props: IFullModeProps) {
     setCurrentQuestion(nextQuestion as Question);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
-
-    if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-      playRecord(nextQuestion.getQuestion());
-    }
   };
 
   const repeatMode = (): void => {

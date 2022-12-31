@@ -9,6 +9,8 @@ import { OpenQuestion } from "./models/open-question";
 import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
 import "./only-open-questions-mode.scoped.css";
 import { Urls } from "app/routing/urls";
+import { QuestionAbout } from "./models/question-about";
+import playRecord from "lexica/common/services/play-record";
 
 interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
@@ -50,6 +52,10 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
   useEffect(() => {
     answerFieldRef.current?.focus();
+
+    if (currentQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
+      playRecord(currentQuestion.getQuestion());
+    }
   }, [currentQuestion]);
 
   useEffect(() => {
@@ -58,6 +64,10 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
     }
 
     continueButtonRef.current?.focus();
+
+    if (currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
+      playRecord(currentQuestion.getAnswer());
+    }
   }, [isCorrectAnswer]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
