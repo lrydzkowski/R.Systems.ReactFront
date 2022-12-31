@@ -1,14 +1,16 @@
-import { AxiosRequestConfig } from "axios";
+import { AxiosRequestConfig, ResponseType } from "axios";
 
 export function buildRequestConfig(
   abortController: AbortController,
   accessToken: string,
-  requestParameters: object
+  requestParameters: object,
+  responseType: ResponseType = "json"
 ): AxiosRequestConfig {
   const requestConfig: AxiosRequestConfig = {
     headers: { Authorization: `Bearer ${accessToken}` },
     signal: abortController.signal,
     params: requestParameters,
+    responseType: responseType,
   };
 
   return requestConfig;

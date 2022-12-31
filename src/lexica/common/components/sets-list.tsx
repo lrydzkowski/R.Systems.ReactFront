@@ -71,7 +71,7 @@ export default function SetsList() {
     }
   );
 
-  const handleRefresh = () => setRefreshKey((x) => x + 1);
+  const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
   const openSet = (path: string) => {
     setSelectedPath(path);

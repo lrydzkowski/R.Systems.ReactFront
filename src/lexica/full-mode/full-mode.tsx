@@ -9,6 +9,10 @@ import { Question } from "./models/question";
 import { FullModeService } from "./full-mode-service";
 import "./full-mode.scoped.css";
 import { QuestionType } from "./models/question-type";
+import useProtectedDataWithCallback from "auth/hooks/use-protected-data-with-callback";
+import { getRecording } from "lexica/common/api/recording-api";
+import { QuestionAbout } from "./models/question-about";
+import RecordingsPlayer from "lexica/common/components/recordings-player";
 
 interface IFullModeProps {
   setPaths: string;
@@ -24,6 +28,7 @@ export default function FullMode(props: IFullModeProps) {
   const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
   const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  // const [recordingRequestKey, setRecordingRequestKey] = useState<number>(0);
   const answerClosedQuestionButtonRef = useRef<HTMLButtonElement>(null);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
@@ -40,10 +45,29 @@ export default function FullMode(props: IFullModeProps) {
     };
   }, [currentQuestion]);
 
+  // useProtectedDataWithCallback<Blob>(
+  //   getRecording,
+  //   currentQuestion
+  //     ?.getQuestion()
+  //     .split(",")
+  //     .map((word) => word.trim()) ?? [],
+  //   recordingRequestKey,
+  //   (data) => {
+  //     const blobUrl = window.URL.createObjectURL(data);
+  //     const audio = new Audio();
+  //     audio.src = blobUrl;
+  //     audio.controls = true;
+  //     document.body.appendChild(audio);
+  //     audio.play();
+  //   },
+  //   (error) => {
+  //     console.log(error);
+  //   }
+  // );
+
   useEffect(() => {
     if (setData.data === null) {
       return;
-      1;
     }
 
     const entries: Entry[] = [];
@@ -53,9 +77,13 @@ export default function FullMode(props: IFullModeProps) {
 
     const service = new FullModeService(entries);
     setService(service);
-    setCurrentQuestion(service.getNextQuestion());
+    const nextQuestion = service.getNextQuestion();
+    setCurrentQuestion(nextQuestion);
     setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
     setNumberOfAllQuestionsToAsk(service.getNumberOfAllQuestionsToAsk());
+    // if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
+    //   setRecordingRequestKey((x) => x + 1);
+    // }
   }, [setData.data]);
 
   useEffect(() => {
@@ -128,10 +156,13 @@ export default function FullMode(props: IFullModeProps) {
     setCurrentQuestion(nextQuestion as Question);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
+    // if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
+    //   setRecordingRequestKey((x) => x + 1);
+    // }
   };
 
   const repeatMode = (): void => {
-    setRefreshKey((x) => x + 1);
+    setRefreshKey((x) => 1 - x);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
     setIsFinished(false);
@@ -215,6 +246,9 @@ export default function FullMode(props: IFullModeProps) {
                   </div>
                 </form>
               )}
+              {currentQuestion.getQuestionAbout() === QuestionAbout.Translations && (
+                <RecordingsPlayer word={currentQuestion.getQuestion()} />
+              )}
             </>
           )}
           {isCorrectAnswer !== null && (
@@ -236,6 +270,9 @@ export default function FullMode(props: IFullModeProps) {
                   Continue
                 </Button>
               </div>
+              {currentQuestion?.getQuestionAbout() === QuestionAbout.Words && (
+                <RecordingsPlayer word={currentQuestion.getAnswer()} />
+              )}
             </div>
           )}
           {isFinished && (
