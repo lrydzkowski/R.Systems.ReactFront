@@ -1,4 +1,4 @@
 export interface ListInfo<T> {
-  numberOfAllRows: number;
+  count: number;
   data: T[];
 }

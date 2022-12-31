@@ -127,7 +127,7 @@ export default function SetsList() {
     <>
       <DataGrid
         rows={setsData.data?.data ?? []}
-        rowCount={setsData.data?.numberOfAllRows ?? 0}
+        rowCount={setsData.data?.count ?? 0}
         loading={setsData.processing}
         rowsPerPageOptions={[pageSize]}
         pagination
