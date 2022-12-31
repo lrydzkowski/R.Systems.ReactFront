@@ -1,13 +1,14 @@
 import { Button, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useProtectedData from "auth/hooks/use-protected-data";
-import { getSets } from "lexica/common/api/sets-api";
+import useProtectedData from "app/hooks/use-protected-data";
+import { getSetsContent } from "lexica/common/api/sets-api";
 import { Entry } from "lexica/common/models/entry";
 import { Set } from "lexica/common/models/set";
 import { OpenQuestion } from "./models/open-question";
 import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
 import "./only-open-questions-mode.scoped.css";
+import { urls } from "app/routing/urls";
 
 interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
@@ -25,7 +26,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
-  const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {
+  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
     setError("An unexpected error has occurred in getting sets.");
   });
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   };
 
   const redirectToList = (): void => {
-    navigate("/lexica/sets");
+    navigate(urls.pages.sets);
   };
 
   return (

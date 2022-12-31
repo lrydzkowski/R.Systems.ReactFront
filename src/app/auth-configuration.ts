@@ -1,10 +1,11 @@
 import { PublicClientApplication } from "@azure/msal-browser";
+import { urls } from "./routing/urls";
 
 export const publicClientApplication = new PublicClientApplication({
   auth: {
     clientId: getClientId(),
     authority: getAuthority(),
-    redirectUri: "/login",
+    redirectUri: urls.pages.login,
   },
   cache: {
     cacheLocation: "sessionStorage",

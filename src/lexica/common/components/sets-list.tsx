@@ -7,7 +7,7 @@ import {
   GridSortModel,
 } from "@mui/x-data-grid";
 import { ListInfo } from "app/models/list-info";
-import useProtectedListData from "auth/hooks/use-protected-list-data";
+import useProtectedListData from "app/hooks/use-protected-list-data";
 import { getSets } from "lexica/common/api/sets-api";
 import { Set } from "lexica/common/models/set";
 import { useMemo, useState } from "react";
@@ -60,6 +60,7 @@ export default function SetsList() {
   );
   const setsData = useProtectedListData<ListInfo<Set>>(
     getSets,
+    {},
     page + 1,
     pageSize,
     sortingFieldName,

@@ -1,6 +1,7 @@
 import { useMsal } from "@azure/msal-react";
 import { Button } from "@mui/material";
-import { loginRequest } from "auth/auth-configuration";
+import { loginRequest } from "app/auth-configuration";
+import { urls } from "app/routing/urls";
 import { useLocation } from "react-router-dom";
 import "./login-page.scoped.css";
 
@@ -8,7 +9,7 @@ export default function LoginPage() {
   const { instance } = useMsal();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || "/home";
+  const from = location.state?.from?.pathname || urls.pages.home;
 
   const handleLogin = () => {
     instance.loginRedirect({ ...loginRequest, redirectStartPage: from }).catch((e) => {

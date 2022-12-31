@@ -1,18 +1,17 @@
 import { Button, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import useProtectedData from "auth/hooks/use-protected-data";
-import { getSets } from "lexica/common/api/sets-api";
+import useProtectedData from "app/hooks/use-protected-data";
+import { getSetsContent } from "lexica/common/api/sets-api";
 import { Entry } from "lexica/common/models/entry";
 import { Set } from "lexica/common/models/set";
 import { Question } from "./models/question";
 import { FullModeService } from "./full-mode-service";
 import "./full-mode.scoped.css";
 import { QuestionType } from "./models/question-type";
-import useProtectedDataWithCallback from "auth/hooks/use-protected-data-with-callback";
-import { getRecording } from "lexica/common/api/recording-api";
+import { urls } from "app/routing/urls";
 import { QuestionAbout } from "./models/question-about";
-import RecordingsPlayer from "lexica/common/components/recordings-player";
+import playRecord from "lexica/common/services/play-record";
 
 interface IFullModeProps {
   setPaths: string;
@@ -32,7 +31,7 @@ export default function FullMode(props: IFullModeProps) {
   const answerClosedQuestionButtonRef = useRef<HTMLButtonElement>(null);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
-  const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {
+  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
     setError("An unexpected error has occurred in getting sets.");
   });
   const navigate = useNavigate();
@@ -44,26 +43,6 @@ export default function FullMode(props: IFullModeProps) {
       window.removeEventListener("keydown", handleKeyboardAnswer);
     };
   }, [currentQuestion]);
-
-  // useProtectedDataWithCallback<Blob>(
-  //   getRecording,
-  //   currentQuestion
-  //     ?.getQuestion()
-  //     .split(",")
-  //     .map((word) => word.trim()) ?? [],
-  //   recordingRequestKey,
-  //   (data) => {
-  //     const blobUrl = window.URL.createObjectURL(data);
-  //     const audio = new Audio();
-  //     audio.src = blobUrl;
-  //     audio.controls = true;
-  //     document.body.appendChild(audio);
-  //     audio.play();
-  //   },
-  //   (error) => {
-  //     console.log(error);
-  //   }
-  // );
 
   useEffect(() => {
     if (setData.data === null) {
@@ -81,9 +60,10 @@ export default function FullMode(props: IFullModeProps) {
     setCurrentQuestion(nextQuestion);
     setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
     setNumberOfAllQuestionsToAsk(service.getNumberOfAllQuestionsToAsk());
-    // if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-    //   setRecordingRequestKey((x) => x + 1);
-    // }
+
+    if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
+      playRecord(nextQuestion.getQuestion());
+    }
   }, [setData.data]);
 
   useEffect(() => {
@@ -137,6 +117,10 @@ export default function FullMode(props: IFullModeProps) {
     const isCorrectAnswer = service?.verifyAnswer(currentQuestion, givenAnswer);
     setIsCorrectAnswer(isCorrectAnswer as boolean);
     setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
+
+    if (currentQuestion.getQuestionAbout() === QuestionAbout.Words) {
+      playRecord(currentQuestion.getAnswer());
+    }
   };
 
   const isAnswerFormDisabled = (): boolean => {
@@ -156,9 +140,10 @@ export default function FullMode(props: IFullModeProps) {
     setCurrentQuestion(nextQuestion as Question);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
-    // if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-    //   setRecordingRequestKey((x) => x + 1);
-    // }
+
+    if (nextQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
+      playRecord(nextQuestion.getQuestion());
+    }
   };
 
   const repeatMode = (): void => {
@@ -169,7 +154,7 @@ export default function FullMode(props: IFullModeProps) {
   };
 
   const redirectToList = (): void => {
-    navigate("/lexica/sets");
+    navigate(urls.pages.sets);
   };
 
   return (
@@ -246,9 +231,6 @@ export default function FullMode(props: IFullModeProps) {
                   </div>
                 </form>
               )}
-              {currentQuestion.getQuestionAbout() === QuestionAbout.Translations && (
-                <RecordingsPlayer word={currentQuestion.getQuestion()} />
-              )}
             </>
           )}
           {isCorrectAnswer !== null && (
@@ -270,9 +252,6 @@ export default function FullMode(props: IFullModeProps) {
                   Continue
                 </Button>
               </div>
-              {currentQuestion?.getQuestionAbout() === QuestionAbout.Words && (
-                <RecordingsPlayer word={currentQuestion.getAnswer()} />
-              )}
             </div>
           )}
           {isFinished && (

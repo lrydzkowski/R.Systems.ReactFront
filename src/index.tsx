@@ -4,7 +4,7 @@ import reportWebVitals from "report-web-vitals";
 import { MsalProvider } from "@azure/msal-react";
 import { RouterProvider } from "react-router-dom";
 import { router } from "app/routing/router";
-import { publicClientApplication } from "auth/auth-configuration";
+import { publicClientApplication } from "app/auth-configuration";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";

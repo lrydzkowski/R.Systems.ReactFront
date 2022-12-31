@@ -2,6 +2,7 @@ import { AuthenticatedTemplate, UnauthenticatedTemplate } from "@azure/msal-reac
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 import { linksNameMap } from "app/routing/links-name-map";
+import { urls } from "app/routing/urls";
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import "./app-menu.scoped.css";
@@ -35,12 +36,12 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
   return (
     <List component="nav">
       <UnauthenticatedTemplate>
-        <ListItemButton component={NavLink} to={`/login`}>
+        <ListItemButton component={NavLink} to={urls.pages.login}>
           <ListItemText primary={linksNameMap["/login"].name} />
         </ListItemButton>
       </UnauthenticatedTemplate>
       <AuthenticatedTemplate>
-        <ListItemButton component={NavLink} to={`/home`} onClick={handleMenuLinkClick}>
+        <ListItemButton component={NavLink} to={urls.pages.home} onClick={handleMenuLinkClick}>
           <ListItemText primary={linksNameMap["/home"].name} />
         </ListItemButton>
         <ListItemButton onClick={(e) => handleClick(e, "lexica")} className={getNoLinkClass("lexica")}>
@@ -52,7 +53,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
             <ListItemButton
               className="subMenuListItemButtom"
               component={NavLink}
-              to={`/lexica/sets`}
+              to={urls.pages.sets}
               onClick={handleMenuLinkClick}
             >
               <ListItemText primary={linksNameMap["/lexica/sets"].name} />
@@ -68,7 +69,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
             <ListItemButton
               className="subMenuListItemButtom"
               component={NavLink}
-              to={`/test/test1`}
+              to={urls.pages.test1}
               onClick={handleMenuLinkClick}
             >
               <ListItemText primary={linksNameMap["/test/test1"].name} />
@@ -76,7 +77,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
             <ListItemButton
               className="subMenuListItemButtom"
               component={NavLink}
-              to={`/test/test2`}
+              to={urls.pages.test2}
               onClick={handleMenuLinkClick}
             >
               <ListItemText primary={linksNameMap["/test/test2"].name} />
@@ -84,7 +85,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
             <ListItemButton
               className="subMenuListItemButtom"
               component={NavLink}
-              to={`/test/test3`}
+              to={urls.pages.test3}
               onClick={handleMenuLinkClick}
             >
               <ListItemText primary={linksNameMap["/test/test3"].name} />
@@ -92,14 +93,14 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
             <ListItemButton
               className="subMenuListItemButtom"
               component={NavLink}
-              to={`/test/test4`}
+              to={urls.pages.test4}
               onClick={handleMenuLinkClick}
             >
               <ListItemText primary={linksNameMap["/test/test4"].name} />
             </ListItemButton>
           </List>
         </Collapse>
-        <ListItemButton component={NavLink} to={`/about`} onClick={handleMenuLinkClick}>
+        <ListItemButton component={NavLink} to={urls.pages.about} onClick={handleMenuLinkClick}>
           <ListItemText primary={linksNameMap["/about"].name} />
         </ListItemButton>
       </AuthenticatedTemplate>

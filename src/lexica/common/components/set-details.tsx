@@ -1,7 +1,7 @@
 import { Button } from "@mui/material";
-import useProtectedData from "auth/hooks/use-protected-data";
+import useProtectedData from "app/hooks/use-protected-data";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { getSets } from "lexica/common/api/sets-api";
+import { getSetsContent } from "lexica/common/api/sets-api";
 import { Set } from "lexica/common/models/set";
 import { useState } from "react";
 import "./set-details.scoped.css";
@@ -13,7 +13,7 @@ interface ISetDetailsProps {
 export default function SetDetails(props: ISetDetailsProps) {
   const [error, setError] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const setData = useProtectedData<Set[]>(getSets, [props.setPaths], refreshKey, () => {
+  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
     setError("An unexpected error has occurred in getting sets.");
   });
 

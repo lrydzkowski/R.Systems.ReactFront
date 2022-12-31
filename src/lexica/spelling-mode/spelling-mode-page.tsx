@@ -1,3 +1,4 @@
+import { urls } from "app/routing/urls";
 import { useNavigate, useParams } from "react-router-dom";
 
 export default function SpellingModePage() {
@@ -5,7 +6,7 @@ export default function SpellingModePage() {
   const navigate = useNavigate();
 
   if (!setPaths) {
-    navigate("/lexica/sets");
+    navigate(urls.pages.sets);
   }
 
   return <p>{setPaths}</p>;

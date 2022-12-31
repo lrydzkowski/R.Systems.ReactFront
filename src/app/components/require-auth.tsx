@@ -1,4 +1,5 @@
 import { useIsAuthenticated } from "@azure/msal-react";
+import { urls } from "app/routing/urls";
 import { Navigate, useLocation } from "react-router-dom";
 
 interface IRequireAuthProps {
@@ -10,7 +11,7 @@ export default function RequireAuth(props: IRequireAuthProps) {
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    return <Navigate to={urls.pages.login} state={{ from: location }} replace />;
   }
 
   return props.children;

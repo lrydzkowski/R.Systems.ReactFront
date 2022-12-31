@@ -1,6 +1,5 @@
-import RequireAuth from "auth/components/require-auth";
-import NotRequireAuth from "auth/components/not-require-auth";
-import LoginPage from "auth/pages/login-page";
+import NotRequireAuth from "app/components/not-require-auth";
+import LoginPage from "app/pages/login-page";
 import SetsPage from "lexica/common/pages/sets-page";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import Test1Page from "test/pages/test1-page";
@@ -17,6 +16,8 @@ import PageWithBreadcrumbs from "app/components/page-with-breadcrumbs";
 import SpellingModePage from "lexica/spelling-mode/spelling-mode-page";
 import FullModePage from "lexica/full-mode/full-mode-page";
 import OnlyOpenQuestionsModePage from "lexica/only-open-questions-mode/only-open-questions-mode-page";
+import RequireAuth from "app/components/require-auth";
+import { urls } from "./urls";
 
 export const router = createBrowserRouter([
   {
@@ -148,7 +149,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "",
-            element: <Navigate to="/login" replace />,
+            element: <Navigate to={urls.pages.login} replace />,
           },
           {
             path: "*",
