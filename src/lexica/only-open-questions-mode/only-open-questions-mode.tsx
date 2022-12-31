@@ -8,7 +8,7 @@ import { Set } from "lexica/common/models/set";
 import { OpenQuestion } from "./models/open-question";
 import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
 import "./only-open-questions-mode.scoped.css";
-import { urls } from "app/routing/urls";
+import { Urls } from "app/routing/urls";
 
 interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
@@ -102,7 +102,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   };
 
   const redirectToList = (): void => {
-    navigate(urls.pages.sets);
+    navigate(Urls.pages.sets.path);
   };
 
   return (

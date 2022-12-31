@@ -5,7 +5,7 @@ import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useState } from "react";
 import "./user-info.scoped.css";
-import { urls } from "app/routing/urls";
+import { Urls } from "app/routing/urls";
 
 export default function UserInfo() {
   const { inProgress, accounts, instance } = useMsal();
@@ -21,7 +21,7 @@ export default function UserInfo() {
 
   const handleLogout = () => {
     instance.logoutRedirect({
-      postLogoutRedirectUri: urls.pages.login,
+      postLogoutRedirectUri: Urls.pages.login.path,
     });
   };
 

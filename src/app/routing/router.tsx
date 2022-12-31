@@ -17,7 +17,7 @@ import SpellingModePage from "lexica/spelling-mode/spelling-mode-page";
 import FullModePage from "lexica/full-mode/full-mode-page";
 import OnlyOpenQuestionsModePage from "lexica/only-open-questions-mode/only-open-questions-mode-page";
 import RequireAuth from "app/components/require-auth";
-import { urls } from "./urls";
+import { Urls } from "./urls";
 
 export const router = createBrowserRouter([
   {
@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
       {
         children: [
           {
-            path: "login",
+            path: Urls.getPathWithoutLeadingSlash("login"),
             element: (
               <NotRequireAuth>
                 <PageWithBreadcrumbs>
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "home",
+            path: Urls.getPathWithoutLeadingSlash("home"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -48,7 +48,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets",
+            path: Urls.getPathWithoutLeadingSlash("sets"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets/content/:setPaths",
+            path: Urls.getPathWithoutLeadingSlash("setWithPaths"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets/spelling-mode/:setPaths",
+            path: Urls.getPathWithoutLeadingSlash("spellingModeWithPaths"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -78,7 +78,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets/full-mode/:setPaths",
+            path: Urls.getPathWithoutLeadingSlash("fullModeWithPaths"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -88,7 +88,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "lexica/sets/only-open-questions-mode/:setPaths",
+            path: Urls.getPathWithoutLeadingSlash("onlyOpenQuestionsModeWithPaths"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -98,7 +98,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "test/test1",
+            path: Urls.getPathWithoutLeadingSlash("test1"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -108,7 +108,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "test/test2",
+            path: Urls.getPathWithoutLeadingSlash("test2"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -118,7 +118,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "test/test3",
+            path: Urls.getPathWithoutLeadingSlash("test3"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -128,7 +128,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "test/test4",
+            path: Urls.getPathWithoutLeadingSlash("test4"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -138,7 +138,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: "about",
+            path: Urls.getPathWithoutLeadingSlash("about"),
             element: (
               <RequireAuth>
                 <PageWithBreadcrumbs>
@@ -149,7 +149,7 @@ export const router = createBrowserRouter([
           },
           {
             path: "",
-            element: <Navigate to={urls.pages.login} replace />,
+            element: <Navigate to={Urls.pages.login.path} replace />,
           },
           {
             path: "*",

@@ -10,11 +10,5 @@ export default function playRecord(word: string): void {
 
     const blobUrl = window.URL.createObjectURL(response.data);
     new Audio(blobUrl).play();
-
-    // const audio = new Audio();
-    // audio.src = blobUrl;
-    // audio.controls = true;
-    // document.body.appendChild(audio);
-    // audio.play();
   });
 }

@@ -9,7 +9,7 @@ import { Question } from "./models/question";
 import { FullModeService } from "./full-mode-service";
 import "./full-mode.scoped.css";
 import { QuestionType } from "./models/question-type";
-import { urls } from "app/routing/urls";
+import { Urls } from "app/routing/urls";
 import { QuestionAbout } from "./models/question-about";
 import playRecord from "lexica/common/services/play-record";
 
@@ -154,7 +154,7 @@ export default function FullMode(props: IFullModeProps) {
   };
 
   const redirectToList = (): void => {
-    navigate(urls.pages.sets);
+    navigate(Urls.pages.sets.path);
   };
 
   return (

@@ -28,7 +28,7 @@ enum SelectedType {
 
 export default function SetsList() {
   const [page, setPage] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(100);
+  const [pageSize, setPageSize] = useState<number>(25);
   const [sortingFieldName, setSortingFieldName] = useState<string>("path");
   const [sortingOrder, setSortingOrder] = useState<string>("desc");
   const [searchQuery, setSearchQuery] = useState<string | null>(null);

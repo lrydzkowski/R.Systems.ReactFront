@@ -1,4 +1,5 @@
 import HomePageCard from "app/components/home-page-card";
+import { Urls } from "app/routing/urls";
 import "./home-page.scoped.css";
 
 export default function HomePage() {
@@ -9,11 +10,11 @@ export default function HomePage() {
           <HomePageCard
             title="Lexica"
             subtitle="English vocabulary learning web application."
-            redirectUrl="/lexica/sets"
+            redirectUrl={Urls.pages.sets.path}
           />
         </div>
         <div className="card">
-          <HomePageCard title="Tests" subtitle="Tests, PoC, and different ideas." redirectUrl="/test/test1" />
+          <HomePageCard title="Tests" subtitle="Tests, PoC, and different ideas." redirectUrl={Urls.pages.test1.path} />
         </div>
       </div>
     </>
