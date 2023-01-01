@@ -4,7 +4,7 @@ import { shuffleArray } from "lexica/common/services/shuffle-array";
 import { OpenQuestion } from "./models/open-question";
 import { QuestionResult } from "./models/question-result";
 
-export class OnlyOpenQuestionsModeService {
+export class SpellingModeService {
   private entries: Entry[] = [];
   private results: QuestionResult[] = [];
   private index = 0;
@@ -15,10 +15,10 @@ export class OnlyOpenQuestionsModeService {
 
   constructor(entries: Entry[]) {
     this.entries = entries;
-    shuffleArray(this.entries);
+    shuffleArray(this.results);
     for (let index = 0; index < this.entries.length; index++) {
       this.results.push(new QuestionResult(index));
-      this.statistics.allQuestionsToAsk += 4;
+      this.statistics.allQuestionsToAsk += 2;
     }
   }
 

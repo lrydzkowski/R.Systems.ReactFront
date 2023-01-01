@@ -1,5 +1,6 @@
 import { Urls } from "app/routing/urls";
 import { useNavigate, useParams } from "react-router-dom";
+import SpellingMode from "./spelling-mode";
 
 export default function SpellingModePage() {
   const { setPaths } = useParams();
@@ -9,5 +10,5 @@ export default function SpellingModePage() {
     navigate(Urls.pages.sets.path);
   }
 
-  return <p>{setPaths}</p>;
+  return <SpellingMode setPaths={setPaths as string} />;
 }

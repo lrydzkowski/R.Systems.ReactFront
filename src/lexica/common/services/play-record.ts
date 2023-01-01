@@ -1,14 +1,16 @@
 import { AxiosResponse } from "axios";
 import { getRecording } from "../api/recording-api";
 
-export default function playRecord(word: string): void {
+export default function playRecord(word: string): Promise<boolean> {
   const abortController = new AbortController();
-  getRecording(abortController, word).then((response: AxiosResponse<Blob> | void) => {
+  return getRecording(abortController, word).then((response: AxiosResponse<Blob> | void) => {
     if (response === undefined) {
-      return;
+      return false;
     }
 
     const blobUrl = window.URL.createObjectURL(response.data);
     new Audio(blobUrl).play();
+
+    return true;
   });
 }

@@ -59,7 +59,7 @@ export class Question {
   }
 
   isAnswerCorrect(givenAnswer: string): boolean {
-    if (givenAnswer === this.answer) {
+    if (givenAnswer.trim() === this.answer) {
       return true;
     }
 

@@ -1,5 +1,4 @@
 import { Entry } from "../../common/models/entry";
-import { QuestionAbout } from "./question-about";
 
 export class OpenQuestion {
   constructor(private question: string, private answer: string, private questionAbout: string) {}
@@ -8,14 +7,7 @@ export class OpenQuestion {
     const words = entry.words.join(", ");
     const translations = entry.translations.join(", ");
 
-    switch (questionAbout) {
-      case QuestionAbout.Translations:
-        return new OpenQuestion(words, translations, QuestionAbout.Translations);
-      case QuestionAbout.Words:
-        return new OpenQuestion(translations, words, QuestionAbout.Words);
-      default:
-        throw new Error(`Question about = ${questionAbout} is not handled.`);
-    }
+    return new OpenQuestion(translations, words, questionAbout);
   }
 
   isAnswerCorrect(givenAnswer: string): boolean {
