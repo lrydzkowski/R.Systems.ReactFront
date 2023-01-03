@@ -13,14 +13,14 @@ export const LearningModes: LearningMode[] = [
     path: Urls.getPathWithoutLeadingSlash("spellingModeWithPaths"),
   },
   {
-    name: "Only Open Questions",
-    key: "onlyOpenQuestions",
-    path: Urls.getPathWithoutLeadingSlash("onlyOpenQuestionsModeWithPaths"),
-  },
-  {
     name: "Full",
     key: "full",
     path: Urls.getPathWithoutLeadingSlash("fullModeWithPaths"),
+  },
+  {
+    name: "Only Open Questions",
+    key: "onlyOpenQuestions",
+    path: Urls.getPathWithoutLeadingSlash("onlyOpenQuestionsModeWithPaths"),
   },
   {
     name: "Content",

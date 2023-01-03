@@ -1,8 +1,10 @@
 import { Entry } from "lexica/common/models/entry";
+import { Question } from "lexica/common/models/question";
+import { QuestionAbout } from "lexica/common/models/question-about";
+import { QuestionResult } from "lexica/common/models/question-result";
+import { QuestionType } from "lexica/common/models/question-type";
 import { generateRandomInteger } from "lexica/common/services/generate-random-integer";
 import { shuffleArray } from "lexica/common/services/shuffle-array";
-import { OpenQuestion } from "./models/open-question";
-import { QuestionResult } from "./models/question-result";
 
 export class SpellingModeService {
   private entries: Entry[] = [];
@@ -17,7 +19,13 @@ export class SpellingModeService {
     this.entries = entries;
     shuffleArray(this.results);
     for (let index = 0; index < this.entries.length; index++) {
-      this.results.push(new QuestionResult(index));
+      this.results.push(
+        new QuestionResult(index, {
+          [QuestionType.Open]: {
+            [QuestionAbout.Pronunciation]: 2,
+          },
+        })
+      );
       this.statistics.allQuestionsToAsk += 2;
     }
   }
@@ -30,34 +38,38 @@ export class SpellingModeService {
     return this.statistics.allQuestionsToAsk;
   }
 
-  getNextQuestion(): OpenQuestion | null {
+  getNextQuestion(): Question | null {
     if (this.isFinished()) {
       return null;
     }
 
-    let question: OpenQuestion | null = null;
+    let question: Question | null = null;
     while (question === null) {
       if (this.index === this.results.length) {
         this.resetIndex();
       }
 
       const result = this.results[this.index];
-      const availableQuestionAbouts = result.getAvailableQuestionAbouts();
+      const availableQuestionAbouts = result.getAvailableQuestionAbouts(QuestionType.Open);
       if (availableQuestionAbouts.length === 0) {
         this.index++;
         continue;
       }
 
       const questionAbout = availableQuestionAbouts[generateRandomInteger(0, availableQuestionAbouts.length)];
-      question = OpenQuestion.fromEntry(this.entries[result.getEntryIndex()], questionAbout);
+      question = Question.fromEntry(this.entries[result.getEntryIndex()], [], questionAbout);
     }
 
     return question;
   }
 
-  verifyAnswer(question: OpenQuestion, givenAnswer: string): boolean {
+  verifyAnswer(question: Question, givenAnswer: string): boolean {
     const isCorrect: boolean = question.isAnswerCorrect(givenAnswer);
-    this.statistics.correctAnswers += this.results[this.index].updateResult(question.getQuestionAbout(), isCorrect);
+    this.statistics.correctAnswers += this.results[this.index].updateResult(
+      QuestionType.Open,
+      question.getQuestionAbout(),
+      isCorrect
+    );
     this.index++;
 
     return isCorrect;

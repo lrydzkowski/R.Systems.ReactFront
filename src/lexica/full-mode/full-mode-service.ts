@@ -1,9 +1,10 @@
 import { Entry } from "lexica/common/models/entry";
+import { Question } from "lexica/common/models/question";
+import { QuestionAbout } from "lexica/common/models/question-about";
+import { QuestionResult } from "lexica/common/models/question-result";
+import { QuestionType } from "lexica/common/models/question-type";
 import { generateRandomInteger } from "lexica/common/services/generate-random-integer";
 import { shuffleArray } from "lexica/common/services/shuffle-array";
-import { Question } from "./models/question";
-import { QuestionResult } from "./models/question-result";
-import { QuestionType } from "./models/question-type";
 
 export class FullModeService {
   private entries: Entry[] = [];
@@ -18,7 +19,18 @@ export class FullModeService {
     this.entries = entries;
     shuffleArray(this.entries);
     for (let index = 0; index < this.entries.length; index++) {
-      this.results.push(new QuestionResult(index));
+      this.results.push(
+        new QuestionResult(index, {
+          [QuestionType.Closed]: {
+            [QuestionAbout.Words]: 1,
+            [QuestionAbout.Translations]: 1,
+          },
+          [QuestionType.Open]: {
+            [QuestionAbout.Words]: 2,
+            [QuestionAbout.Translations]: 2,
+          },
+        })
+      );
       this.statistics.allQuestionsToAsk += 6;
     }
   }
@@ -43,7 +55,12 @@ export class FullModeService {
       }
 
       const result = this.results[this.index];
-      const availableQuestionType: string = result.getAvailableQuestionType();
+      const availableQuestionType: string | null = result.getAvailableQuestionType();
+      if (availableQuestionType === null) {
+        this.index++;
+        continue;
+      }
+
       const availableQuestionAbouts: string[] = result.getAvailableQuestionAbouts(availableQuestionType);
       if (availableQuestionAbouts.length === 0) {
         this.index++;

@@ -5,13 +5,14 @@ import useProtectedData from "app/hooks/use-protected-data";
 import { getSetsContent } from "lexica/common/api/sets-api";
 import { Entry } from "lexica/common/models/entry";
 import { Set } from "lexica/common/models/set";
-import { Question } from "./models/question";
 import { FullModeService } from "./full-mode-service";
 import "./full-mode.scoped.css";
-import { QuestionType } from "./models/question-type";
 import { Urls } from "app/routing/urls";
-import { QuestionAbout } from "./models/question-about";
-import playRecord from "lexica/common/services/play-record";
+import { Question } from "lexica/common/models/question";
+import { QuestionType } from "lexica/common/models/question-type";
+import { QuestionAbout } from "lexica/common/models/question-about";
+import { playRecordings } from "lexica/common/services/play-recordings";
+import getRecordings from "lexica/common/services/get-recordings";
 
 interface IFullModeProps {
   setPaths: string;
@@ -74,9 +75,20 @@ export default function FullMode(props: IFullModeProps) {
       answerFieldRef.current?.focus();
     }
 
+    const abortController = new AbortController();
     if (currentQuestion.getQuestionAbout() === QuestionAbout.Translations) {
-      playRecord(currentQuestion.getQuestion());
+      getRecordings(currentQuestion.getQuestions())
+        .then((recordings) => {
+          playRecordings(recordings, abortController);
+        })
+        .catch(console.log);
     }
+
+    return () => {
+      abortController.abort();
+
+      return;
+    };
   }, [currentQuestion]);
 
   useEffect(() => {
@@ -86,9 +98,20 @@ export default function FullMode(props: IFullModeProps) {
 
     continueButtonRef.current?.focus();
 
+    const abortController = new AbortController();
     if (currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
-      playRecord(currentQuestion.getAnswer());
+      getRecordings(currentQuestion.getAnswers())
+        .then((recordings) => {
+          playRecordings(recordings, abortController);
+        })
+        .catch(console.log);
     }
+
+    return () => {
+      abortController.abort();
+
+      return;
+    };
   }, [isCorrectAnswer]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {

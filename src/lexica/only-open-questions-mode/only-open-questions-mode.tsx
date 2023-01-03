@@ -5,12 +5,13 @@ import useProtectedData from "app/hooks/use-protected-data";
 import { getSetsContent } from "lexica/common/api/sets-api";
 import { Entry } from "lexica/common/models/entry";
 import { Set } from "lexica/common/models/set";
-import { OpenQuestion } from "./models/open-question";
 import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
 import "./only-open-questions-mode.scoped.css";
 import { Urls } from "app/routing/urls";
-import { QuestionAbout } from "./models/question-about";
-import playRecord from "lexica/common/services/play-record";
+import { Question } from "lexica/common/models/question";
+import { QuestionAbout } from "lexica/common/models/question-about";
+import getRecordings from "lexica/common/services/get-recordings";
+import { playRecordings } from "lexica/common/services/play-recordings";
 
 interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
@@ -18,7 +19,7 @@ interface IOnlyOpenQuestionsModeProps {
 
 export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps) {
   const [error, setError] = useState<string>("");
-  const [currentQuestion, setCurrentQuestion] = useState<OpenQuestion | null>(null);
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [service, setService] = useState<OnlyOpenQuestionsModeService | null>(null);
   const [givenAnswer, setGivenAnswer] = useState<string>("");
   const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
@@ -53,9 +54,20 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   useEffect(() => {
     answerFieldRef.current?.focus();
 
+    const abortController = new AbortController();
     if (currentQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-      playRecord(currentQuestion.getQuestion());
+      getRecordings(currentQuestion.getQuestions())
+        .then((recordings) => {
+          playRecordings(recordings, abortController);
+        })
+        .catch(console.log);
     }
+
+    return () => {
+      abortController.abort();
+
+      return;
+    };
   }, [currentQuestion]);
 
   useEffect(() => {
@@ -65,9 +77,20 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
     continueButtonRef.current?.focus();
 
+    const abortController = new AbortController();
     if (currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
-      playRecord(currentQuestion.getAnswer());
+      getRecordings(currentQuestion.getAnswers())
+        .then((recordings) => {
+          playRecordings(recordings, abortController);
+        })
+        .catch(console.log);
     }
+
+    return () => {
+      abortController.abort();
+
+      return;
+    };
   }, [isCorrectAnswer]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -99,7 +122,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
       return;
     }
 
-    setCurrentQuestion(nextQuestion as OpenQuestion);
+    setCurrentQuestion(nextQuestion as Question);
     setGivenAnswer("");
     setIsCorrectAnswer(null);
   };
