@@ -1,3 +1,3 @@
-# R.Systems.ReactFront
+# r-systems-react-front
 
 R.Systems front-end.

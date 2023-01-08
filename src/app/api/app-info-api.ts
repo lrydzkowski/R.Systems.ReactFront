@@ -1,7 +1,11 @@
-import axios from "axios";
+import { IAppInfo } from "app/models/app-info";
+import { AxiosResponse } from "axios";
+import { sendGetRequest } from "./services/send-request";
 
-const baseUrl = process.env.REACT_APP_LEXICA_API_URL;
+const baseUrl = process.env.REACT_APP_LEXICA_API_URL ?? "";
 
-export function getAppInfo(abortController: AbortController) {
-  return axios.get(`${baseUrl}`, { signal: abortController.signal });
+export function getAppInfo(abortController: AbortController): Promise<AxiosResponse<IAppInfo> | void> {
+  const urlPath = "/";
+
+  return sendGetRequest<IAppInfo>(abortController, baseUrl, urlPath, {}, {});
 }

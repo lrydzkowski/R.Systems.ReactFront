@@ -1,9 +1,9 @@
-import { AppBar } from "@mui/material";
-import UserInfo from "auth/components/user-info";
+import { AppBar, Divider } from "@mui/material";
 import Header from "./header";
 import Navigation from "./navigation";
 import NavigationMobile from "./navigation-mobile";
 import "./sidebar.scoped.css";
+import UserInfo from "./user-info";
 
 export default function Sidebar() {
   return (
@@ -16,6 +16,9 @@ export default function Sidebar() {
           <NavigationMobile />
         </div>
       </AppBar>
+      <div className="divider">
+        <Divider variant="middle" />
+      </div>
       <div className="navigation">
         <Navigation />
       </div>

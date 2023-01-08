@@ -1,3 +1,5 @@
+import "./not-found-page.scoped.css";
+
 export default function NotFoundPage() {
   return (
     <>

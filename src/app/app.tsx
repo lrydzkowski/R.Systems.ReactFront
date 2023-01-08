@@ -16,8 +16,9 @@ export default function App() {
   return (
     <>
       <CssBaseline />
-      {isLoading && <p className="loading">Loading...</p>}
-      {!isLoading && (
+      {isLoading ? (
+        <p className="loading">Loading...</p>
+      ) : (
         <div id="page">
           <div id="sidebar">
             <Sidebar />

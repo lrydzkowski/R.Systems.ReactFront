@@ -1,0 +1,16 @@
+.breadcrumbs-container {
+  align-items: center;
+  display: flex;
+  min-height: 2rem;
+  margin-bottom: 1rem;
+  word-break: break-all;
+}
+.breadcrumbs-divider {
+  margin-bottom: 1rem;
+}
+.content-bottom {
+  flex-grow: 1;
+  height: 100%;
+  max-height: 100%;
+  overflow: auto;
+}
