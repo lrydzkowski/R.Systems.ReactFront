@@ -146,7 +146,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
         <div className="mode-container">
           {error.length > 0 && <p className="error">{error}</p>}
           {currentQuestion !== null && (
-            <form onSubmit={handleAnswer}>
+            <form onSubmit={handleAnswer} autoComplete="off">
               <div className="row results">
                 <p>
                   {numberOfCorrectAnswers} / {numberOfAllQuestionsToAsk}

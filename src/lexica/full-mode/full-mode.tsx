@@ -194,7 +194,7 @@ export default function FullMode(props: IFullModeProps) {
               </div>
               {currentQuestion.getQuestionType() === QuestionType.Closed && (
                 <div>
-                  <form className="closed-question-form" onSubmit={handleAnswer}>
+                  <form className="closed-question-form" onSubmit={handleAnswer} autoComplete="off">
                     <div className="row">
                       <RadioGroup
                         name="radio-buttons-group"
