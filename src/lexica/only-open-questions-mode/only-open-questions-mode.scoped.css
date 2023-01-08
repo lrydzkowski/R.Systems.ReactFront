@@ -11,6 +11,11 @@
   margin-bottom: 1rem;
 }
 .mode-container .row .left-col {
+  align-items: center;
+  display: flex;
+  flex-grow: 1;
+}
+.mode-container .row .left-col > * {
   flex-grow: 1;
 }
 .mode-container .row .right-col {

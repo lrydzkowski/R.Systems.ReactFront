@@ -17,7 +17,7 @@ export class SpellingModeService {
 
   constructor(entries: Entry[]) {
     this.entries = entries;
-    shuffleArray(this.results);
+    shuffleArray(this.entries);
     for (let index = 0; index < this.entries.length; index++) {
       this.results.push(
         new QuestionResult(index, {

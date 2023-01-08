@@ -252,25 +252,62 @@ export default function FullMode(props: IFullModeProps) {
             </>
           )}
           {isCorrectAnswer !== null && (
-            <div className="row">
-              <div className="left-col">
-                {isCorrectAnswer ? (
-                  <p className="correct-answer">Correct answer</p>
-                ) : (
-                  <>
-                    <p className="wrong-answer">Wrong answer</p>
-                    <p>
-                      Correct answer is: <span className="answer">{currentQuestion?.getAnswer()}</span>
-                    </p>
-                  </>
-                )}
-              </div>
-              <div className="right-col">
-                <Button fullWidth variant="outlined" type="button" onClick={showNextQuestion} ref={continueButtonRef}>
-                  Continue
-                </Button>
-              </div>
-            </div>
+            <>
+              {currentQuestion !== null && currentQuestion.getQuestionType() === QuestionType.Closed && (
+                <div className="row">
+                  <div className="left-col closed-question">
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      type="button"
+                      onClick={showNextQuestion}
+                      ref={continueButtonRef}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                  <div className="right-col closed-question">
+                    {isCorrectAnswer ? (
+                      <p className="correct-answer">Correct answer</p>
+                    ) : (
+                      <>
+                        <p className="wrong-answer">Wrong answer</p>
+                        <p>
+                          Correct answer is: <span className="answer">{currentQuestion?.getAnswer()}</span>
+                        </p>
+                      </>
+                    )}
+                  </div>
+                </div>
+              )}
+              {(currentQuestion === null || currentQuestion.getQuestionType() === QuestionType.Open) && (
+                <div className="row">
+                  <div className="left-col">
+                    {isCorrectAnswer ? (
+                      <p className="correct-answer">Correct answer</p>
+                    ) : (
+                      <>
+                        <p className="wrong-answer">Wrong answer</p>
+                        <p>
+                          Correct answer is: <span className="answer">{currentQuestion?.getAnswer()}</span>
+                        </p>
+                      </>
+                    )}
+                  </div>
+                  <div className="right-col">
+                    <Button
+                      fullWidth
+                      variant="outlined"
+                      type="button"
+                      onClick={showNextQuestion}
+                      ref={continueButtonRef}
+                    >
+                      Continue
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </>
           )}
           {isFinished && (
             <div className="summary">
