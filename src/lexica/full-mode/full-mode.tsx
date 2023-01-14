@@ -319,10 +319,10 @@ export default function FullMode(props: IFullModeProps) {
           {isFinished && (
             <div className="summary">
               <p className="the-end">The end!</p>
-              <Button type="button" onClick={repeatMode}>
+              <Button variant="outlined" type="button" onClick={repeatMode}>
                 Repeat
               </Button>
-              <Button type="button" onClick={redirectToList}>
+              <Button variant="outlined" type="button" onClick={redirectToList}>
                 Sets
               </Button>
             </div>
