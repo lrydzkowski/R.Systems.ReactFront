@@ -13,6 +13,7 @@ import { QuestionType } from "lexica/common/models/question-type";
 import { QuestionAbout } from "lexica/common/models/question-about";
 import { playRecordings } from "lexica/common/services/play-recordings";
 import getRecordings from "lexica/common/services/get-recordings";
+import { decodePaths } from "lexica/common/services/paths-encoder";
 
 interface IFullModeProps {
   setPaths: string;
@@ -31,9 +32,15 @@ export default function FullMode(props: IFullModeProps) {
   const answerClosedQuestionButtonRef = useRef<HTMLButtonElement>(null);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
-  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
-    setError("An unexpected error has occurred in getting sets.");
-  });
+  const setData = useProtectedData<Set[]>(
+    getSetsContent,
+    {},
+    { setPath: decodePaths(props.setPaths) },
+    refreshKey,
+    () => {
+      setError("An unexpected error has occurred in getting sets.");
+    }
+  );
   const navigate = useNavigate();
 
   useEffect(() => {

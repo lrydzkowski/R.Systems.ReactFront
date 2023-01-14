@@ -12,6 +12,7 @@ import { Question } from "lexica/common/models/question";
 import { QuestionAbout } from "lexica/common/models/question-about";
 import getRecordings from "lexica/common/services/get-recordings";
 import { playRecordings } from "lexica/common/services/play-recordings";
+import { decodePaths } from "lexica/common/services/paths-encoder";
 
 interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
@@ -29,9 +30,15 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
-  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
-    setError("An unexpected error has occurred in getting sets.");
-  });
+  const setData = useProtectedData<Set[]>(
+    getSetsContent,
+    {},
+    { setPath: decodePaths(props.setPaths) },
+    refreshKey,
+    () => {
+      setError("An unexpected error has occurred in getting sets.");
+    }
+  );
   const navigate = useNavigate();
 
   useEffect(() => {

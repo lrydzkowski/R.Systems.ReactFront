@@ -20,6 +20,7 @@ import CustomDataGridToolbar from "table/components/custom-data-grid-toolbar";
 import "./sets-list.css";
 import ChooseModeDialog from "./choose-mode-dialog";
 import LearningModeService from "lexica/common/services/learning-mode-service";
+import { encodePaths } from "../services/paths-encoder";
 
 enum SelectedType {
   RowSelection,
@@ -117,10 +118,6 @@ export default function SetsList() {
         navigate("/" + path.replace(":setPaths", encodePaths(selectedPaths)));
         break;
     }
-  };
-
-  const encodePaths = (paths: string[]): string => {
-    return encodeURIComponent(paths.join("|"));
   };
 
   return (

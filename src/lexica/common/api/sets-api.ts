@@ -27,7 +27,7 @@ export function getSetsContent(
   urlPathParameters: UrlParameters,
   requestParameters: object = {}
 ): Promise<AxiosResponse<Set[]> | void> {
-  const urlPath = "/sets/:paths";
+  const urlPath = "/sets/content";
 
   return sendGetRequestWithToken<Set[]>(abortController, baseUrl, urlPath, urlPathParameters, requestParameters);
 }

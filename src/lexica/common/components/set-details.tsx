@@ -5,6 +5,7 @@ import { getSetsContent } from "lexica/common/api/sets-api";
 import { Set } from "lexica/common/models/set";
 import { useState } from "react";
 import "./set-details.scoped.css";
+import { decodePaths } from "../services/paths-encoder";
 
 interface ISetDetailsProps {
   setPaths: string;
@@ -13,9 +14,15 @@ interface ISetDetailsProps {
 export default function SetDetails(props: ISetDetailsProps) {
   const [error, setError] = useState<string>("");
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
-    setError("An unexpected error has occurred in getting sets.");
-  });
+  const setData = useProtectedData<Set[]>(
+    getSetsContent,
+    {},
+    { setPath: decodePaths(props.setPaths) },
+    refreshKey,
+    () => {
+      setError("An unexpected error has occurred in getting sets.");
+    }
+  );
 
   const handleRefresh = () => {
     setRefreshKey((x) => x + 1);

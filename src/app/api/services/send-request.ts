@@ -46,5 +46,9 @@ function buildRequestConfig(
     requestConfig.headers["Authorization"] = `Bearer ${accessToken}`;
   }
 
+  requestConfig.paramsSerializer = {
+    indexes: null,
+  };
+
   return requestConfig;
 }
