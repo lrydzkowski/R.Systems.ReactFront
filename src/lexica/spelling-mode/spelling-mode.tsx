@@ -11,6 +11,7 @@ import { SpellingModeService } from "./spelling-mode-service";
 import { Question } from "lexica/common/models/question";
 import getRecordings from "lexica/common/services/get-recordings";
 import { playRecordings } from "lexica/common/services/play-recordings";
+import { decodePaths } from "lexica/common/services/paths-encoder";
 
 interface ISpellingModeProps {
   setPaths: string;
@@ -29,9 +30,15 @@ export default function SpellingMode(props: ISpellingModeProps) {
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const answerFieldRef = useRef<HTMLInputElement>(null);
   const continueButtonRef = useRef<HTMLButtonElement>(null);
-  const setData = useProtectedData<Set[]>(getSetsContent, { paths: props.setPaths }, refreshKey, () => {
-    setError("An unexpected error has occurred in getting sets.");
-  });
+  const setData = useProtectedData<Set[]>(
+    getSetsContent,
+    {},
+    { setPath: decodePaths(props.setPaths) },
+    refreshKey,
+    () => {
+      setError("An unexpected error has occurred in getting sets.");
+    }
+  );
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -200,10 +207,10 @@ export default function SpellingMode(props: ISpellingModeProps) {
           {isFinished && (
             <div className="summary">
               <p className="the-end">The end!</p>
-              <Button type="button" onClick={repeatMode}>
+              <Button variant="outlined" type="button" onClick={repeatMode}>
                 Repeat
               </Button>
-              <Button type="button" onClick={redirectToList}>
+              <Button variant="outlined" type="button" onClick={redirectToList}>
                 Sets
               </Button>
             </div>

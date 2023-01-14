@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 export default function useProtectedData<TData>(
   getDataFunc: GetData<TData>,
   urlParameters: UrlParameters,
+  requestParameters: object,
   refreshKey: number,
   onError: (error: AxiosError) => void
 ): IData<TData | null> {
@@ -15,7 +16,7 @@ export default function useProtectedData<TData>(
   useEffect(() => {
     const abortController = new AbortController();
     setProcessing((x) => x + 1);
-    getDataFunc(abortController, urlParameters, {})
+    getDataFunc(abortController, urlParameters, requestParameters)
       .then((response) => {
         if (response === undefined) {
           return;
