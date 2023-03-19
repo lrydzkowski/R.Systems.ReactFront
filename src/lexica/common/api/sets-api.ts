@@ -1,6 +1,6 @@
 import { UrlParameters } from "app/models/get-data";
 import { ListInfo } from "app/models/list-info";
-import { sendGetRequestWithToken } from "app/api/services/send-request-with-token";
+import { sendGetRequestWithToken } from "app/api/services/send-get-request-with-token";
 import { AxiosResponse } from "axios";
 import { Set } from "lexica/common/models/set";
 
