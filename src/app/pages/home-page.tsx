@@ -13,9 +13,9 @@ export default function HomePage() {
             redirectUrl={Urls.pages.sets.path}
           />
         </div>
-        <div className="card">
+        {/* <div className="card">
           <HomePageCard title="Tests" subtitle="Tests, PoC, and different ideas." redirectUrl={Urls.pages.test1.path} />
-        </div>
+        </div> */}
       </div>
     </>
   );
