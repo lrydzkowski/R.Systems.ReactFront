@@ -59,7 +59,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
             </ListItemButton>
           </List>
         </Collapse>
-        <ListItemButton onClick={(e) => handleClick(e, "test")} className={getNoLinkClass("test")}>
+        {/* <ListItemButton onClick={(e) => handleClick(e, "test")} className={getNoLinkClass("test")}>
           <ListItemText primary="Test" />
           {openState.test ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
@@ -98,7 +98,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
               <ListItemText primary={Urls.pages.test4.name} />
             </ListItemButton>
           </List>
-        </Collapse>
+        </Collapse> */}
         <ListItemButton component={NavLink} to={Urls.pages.about.path} onClick={handleMenuLinkClick}>
           <ListItemText primary={Urls.pages.about.name} />
         </ListItemButton>

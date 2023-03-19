@@ -1,4 +1,4 @@
-import { sendGetRequestWithToken } from "app/api/services/send-request-with-token";
+import { sendGetRequestWithToken } from "app/api/services/send-get-request-with-token";
 import { AxiosError, AxiosResponse } from "axios";
 
 const baseUrl = process.env.REACT_APP_LEXICA_API_URL ?? "";
