@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import DialogError from "@app/components/common/dialog-error";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
 import { ListInfo } from "@app/models/list-info";
+import { IListParameters, SortingOrder } from "@app/models/list-parameters";
 import CustomDataGridToolbar from "@table/components/custom-data-grid-toolbar";
 import { getSets } from "@lexica/api/sets-api";
 import { Set } from "@lexica/models/set";
@@ -23,20 +24,15 @@ import { encodePaths } from "@lexica/services/paths-encoder";
 import ChooseModeDialog from "./choose-mode-dialog";
 import "./sets-list.css";
 
-enum SelectedType {
-  RowSelection,
-  RowButton,
-}
-
 export default function SetsList() {
-  const [page, setPage] = useState<number>(0);
-  const [pageSize, setPageSize] = useState<number>(25);
-  const [sortingFieldName, setSortingFieldName] = useState<string>("path");
-  const [sortingOrder, setSortingOrder] = useState<string>("desc");
-  const [searchQuery, setSearchQuery] = useState<string | null>(null);
+  const [listParameters, setListParameters] = useState<IListParameters>({
+    page: 0,
+    pageSize: 25,
+    sortingFieldName: "path",
+    sortingOrder: "desc",
+    searchQuery: null,
+  });
   const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
-  const [selectedPath, setSelectedPath] = useState<string | null>(null);
-  const [selectedType, setSelectedType] = useState<SelectedType | null>(null);
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -60,25 +56,14 @@ export default function SetsList() {
     ],
     []
   );
-  const setsData = useProtectedListData<ListInfo<Set>>(
-    getSets,
-    {},
-    page + 1,
-    pageSize,
-    sortingFieldName,
-    sortingOrder,
-    searchQuery,
-    refreshKey,
-    () => {
-      setIsErrorOpen(true);
-    }
-  );
+  const setsData = useProtectedListData<ListInfo<Set>>(getSets, {}, listParameters, refreshKey, () => {
+    setIsErrorOpen(true);
+  });
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
   const openSet = (path: string) => {
-    setSelectedPath(path);
-    setSelectedType(SelectedType.RowButton);
+    setSelectedPaths([path]);
     setOpenChooseModeDialog(true);
   };
 
@@ -87,13 +72,11 @@ export default function SetsList() {
       return;
     }
 
-    setSelectedType(SelectedType.RowSelection);
     setOpenChooseModeDialog(true);
   };
 
   const handleChooseModeDialogClose = (selectedMode: string | null) => {
     setOpenChooseModeDialog(false);
-    setSelectedType(null);
     if (selectedMode === null) {
       return;
     }
@@ -103,22 +86,11 @@ export default function SetsList() {
       return;
     }
 
-    switch (selectedType) {
-      case SelectedType.RowButton:
-        if (selectedPath == null) {
-          return;
-        }
-
-        navigate("/" + path.replace(":setPaths", encodePaths([selectedPath])));
-        break;
-      case SelectedType.RowSelection:
-        if (selectedPaths.length === 0) {
-          return;
-        }
-
-        navigate("/" + path.replace(":setPaths", encodePaths(selectedPaths)));
-        break;
+    if (selectedPaths.length === 0) {
+      return;
     }
+
+    navigate("/" + path.replace(":setPaths", encodePaths(selectedPaths)));
   };
 
   return (
@@ -127,13 +99,16 @@ export default function SetsList() {
         rows={setsData.data?.data ?? []}
         rowCount={setsData.data?.count ?? 0}
         loading={setsData.processing}
-        pageSizeOptions={[pageSize]}
+        pageSizeOptions={[listParameters.pageSize]}
         pagination
-        paginationModel={{ page, pageSize }}
+        paginationModel={{ page: listParameters.page, pageSize: listParameters.pageSize }}
         paginationMode="server"
         onPaginationModelChange={(paginationModel: GridPaginationModel) => {
-          setPage(paginationModel.page);
-          setPageSize(paginationModel.pageSize);
+          setListParameters({
+            ...listParameters,
+            page: paginationModel.page,
+            pageSize: paginationModel.pageSize,
+          });
         }}
         columns={columns}
         checkboxSelection={true}
@@ -175,15 +150,25 @@ export default function SetsList() {
           if (model.length === 0) {
             return;
           }
-          setSortingFieldName(model[0].field);
-          setSortingOrder(model[0].sort ?? "asc");
+
+          setListParameters({
+            ...listParameters,
+            sortingFieldName: model[0].field,
+            sortingOrder: model[0].sort ?? SortingOrder.ascending,
+          });
         }}
         filterMode="server"
         onFilterModelChange={(model: GridFilterModel) => {
           if (!model.quickFilterValues || model.quickFilterValues.length === 0) {
-            setSearchQuery(null);
+            setListParameters({
+              ...listParameters,
+              searchQuery: null,
+            });
           } else {
-            setSearchQuery(model.quickFilterValues.join(" "));
+            setListParameters({
+              ...listParameters,
+              searchQuery: model.quickFilterValues.join(" "),
+            });
           }
         }}
         initialState={{

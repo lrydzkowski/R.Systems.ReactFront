@@ -30,6 +30,7 @@ export default function useProtectedData<TData>(
       });
 
     return () => abortController.abort();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refreshKey]);
 
   return {
