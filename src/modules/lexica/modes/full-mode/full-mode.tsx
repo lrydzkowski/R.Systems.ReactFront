@@ -2,6 +2,7 @@ import { Button, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/mat
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useProtectedData from "@app/hooks/use-protected-data";
+import { Pages, Urls } from "@app/router/urls";
 import { getSetsContent } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
@@ -178,7 +179,7 @@ export default function FullMode(props: IFullModeProps) {
   };
 
   const redirectToList = (): void => {
-    navigate("/lexica/sets");
+    navigate(Urls.getPath(Pages.sets));
   };
 
   return (
