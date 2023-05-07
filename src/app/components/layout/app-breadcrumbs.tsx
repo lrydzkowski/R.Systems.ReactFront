@@ -34,7 +34,7 @@ export default function AppBreadcrumbs() {
 
           return last || !isValidLink ? (
             <Typography color="text.primary" key={to}>
-              {name}
+              {name.replaceAll("|", " ")}
             </Typography>
           ) : (
             <Link underline="hover" color="inherit" component={RouterLink} to={to} key={to}>
