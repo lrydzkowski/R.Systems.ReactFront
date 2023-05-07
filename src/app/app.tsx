@@ -2,10 +2,10 @@ import { InteractionStatus } from "@azure/msal-browser";
 import { useMsal } from "@azure/msal-react";
 import { CssBaseline } from "@mui/material";
 import { Outlet } from "react-router-dom";
-import Sidebar from "./components/sidebar";
 import "./app.css";
+import Sidebar from "./components/layout/sidebar";
 
-export default function App() {
+function App() {
   const { inProgress } = useMsal();
 
   let isLoading = true;
@@ -31,3 +31,5 @@ export default function App() {
     </>
   );
 }
+
+export default App;

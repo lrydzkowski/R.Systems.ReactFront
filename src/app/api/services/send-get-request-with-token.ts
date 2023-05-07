@@ -1,6 +1,6 @@
-import { sendGetRequest } from "app/api/services/send-get-request";
 import { AxiosResponse, ResponseType } from "axios";
 import { getAccessToken } from "./get-access-token";
+import { sendGetRequest } from "./send-get-request";
 
 export function sendGetRequestWithToken<TData>(
   abortController: AbortController,

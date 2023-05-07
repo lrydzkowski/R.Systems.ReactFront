@@ -1,0 +1,8 @@
+.home-page--cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.home-page--card {
+  width: 21rem;
+}

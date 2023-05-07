@@ -1,7 +1,7 @@
-import { GetData, UrlParameters } from "app/models/get-data";
-import { IData } from "app/models/data";
 import { AxiosError } from "axios";
 import { useEffect, useState } from "react";
+import { IData } from "@app/models/data";
+import { GetData, UrlParameters } from "@app/models/get-data";
 
 export default function useProtectedData<TData>(
   getDataFunc: GetData<TData>,
