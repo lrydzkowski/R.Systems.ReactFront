@@ -1,8 +1,5 @@
-import { Button, FormControlLabel, Radio, RadioGroup, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import useProtectedData from "@app/hooks/use-protected-data";
-import { Pages, Urls } from "@app/router/urls";
 import { getSetsContent } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
@@ -12,6 +9,13 @@ import { Set } from "@lexica/models/set";
 import getRecordings from "@lexica/services/get-recordings";
 import { decodePaths } from "@lexica/services/paths-encoder";
 import { playRecordings } from "@lexica/services/play-recordings";
+import ClosedQuestionAnswer from "./components/closed-question-answer";
+import ClosedQuestionResult from "./components/closed-question-result";
+import OpenQuestionAnswer from "./components/open-question-answer";
+import OpenQuestionResult from "./components/open-question-result";
+import QuestionComponent from "./components/question-component";
+import Results from "./components/results";
+import Summary from "./components/summary";
 import { FullModeService } from "./full-mode-service";
 import "./full-mode.css";
 
@@ -19,19 +23,30 @@ interface IFullModeProps {
   setPaths: string;
 }
 
+interface IModeState {
+  currentQuestion: Question | null;
+  numberOfCorrectAnswers: number | null;
+  numberOfAllQuestionsToAsk: number | null;
+  givenAnswer: string;
+  isCorrectAnswer: boolean | null;
+  isFinished: boolean;
+}
+
 export default function FullMode(props: IFullModeProps) {
   const [error, setError] = useState<string>("");
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [service, setService] = useState<FullModeService | null>(null);
-  const [givenAnswer, setGivenAnswer] = useState<string>("");
-  const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
-  const [isFinished, setIsFinished] = useState<boolean>(false);
-  const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
-  const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
+  const [modeState, setModeState] = useState<IModeState>({
+    currentQuestion: null,
+    numberOfCorrectAnswers: null,
+    numberOfAllQuestionsToAsk: null,
+    givenAnswer: "",
+    isCorrectAnswer: null,
+    isFinished: false,
+  });
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const answerClosedQuestionButtonRef = useRef<HTMLButtonElement>(null);
-  const answerFieldRef = useRef<HTMLInputElement>(null);
-  const continueButtonRef = useRef<HTMLButtonElement>(null);
+  const [submitButtonFocusTrigger, setSubmitButtonFocusTrigger] = useState(0);
+  const [inputFocusTrigger, setInputFocusTrigger] = useState(0);
+  const [buttonFocusTrigger, setButtonFocusTrigger] = useState(0);
   const setData = useProtectedData<Set[]>(
     getSetsContent,
     {},
@@ -41,7 +56,8 @@ export default function FullMode(props: IFullModeProps) {
       setError("An unexpected error has occurred in getting sets.");
     }
   );
-  const navigate = useNavigate();
+
+  const currentQuestionValue = modeState.currentQuestion?.getQuestion();
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboardAnswer);
@@ -49,7 +65,7 @@ export default function FullMode(props: IFullModeProps) {
     return function cleanup() {
       window.removeEventListener("keydown", handleKeyboardAnswer);
     };
-  }, [currentQuestion]);
+  }, [currentQuestionValue]);
 
   useEffect(() => {
     if (setData.data === null) {
@@ -63,28 +79,30 @@ export default function FullMode(props: IFullModeProps) {
 
     const service = new FullModeService(entries);
     setService(service);
-    const nextQuestion = service.getNextQuestion();
-    setCurrentQuestion(nextQuestion);
-    setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
-    setNumberOfAllQuestionsToAsk(service.getNumberOfAllQuestionsToAsk());
+    setModeState({
+      ...modeState,
+      currentQuestion: service.getNextQuestion(),
+      numberOfCorrectAnswers: service.getNumberOfCorrectAnswers(),
+      numberOfAllQuestionsToAsk: service.getNumberOfAllQuestionsToAsk(),
+    });
   }, [setData.data]);
 
   useEffect(() => {
-    if (currentQuestion === null) {
+    if (modeState.currentQuestion === null) {
       return;
     }
 
-    if (currentQuestion.getQuestionType() === QuestionType.Closed) {
-      answerClosedQuestionButtonRef.current?.focus();
+    if (modeState.currentQuestion.getQuestionType() === QuestionType.Closed) {
+      setSubmitButtonFocusTrigger((x) => 1 - x);
     }
 
-    if (currentQuestion.getQuestionType() === QuestionType.Open) {
-      answerFieldRef.current?.focus();
+    if (modeState.currentQuestion.getQuestionType() === QuestionType.Open) {
+      setInputFocusTrigger((x) => 1 - x);
     }
 
     const abortController = new AbortController();
-    if (currentQuestion.getQuestionAbout() === QuestionAbout.Translations) {
-      getRecordings(currentQuestion.getQuestions())
+    if (modeState.currentQuestion.getQuestionAbout() === QuestionAbout.Translations) {
+      getRecordings(modeState.currentQuestion.getQuestions())
         .then((recordings) => {
           playRecordings(recordings, abortController);
         })
@@ -96,18 +114,18 @@ export default function FullMode(props: IFullModeProps) {
 
       return;
     };
-  }, [currentQuestion]);
+  }, [currentQuestionValue]);
 
   useEffect(() => {
-    if (isCorrectAnswer === null) {
+    if (modeState.isCorrectAnswer === null) {
       return;
     }
 
-    continueButtonRef.current?.focus();
+    setButtonFocusTrigger((x) => 1 - x);
 
     const abortController = new AbortController();
-    if (currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
-      getRecordings(currentQuestion.getAnswers())
+    if (modeState.currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
+      getRecordings(modeState.currentQuestion.getAnswers())
         .then((recordings) => {
           playRecordings(recordings, abortController);
         })
@@ -119,67 +137,82 @@ export default function FullMode(props: IFullModeProps) {
 
       return;
     };
-  }, [isCorrectAnswer]);
+  }, [modeState.isCorrectAnswer]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setGivenAnswer(event.target.value);
+  const handleChange = (value: string): void => {
+    setModeState({
+      ...modeState,
+      givenAnswer: value,
+    });
   };
 
   const handleKeyboardAnswer = (event: KeyboardEvent): void => {
-    if (currentQuestion?.getQuestionType() !== QuestionType.Closed) {
+    if (modeState.currentQuestion?.getQuestionType() !== QuestionType.Closed) {
       return;
     }
 
-    const possibleAnswers = currentQuestion.getPossibleAnswers();
+    const possibleAnswers = modeState.currentQuestion.getPossibleAnswers();
     for (let index = 1; index <= possibleAnswers.length; index++) {
       if (event.key !== index.toString()) {
         continue;
       }
 
-      setGivenAnswer(possibleAnswers[index - 1]);
+      const givenAnswer = possibleAnswers[index - 1];
+      setModeState({
+        ...modeState,
+        givenAnswer,
+      });
       break;
     }
   };
 
-  const handleAnswer = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (service === null || currentQuestion === null) {
+  const handleAnswer = () => {
+    if (service === null || modeState.currentQuestion === null) {
       return;
     }
 
-    const isCorrectAnswer = service?.verifyAnswer(currentQuestion, givenAnswer);
-    setIsCorrectAnswer(isCorrectAnswer as boolean);
-    setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
+    const isCorrectAnswer = service.verifyAnswer(modeState.currentQuestion, modeState.givenAnswer);
+    setModeState({
+      ...modeState,
+      isCorrectAnswer: isCorrectAnswer as boolean,
+      numberOfCorrectAnswers: service.getNumberOfCorrectAnswers(),
+    });
   };
 
   const isAnswerFormDisabled = (): boolean => {
-    return isCorrectAnswer !== null;
+    return modeState.isCorrectAnswer !== null;
   };
 
   const showNextQuestion = (): void => {
     const nextQuestion = service?.getNextQuestion();
     if (nextQuestion === null) {
-      setCurrentQuestion(null);
-      setIsCorrectAnswer(null);
-      setIsFinished(true);
+      setModeState({
+        ...modeState,
+        currentQuestion: null,
+        isCorrectAnswer: null,
+        isFinished: true,
+      });
 
       return;
     }
 
-    setCurrentQuestion(nextQuestion as Question);
-    setGivenAnswer("");
-    setIsCorrectAnswer(null);
+    setModeState({
+      ...modeState,
+      currentQuestion: nextQuestion as Question,
+      givenAnswer: "",
+      isCorrectAnswer: null,
+    });
   };
 
   const repeatMode = (): void => {
     setRefreshKey((x) => 1 - x);
-    setGivenAnswer("");
-    setIsCorrectAnswer(null);
-    setIsFinished(false);
-  };
 
-  const redirectToList = (): void => {
-    navigate(Urls.getPath(Pages.sets));
+    setModeState({
+      ...modeState,
+      givenAnswer: "",
+      isCorrectAnswer: null,
+      isFinished: false,
+    });
   };
 
   return (
@@ -189,144 +222,58 @@ export default function FullMode(props: IFullModeProps) {
       ) : (
         <div className="full-mode--container">
           {error.length > 0 && <p className="error">{error}</p>}
-          {currentQuestion !== null && (
+          {modeState.currentQuestion !== null && (
             <>
-              <div className="row results">
-                <p>
-                  {numberOfCorrectAnswers} / {numberOfAllQuestionsToAsk}
-                </p>
-              </div>
-              <div className="row">
-                <p className="question">{currentQuestion.getQuestion()}</p>
-              </div>
-              {currentQuestion.getQuestionType() === QuestionType.Closed && (
-                <div>
-                  <form className="closed-question-form" onSubmit={handleAnswer} autoComplete="off">
-                    <div className="row">
-                      <RadioGroup
-                        name="radio-buttons-group"
-                        className="radio-buttons"
-                        onChange={handleChange}
-                        value={givenAnswer}
-                      >
-                        {currentQuestion.getPossibleAnswers().map((possibleAnswer, index) => (
-                          <FormControlLabel
-                            key={index}
-                            value={possibleAnswer}
-                            control={<Radio />}
-                            label={possibleAnswer}
-                            disabled={isAnswerFormDisabled()}
-                          />
-                        ))}
-                      </RadioGroup>
-                    </div>
-                    <div className="row">
-                      <Button
-                        variant="outlined"
-                        type="submit"
-                        disabled={isAnswerFormDisabled()}
-                        ref={answerClosedQuestionButtonRef}
-                      >
-                        Answer
-                      </Button>
-                    </div>
-                  </form>
-                </div>
+              <Results
+                numberOfCorrectAnswers={modeState.numberOfCorrectAnswers}
+                numberOfAllQuestionsToAsk={modeState.numberOfAllQuestionsToAsk}
+              />
+              <QuestionComponent question={modeState.currentQuestion.getQuestion()} />
+              {modeState.currentQuestion.getQuestionType() === QuestionType.Closed && (
+                <ClosedQuestionAnswer
+                  onSubmit={handleAnswer}
+                  handleChange={handleChange}
+                  givenAnswer={modeState.givenAnswer}
+                  possibleAnswers={modeState.currentQuestion.getPossibleAnswers()}
+                  isAnswerFormDisabled={isAnswerFormDisabled()}
+                  submitButtonFocusTrigger={submitButtonFocusTrigger}
+                />
               )}
-              {currentQuestion.getQuestionType() === QuestionType.Open && (
-                <form onSubmit={handleAnswer}>
-                  <div className="row answer-field-row">
-                    <div className="left-col">
-                      <div className="answerField">
-                        <TextField
-                          fullWidth
-                          variant="standard"
-                          value={givenAnswer}
-                          onChange={handleChange}
-                          disabled={isAnswerFormDisabled()}
-                          inputRef={answerFieldRef}
-                        />
-                      </div>
-                    </div>
-                    <div className="right-col">
-                      <Button fullWidth variant="outlined" type="submit" disabled={isAnswerFormDisabled()}>
-                        Answer
-                      </Button>
-                    </div>
-                  </div>
-                </form>
+              {modeState.currentQuestion.getQuestionType() === QuestionType.Open && (
+                <OpenQuestionAnswer
+                  onSubmit={handleAnswer}
+                  handleChange={handleChange}
+                  givenAnswer={modeState.givenAnswer}
+                  possibleAnswers={modeState.currentQuestion.getPossibleAnswers()}
+                  isAnswerFormDisabled={isAnswerFormDisabled()}
+                  inputFocusTrigger={inputFocusTrigger}
+                />
               )}
             </>
           )}
-          {isCorrectAnswer !== null && (
+          {modeState.isCorrectAnswer !== null && (
             <>
-              {currentQuestion !== null && currentQuestion.getQuestionType() === QuestionType.Closed && (
-                <div className="row">
-                  <div className="left-col closed-question">
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      type="button"
-                      onClick={showNextQuestion}
-                      ref={continueButtonRef}
-                    >
-                      Continue
-                    </Button>
-                  </div>
-                  <div className="right-col closed-question">
-                    {isCorrectAnswer ? (
-                      <p className="correct-answer">Correct answer</p>
-                    ) : (
-                      <>
-                        <p className="wrong-answer">Wrong answer</p>
-                        <p>
-                          Correct answer is: <span className="answer">{currentQuestion?.getAnswer()}</span>
-                        </p>
-                      </>
-                    )}
-                  </div>
-                </div>
-              )}
-              {(currentQuestion === null || currentQuestion.getQuestionType() === QuestionType.Open) && (
-                <div className="row">
-                  <div className="left-col">
-                    {isCorrectAnswer ? (
-                      <p className="correct-answer">Correct answer</p>
-                    ) : (
-                      <>
-                        <p className="wrong-answer">Wrong answer</p>
-                        <p>
-                          Correct answer is: <span className="answer">{currentQuestion?.getAnswer()}</span>
-                        </p>
-                      </>
-                    )}
-                  </div>
-                  <div className="right-col">
-                    <Button
-                      fullWidth
-                      variant="outlined"
-                      type="button"
-                      onClick={showNextQuestion}
-                      ref={continueButtonRef}
-                    >
-                      Continue
-                    </Button>
-                  </div>
-                </div>
+              {modeState.currentQuestion !== null &&
+                modeState.currentQuestion.getQuestionType() === QuestionType.Closed && (
+                  <ClosedQuestionResult
+                    onShowNextQuestion={showNextQuestion}
+                    buttonFocusTrigger={buttonFocusTrigger}
+                    isCorrectAnswer={modeState.isCorrectAnswer}
+                    answer={modeState.currentQuestion?.getAnswer()}
+                  />
+                )}
+              {(modeState.currentQuestion === null ||
+                modeState.currentQuestion.getQuestionType() === QuestionType.Open) && (
+                <OpenQuestionResult
+                  isCorrectAnswer={modeState.isCorrectAnswer}
+                  answer={modeState.currentQuestion?.getAnswer() ?? ""}
+                  onShowNextQuestion={showNextQuestion}
+                  buttonFocusTrigger={buttonFocusTrigger}
+                />
               )}
             </>
           )}
-          {isFinished && (
-            <div className="summary">
-              <p className="the-end">The end!</p>
-              <Button variant="outlined" type="button" onClick={repeatMode}>
-                Repeat
-              </Button>
-              <Button variant="outlined" type="button" onClick={redirectToList}>
-                Sets
-              </Button>
-            </div>
-          )}
+          {modeState.isFinished && <Summary onRepeatMode={repeatMode} />}
         </div>
       )}
     </>
