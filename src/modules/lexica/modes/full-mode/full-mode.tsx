@@ -46,7 +46,7 @@ export default function FullMode(props: IFullModeProps) {
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [submitButtonFocusTrigger, setSubmitButtonFocusTrigger] = useState(0);
   const [inputFocusTrigger, setInputFocusTrigger] = useState(0);
-  const [buttonFocusTrigger, setButtonFocusTrigger] = useState(0);
+  const [continueButtonFocusTrigger, setContinueButtonFocusTrigger] = useState(0);
   const setData = useProtectedData<Set[]>(
     getSetsContent,
     {},
@@ -121,7 +121,7 @@ export default function FullMode(props: IFullModeProps) {
       return;
     }
 
-    setButtonFocusTrigger((x) => 1 - x);
+    setContinueButtonFocusTrigger((x) => 1 - x);
 
     const abortController = new AbortController();
     if (modeState.currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
@@ -257,7 +257,7 @@ export default function FullMode(props: IFullModeProps) {
                 modeState.currentQuestion.getQuestionType() === QuestionType.Closed && (
                   <ClosedQuestionResult
                     onShowNextQuestion={showNextQuestion}
-                    buttonFocusTrigger={buttonFocusTrigger}
+                    continueButtonFocusTrigger={continueButtonFocusTrigger}
                     isCorrectAnswer={modeState.isCorrectAnswer}
                     answer={modeState.currentQuestion?.getAnswer()}
                   />
@@ -268,7 +268,7 @@ export default function FullMode(props: IFullModeProps) {
                   isCorrectAnswer={modeState.isCorrectAnswer}
                   answer={modeState.currentQuestion?.getAnswer() ?? ""}
                   onShowNextQuestion={showNextQuestion}
-                  buttonFocusTrigger={buttonFocusTrigger}
+                  continueButtonFocusTrigger={continueButtonFocusTrigger}
                 />
               )}
             </>

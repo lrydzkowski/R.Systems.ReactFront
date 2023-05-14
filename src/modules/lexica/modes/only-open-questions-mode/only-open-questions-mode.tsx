@@ -1,8 +1,5 @@
-import { Button, TextField } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import useProtectedData from "@app/hooks/use-protected-data";
-import { Pages, Urls } from "@app/router/urls";
 import { getSetsContent } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
@@ -11,6 +8,11 @@ import { Set } from "@lexica/models/set";
 import getRecordings from "@lexica/services/get-recordings";
 import { decodePaths } from "@lexica/services/paths-encoder";
 import { playRecordings } from "@lexica/services/play-recordings";
+import OpenQuestionAnswer from "./components/open-question-answer";
+import OpenQuestionResult from "./components/open-question-result";
+import QuestionComponent from "./components/question-component";
+import Results from "./components/results";
+import Summary from "./components/summary";
 import { OnlyOpenQuestionsModeService } from "./only-open-questions-mode-service";
 import "./only-open-questions-mode.css";
 
@@ -18,18 +20,29 @@ interface IOnlyOpenQuestionsModeProps {
   setPaths: string;
 }
 
+interface IModeState {
+  currentQuestion: Question | null;
+  numberOfCorrectAnswers: number | null;
+  numberOfAllQuestionsToAsk: number | null;
+  givenAnswer: string;
+  isCorrectAnswer: boolean | null;
+  isFinished: boolean;
+}
+
 export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps) {
   const [error, setError] = useState<string>("");
-  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [service, setService] = useState<OnlyOpenQuestionsModeService | null>(null);
-  const [givenAnswer, setGivenAnswer] = useState<string>("");
-  const [isCorrectAnswer, setIsCorrectAnswer] = useState<boolean | null>(null);
-  const [isFinished, setIsFinished] = useState<boolean>(false);
-  const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState<number | null>(null);
-  const [numberOfAllQuestionsToAsk, setNumberOfAllQuestionsToAsk] = useState<number | null>(null);
+  const [modeState, setModeState] = useState<IModeState>({
+    currentQuestion: null,
+    numberOfCorrectAnswers: null,
+    numberOfAllQuestionsToAsk: null,
+    givenAnswer: "",
+    isCorrectAnswer: null,
+    isFinished: false,
+  });
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const answerFieldRef = useRef<HTMLInputElement>(null);
-  const continueButtonRef = useRef<HTMLButtonElement>(null);
+  const [inputFocusTrigger, setInputFocusTrigger] = useState(0);
+  const [continueButtonFocusTrigger, setContinueButtonFocusTrigger] = useState(0);
   const setData = useProtectedData<Set[]>(
     getSetsContent,
     {},
@@ -39,7 +52,8 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
       setError("An unexpected error has occurred in getting sets.");
     }
   );
-  const navigate = useNavigate();
+
+  const currentQuestionValue = modeState.currentQuestion?.getQuestion();
 
   useEffect(() => {
     if (setData.data === null) {
@@ -53,17 +67,20 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
     const service = new OnlyOpenQuestionsModeService(entries);
     setService(service);
-    setCurrentQuestion(service.getNextQuestion());
-    setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
-    setNumberOfAllQuestionsToAsk(service.getNumberOfAllQuestionsToAsk());
+    setModeState({
+      ...modeState,
+      currentQuestion: service.getNextQuestion(),
+      numberOfCorrectAnswers: service.getNumberOfCorrectAnswers(),
+      numberOfAllQuestionsToAsk: service.getNumberOfAllQuestionsToAsk(),
+    });
   }, [setData.data]);
 
   useEffect(() => {
-    answerFieldRef.current?.focus();
+    setInputFocusTrigger((x) => 1 - x);
 
     const abortController = new AbortController();
-    if (currentQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-      getRecordings(currentQuestion.getQuestions())
+    if (modeState.currentQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
+      getRecordings(modeState.currentQuestion.getQuestions())
         .then((recordings) => {
           playRecordings(recordings, abortController);
         })
@@ -75,18 +92,18 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
       return;
     };
-  }, [currentQuestion]);
+  }, [currentQuestionValue]);
 
   useEffect(() => {
-    if (isCorrectAnswer === null) {
+    if (modeState.isCorrectAnswer === null) {
       return;
     }
 
-    continueButtonRef.current?.focus();
+    setContinueButtonFocusTrigger((x) => 1 - x);
 
     const abortController = new AbortController();
-    if (currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
-      getRecordings(currentQuestion.getAnswers())
+    if (modeState.currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
+      getRecordings(modeState.currentQuestion.getAnswers())
         .then((recordings) => {
           playRecordings(recordings, abortController);
         })
@@ -98,51 +115,62 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
       return;
     };
-  }, [isCorrectAnswer]);
+  }, [modeState.isCorrectAnswer]);
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    setGivenAnswer(event.target.value);
+  const handleChange = (value: string): void => {
+    setModeState({
+      ...modeState,
+      givenAnswer: value,
+    });
   };
 
-  const handleAnswer = (event: React.FormEvent) => {
-    event.preventDefault();
-    if (service === null || currentQuestion === null) {
+  const handleAnswer = () => {
+    if (service === null || modeState.currentQuestion === null) {
       return;
     }
 
-    const isCorrectAnswer = service?.verifyAnswer(currentQuestion, givenAnswer);
-    setIsCorrectAnswer(isCorrectAnswer as boolean);
-    setNumberOfCorrectAnswers(service.getNumberOfCorrectAnswers());
+    const isCorrectAnswer = service.verifyAnswer(modeState.currentQuestion, modeState.givenAnswer);
+    setModeState({
+      ...modeState,
+      isCorrectAnswer: isCorrectAnswer as boolean,
+      numberOfCorrectAnswers: service.getNumberOfCorrectAnswers(),
+    });
   };
 
   const isAnswerFormDisabled = (): boolean => {
-    return isCorrectAnswer !== null;
+    return modeState.isCorrectAnswer !== null;
   };
 
   const showNextQuestion = (): void => {
     const nextQuestion = service?.getNextQuestion();
     if (nextQuestion === null) {
-      setCurrentQuestion(null);
-      setIsCorrectAnswer(null);
-      setIsFinished(true);
+      setModeState({
+        ...modeState,
+        currentQuestion: null,
+        isCorrectAnswer: null,
+        isFinished: true,
+      });
 
       return;
     }
 
-    setCurrentQuestion(nextQuestion as Question);
-    setGivenAnswer("");
-    setIsCorrectAnswer(null);
+    setModeState({
+      ...modeState,
+      currentQuestion: nextQuestion as Question,
+      givenAnswer: "",
+      isCorrectAnswer: null,
+    });
   };
 
   const repeatMode = (): void => {
-    setRefreshKey((x) => x + 1);
-    setGivenAnswer("");
-    setIsCorrectAnswer(null);
-    setIsFinished(false);
-  };
+    setRefreshKey((x) => 1 - x);
 
-  const redirectToList = (): void => {
-    navigate(Urls.getPath(Pages.sets));
+    setModeState({
+      ...modeState,
+      givenAnswer: "",
+      isCorrectAnswer: null,
+      isFinished: false,
+    });
   };
 
   return (
@@ -152,69 +180,32 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
       ) : (
         <div className="only-open-questions-mode--container">
           {error.length > 0 && <p className="error">{error}</p>}
-          {currentQuestion !== null && (
-            <form onSubmit={handleAnswer} autoComplete="off">
-              <div className="row results">
-                <p>
-                  {numberOfCorrectAnswers} / {numberOfAllQuestionsToAsk}
-                </p>
-              </div>
-              <div className="row">
-                <p className="question">{currentQuestion.getQuestion()}</p>
-              </div>
-              <div className="row answer-field-row">
-                <div className="left-col">
-                  <div className="answerField">
-                    <TextField
-                      fullWidth
-                      variant="standard"
-                      value={givenAnswer}
-                      onChange={handleChange}
-                      disabled={isAnswerFormDisabled()}
-                      inputRef={answerFieldRef}
-                    />
-                  </div>
-                </div>
-                <div className="right-col">
-                  <Button fullWidth variant="outlined" type="submit" disabled={isAnswerFormDisabled()}>
-                    Answer
-                  </Button>
-                </div>
-              </div>
-            </form>
+          {modeState.currentQuestion !== null && (
+            <>
+              <Results
+                numberOfCorrectAnswers={modeState.numberOfCorrectAnswers}
+                numberOfAllQuestionsToAsk={modeState.numberOfAllQuestionsToAsk}
+              />
+              <QuestionComponent question={modeState.currentQuestion.getQuestion()} />
+              <OpenQuestionAnswer
+                onSubmit={handleAnswer}
+                handleChange={handleChange}
+                givenAnswer={modeState.givenAnswer}
+                possibleAnswers={modeState.currentQuestion.getPossibleAnswers()}
+                isAnswerFormDisabled={isAnswerFormDisabled()}
+                inputFocusTrigger={inputFocusTrigger}
+              />
+            </>
           )}
-          {isCorrectAnswer !== null && (
-            <div className="row">
-              <div className="left-col">
-                {isCorrectAnswer ? (
-                  <p className="correct-answer">Correct answer</p>
-                ) : (
-                  <>
-                    <p className="wrong-answer">Wrong answer</p>
-                    <p>
-                      Correct answer is: <span className="answer">{currentQuestion?.getAnswer()}</span>
-                    </p>
-                  </>
-                )}
-              </div>
-              <div className="right-col">
-                <Button fullWidth variant="outlined" type="button" onClick={showNextQuestion} ref={continueButtonRef}>
-                  Continue
-                </Button>
-              </div>
-            </div>
+          {modeState.isCorrectAnswer !== null && (
+            <OpenQuestionResult
+              isCorrectAnswer={modeState.isCorrectAnswer}
+              answer={modeState.currentQuestion?.getAnswer() ?? ""}
+              onShowNextQuestion={showNextQuestion}
+              continueButtonFocusTrigger={continueButtonFocusTrigger}
+            />
           )}
-          {isFinished && (
-            <div className="summary">
-              <p className="the-end">The end!</p>
-              <Button variant="outlined" type="button" onClick={repeatMode}>
-                Repeat
-              </Button>
-              <Button variant="outlined" type="button" onClick={redirectToList}>
-                Sets
-              </Button>
-            </div>
-          )}
+          {modeState.isFinished && <Summary onRepeatMode={repeatMode} />}
         </div>
       )}
     </>

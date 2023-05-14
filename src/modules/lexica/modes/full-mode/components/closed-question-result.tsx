@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 export interface IClosedQuestionResultProps {
   onShowNextQuestion: () => void;
-  buttonFocusTrigger: number;
+  continueButtonFocusTrigger: number;
   isCorrectAnswer: boolean;
   answer: string;
 }
@@ -13,7 +13,7 @@ export default function ClosedQuestionResult(props: IClosedQuestionResultProps) 
 
   useEffect(() => {
     continueButtonRef.current?.focus();
-  }, [props.buttonFocusTrigger]);
+  }, [props.continueButtonFocusTrigger]);
 
   return (
     <div className="row">
