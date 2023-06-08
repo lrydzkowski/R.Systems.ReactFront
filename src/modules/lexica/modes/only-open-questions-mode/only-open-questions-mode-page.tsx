@@ -2,11 +2,12 @@ import { Button, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Pages, Urls } from "@app/router/urls";
+import { splitIds } from "@lexica/services/ids-parser";
 import OnlyOpenQuestionsMode from "./only-open-questions-mode";
 import "./only-open-questions-mode-page.css";
 
 export default function OnlyOpenQuestionsModePage() {
-  const { setPaths } = useParams();
+  const { setIds } = useParams();
   const navigate = useNavigate();
   const [showStartButton, setShowStartButton] = useState<boolean>(true);
   const startButtonRef = useRef<HTMLButtonElement>(null);
@@ -15,7 +16,7 @@ export default function OnlyOpenQuestionsModePage() {
     startButtonRef.current?.focus();
   }, []);
 
-  if (!setPaths) {
+  if (!setIds) {
     navigate(Urls.getPath(Pages.sets));
   }
 
@@ -31,7 +32,7 @@ export default function OnlyOpenQuestionsModePage() {
           </Button>
         </>
       ) : (
-        <OnlyOpenQuestionsMode setPaths={setPaths as string} />
+        <OnlyOpenQuestionsMode setIds={splitIds(setIds as string)} />
       )}
     </div>
   );

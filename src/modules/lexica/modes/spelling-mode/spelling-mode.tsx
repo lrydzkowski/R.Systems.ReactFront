@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
-import useProtectedData from "@app/hooks/use-protected-data";
-import { getSetsContent } from "@lexica/api/sets-api";
+import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
+import { getSet } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
 import { Set } from "@lexica/models/set";
 import getRecordings from "@lexica/services/get-recordings";
-import { decodePaths } from "@lexica/services/paths-encoder";
 import { playRecordings } from "@lexica/services/play-recordings";
 import OpenQuestionAnswer from "./components/open-question-answer";
 import OpenQuestionResult from "./components/open-question-result";
@@ -15,7 +14,7 @@ import { SpellingModeService } from "./spelling-mode-service";
 import "./spelling-mode.css";
 
 interface ISpellingModeProps {
-  setPaths: string;
+  setIds: number[];
 }
 
 interface IModeState {
@@ -25,6 +24,7 @@ interface IModeState {
   givenAnswer: string;
   isCorrectAnswer: boolean | null;
   isFinished: boolean;
+  questionIndex: number;
 }
 
 export default function SpellingMode(props: ISpellingModeProps) {
@@ -38,21 +38,24 @@ export default function SpellingMode(props: ISpellingModeProps) {
     givenAnswer: "",
     isCorrectAnswer: null,
     isFinished: false,
+    questionIndex: 0,
   });
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [inputFocusTrigger, setInputFocusTrigger] = useState(0);
   const [continueButtonFocusTrigger, setContinueButtonFocusTrigger] = useState(0);
-  const setData = useProtectedData<Set[]>(
-    getSetsContent,
-    {},
-    { setPath: decodePaths(props.setPaths) },
+  const setData = useProtectedMultipleData<Set>(
+    props.setIds.map((setId) => ({
+      getDataFunc: getSet,
+      urlParameters: { setId: setId.toString() },
+      requestParameters: {},
+    })),
     refreshKey,
     () => {
       setError("An unexpected error has occurred in getting sets.");
     }
   );
 
-  const currentQuestionValue = modeState.currentQuestion?.getQuestion();
+  const currentQuestionIndex = modeState.questionIndex;
 
   useEffect(() => {
     if (setData.data === null) {
@@ -71,6 +74,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
       currentQuestion: service.getNextQuestion(),
       numberOfCorrectAnswers: service.getNumberOfCorrectAnswers(),
       numberOfAllQuestionsToAsk: service.getNumberOfAllQuestionsToAsk(),
+      questionIndex: modeState.questionIndex + 1,
     });
   }, [setData.data]);
 
@@ -107,7 +111,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
 
       return;
     };
-  }, [currentQuestionValue]);
+  }, [currentQuestionIndex]);
 
   useEffect(() => {
     setInputFocusTrigger((x) => 1 - x);
@@ -153,6 +157,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
         currentQuestion: null,
         isCorrectAnswer: null,
         isFinished: true,
+        questionIndex: 0,
       });
 
       return;
@@ -163,6 +168,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
       currentQuestion: nextQuestion as Question,
       givenAnswer: "",
       isCorrectAnswer: null,
+      questionIndex: modeState.questionIndex + 1,
     });
   };
 

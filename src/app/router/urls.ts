@@ -21,16 +21,16 @@ export class Urls {
     [Pages.lexicaLabel, { path: "/lexica", name: "Lexica", validLink: false }],
     [Pages.sets, { path: "/lexica/sets", name: "Sets", validLink: true }],
     [Pages.setLabel, { path: "/lexica/sets/content", name: "Content", validLink: false }],
-    [Pages.set, { path: "/lexica/sets/content/:setPaths", validLink: true }],
+    [Pages.set, { path: "/lexica/sets/content/:setIds", validLink: true }],
     [Pages.spellingModeLabel, { path: "/lexica/sets/spelling-mode", name: "Spelling Mode", validLink: false }],
-    [Pages.spellingMode, { path: "/lexica/sets/spelling-mode/:setPaths", validLink: true }],
+    [Pages.spellingMode, { path: "/lexica/sets/spelling-mode/:setIds", validLink: true }],
     [Pages.fullModeLabel, { path: "/lexica/sets/full-mode", name: "Full Mode", validLink: false }],
-    [Pages.fullMode, { path: "/lexica/sets/full-mode/:setPaths", validLink: true }],
+    [Pages.fullMode, { path: "/lexica/sets/full-mode/:setIds", validLink: true }],
     [
       Pages.onlyOpenQuestionsLabel,
       { path: "/lexica/sets/only-open-questions-mode", name: "Only Open Questions Mode", validLink: false },
     ],
-    [Pages.onlyOpenQuestions, { path: "/lexica/sets/only-open-questions-mode/:setPaths", validLink: true }],
+    [Pages.onlyOpenQuestions, { path: "/lexica/sets/only-open-questions-mode/:setIds", validLink: true }],
     [Pages.about, { path: "/about", name: "About", validLink: true }],
   ]);
 

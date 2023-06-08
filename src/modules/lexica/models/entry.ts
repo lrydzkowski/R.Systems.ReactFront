@@ -1,4 +1,5 @@
 export interface Entry {
-  words: string[];
+  word: string;
+  wordType: string;
   translations: string[];
 }

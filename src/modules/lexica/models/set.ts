@@ -1,6 +1,8 @@
 import { Entry } from "./entry";
 
 export interface Set {
-  path: string;
+  setId: number;
+  name: string;
+  createdAt: string;
   entries: Entry[];
 }

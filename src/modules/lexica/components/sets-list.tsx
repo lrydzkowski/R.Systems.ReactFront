@@ -19,8 +19,8 @@ import { IListParameters, SortingOrder } from "@app/models/list-parameters";
 import CustomDataGridToolbar from "@table/components/custom-data-grid-toolbar";
 import { getSets } from "@lexica/api/sets-api";
 import { Set } from "@lexica/models/set";
+import { combineIds } from "@lexica/services/ids-parser";
 import LearningModeService from "@lexica/services/learning-mode-service";
-import { encodePaths } from "@lexica/services/paths-encoder";
 import ChooseModeDialog from "./choose-mode-dialog";
 import "./sets-list.css";
 
@@ -28,11 +28,11 @@ export default function SetsList() {
   const [listParameters, setListParameters] = useState<IListParameters>({
     page: 0,
     pageSize: 25,
-    sortingFieldName: "path",
+    sortingFieldName: "setId",
     sortingOrder: "desc",
     searchQuery: null,
   });
-  const [selectedPaths, setSelectedPaths] = useState<string[]>([]);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -43,16 +43,22 @@ export default function SetsList() {
         field: "actions",
         type: "actions",
         width: 50,
-        getActions: (params: { row: { path: string } }) => [
+        getActions: (params: { row: { setId: number } }) => [
           <GridActionsCellItem
             key="open"
             icon={<OpenInNewIcon color="primary" />}
-            onClick={() => openSet(params.row.path)}
+            onClick={() => openSet(params.row.setId)}
             label="Open"
           />,
         ],
       },
-      { field: "path", headerName: "File Path", flex: 1 },
+      { field: "setId", headerName: "Id", width: 70 },
+      {
+        field: "createdAt",
+        headerName: "Created At",
+        width: 200,
+      },
+      { field: "name", headerName: "Name", flex: 1 },
     ],
     []
   );
@@ -62,13 +68,13 @@ export default function SetsList() {
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
-  const openSet = (path: string) => {
-    setSelectedPaths([path]);
+  const openSet = (setId: number) => {
+    setSelectedIds([setId]);
     setOpenChooseModeDialog(true);
   };
 
   const openSets = () => {
-    if (selectedPaths.length === 0) {
+    if (selectedIds.length === 0) {
       return;
     }
 
@@ -86,11 +92,11 @@ export default function SetsList() {
       return;
     }
 
-    if (selectedPaths.length === 0) {
+    if (selectedIds.length === 0) {
       return;
     }
 
-    navigate("/" + path.replace(":setPaths", encodePaths(selectedPaths)));
+    navigate("/" + path.replace(":setIds", combineIds(selectedIds)));
   };
 
   return (
@@ -115,7 +121,7 @@ export default function SetsList() {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "sets-list--even" : "sets-list--odd"
         }
-        getRowId={(row: Set) => row.path}
+        getRowId={(row: Set) => row.setId}
         components={{ Toolbar: CustomDataGridToolbar }}
         componentsProps={{
           toolbar: {
@@ -134,7 +140,7 @@ export default function SetsList() {
                   variant="text"
                   startIcon={<OpenInNewIcon />}
                   onClick={() => openSets()}
-                  disabled={setsData.processing || selectedPaths.length === 0}
+                  disabled={setsData.processing || selectedIds.length === 0}
                 >
                   Open
                 </Button>
@@ -173,11 +179,11 @@ export default function SetsList() {
         }}
         initialState={{
           sorting: {
-            sortModel: [{ field: "path", sort: "desc" }],
+            sortModel: [{ field: "setId", sort: "desc" }],
           },
         }}
         onRowSelectionModelChange={(gridSelectionModel: GridRowId[]) =>
-          setSelectedPaths(gridSelectionModel.map((x) => x.toString()))
+          setSelectedIds(gridSelectionModel.map((x) => x as number))
         }
       />
       <DialogError

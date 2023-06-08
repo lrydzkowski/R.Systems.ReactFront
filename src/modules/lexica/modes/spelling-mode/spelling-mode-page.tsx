@@ -3,11 +3,12 @@ import Button from "@mui/material/Button";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Pages, Urls } from "@app/router/urls";
+import { splitIds } from "@lexica/services/ids-parser";
 import SpellingMode from "./spelling-mode";
 import "./spelling-mode-page.css";
 
 export default function SpellingModePage() {
-  const { setPaths } = useParams();
+  const { setIds } = useParams();
   const navigate = useNavigate();
   const [showStartButton, setShowStartButton] = useState<boolean>(true);
   const startButtonRef = useRef<HTMLButtonElement>(null);
@@ -16,7 +17,7 @@ export default function SpellingModePage() {
     startButtonRef.current?.focus();
   }, []);
 
-  if (!setPaths) {
+  if (!setIds) {
     navigate(Urls.getPath(Pages.sets));
   }
 
@@ -32,7 +33,7 @@ export default function SpellingModePage() {
           </Button>
         </>
       ) : (
-        <SpellingMode setPaths={setPaths as string} />
+        <SpellingMode setIds={splitIds(setIds as string)} />
       )}
     </div>
   );

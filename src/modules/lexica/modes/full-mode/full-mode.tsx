@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
-import useProtectedData from "@app/hooks/use-protected-data";
-import { getSetsContent } from "@lexica/api/sets-api";
+import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
+import { getSet } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
 import { QuestionAbout } from "@lexica/models/question-about";
 import { QuestionType } from "@lexica/models/question-type";
 import { Set } from "@lexica/models/set";
 import getRecordings from "@lexica/services/get-recordings";
-import { decodePaths } from "@lexica/services/paths-encoder";
 import { playRecordings } from "@lexica/services/play-recordings";
 import ClosedQuestionAnswer from "./components/closed-question-answer";
 import ClosedQuestionResult from "./components/closed-question-result";
@@ -20,7 +19,7 @@ import { FullModeService } from "./full-mode-service";
 import "./full-mode.css";
 
 interface IFullModeProps {
-  setPaths: string;
+  setIds: number[];
 }
 
 interface IModeState {
@@ -30,6 +29,7 @@ interface IModeState {
   givenAnswer: string;
   isCorrectAnswer: boolean | null;
   isFinished: boolean;
+  questionIndex: number;
 }
 
 export default function FullMode(props: IFullModeProps) {
@@ -42,22 +42,25 @@ export default function FullMode(props: IFullModeProps) {
     givenAnswer: "",
     isCorrectAnswer: null,
     isFinished: false,
+    questionIndex: 0,
   });
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [submitButtonFocusTrigger, setSubmitButtonFocusTrigger] = useState(0);
   const [inputFocusTrigger, setInputFocusTrigger] = useState(0);
   const [continueButtonFocusTrigger, setContinueButtonFocusTrigger] = useState(0);
-  const setData = useProtectedData<Set[]>(
-    getSetsContent,
-    {},
-    { setPath: decodePaths(props.setPaths) },
+  const setData = useProtectedMultipleData<Set>(
+    props.setIds.map((setId) => ({
+      getDataFunc: getSet,
+      urlParameters: { setId: setId.toString() },
+      requestParameters: {},
+    })),
     refreshKey,
     () => {
       setError("An unexpected error has occurred in getting sets.");
     }
   );
 
-  const currentQuestionValue = modeState.currentQuestion?.getQuestion();
+  const currentQuestionIndex = modeState.questionIndex;
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyboardAnswer);
@@ -65,7 +68,7 @@ export default function FullMode(props: IFullModeProps) {
     return function cleanup() {
       window.removeEventListener("keydown", handleKeyboardAnswer);
     };
-  }, [currentQuestionValue]);
+  }, [currentQuestionIndex]);
 
   useEffect(() => {
     if (setData.data === null) {
@@ -84,6 +87,7 @@ export default function FullMode(props: IFullModeProps) {
       currentQuestion: service.getNextQuestion(),
       numberOfCorrectAnswers: service.getNumberOfCorrectAnswers(),
       numberOfAllQuestionsToAsk: service.getNumberOfAllQuestionsToAsk(),
+      questionIndex: modeState.questionIndex + 1,
     });
   }, [setData.data]);
 
@@ -114,7 +118,7 @@ export default function FullMode(props: IFullModeProps) {
 
       return;
     };
-  }, [currentQuestionValue]);
+  }, [currentQuestionIndex]);
 
   useEffect(() => {
     if (modeState.isCorrectAnswer === null) {
@@ -191,6 +195,7 @@ export default function FullMode(props: IFullModeProps) {
         currentQuestion: null,
         isCorrectAnswer: null,
         isFinished: true,
+        questionIndex: 0,
       });
 
       return;
@@ -201,6 +206,7 @@ export default function FullMode(props: IFullModeProps) {
       currentQuestion: nextQuestion as Question,
       givenAnswer: "",
       isCorrectAnswer: null,
+      questionIndex: modeState.questionIndex + 1,
     });
   };
 
