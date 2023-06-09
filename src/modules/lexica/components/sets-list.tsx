@@ -58,7 +58,7 @@ export default function SetsList() {
         headerName: "Created At",
         width: 200,
       },
-      { field: "name", headerName: "Name", flex: 1 },
+      { field: "name", headerName: "Name", flex: 1, minWidth: 300 },
     ],
     []
   );
