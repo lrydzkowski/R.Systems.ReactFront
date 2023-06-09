@@ -1,3 +1,5 @@
+import { getSetNamesAsync } from "@lexica/api/sets-api";
+
 export class Pages {
   public static readonly login = "login";
   public static readonly home = "home";
@@ -21,16 +23,29 @@ export class Urls {
     [Pages.lexicaLabel, { path: "/lexica", name: "Lexica", validLink: false }],
     [Pages.sets, { path: "/lexica/sets", name: "Sets", validLink: true }],
     [Pages.setLabel, { path: "/lexica/sets/content", name: "Content", validLink: false }],
-    [Pages.set, { path: "/lexica/sets/content/:setIds", validLink: true }],
+    [
+      Pages.set,
+      {
+        path: "/lexica/sets/content/:setIds",
+        validLink: true,
+        getNameAsync: getSetNamesAsync,
+      },
+    ],
     [Pages.spellingModeLabel, { path: "/lexica/sets/spelling-mode", name: "Spelling Mode", validLink: false }],
-    [Pages.spellingMode, { path: "/lexica/sets/spelling-mode/:setIds", validLink: true }],
+    [
+      Pages.spellingMode,
+      { path: "/lexica/sets/spelling-mode/:setIds", validLink: true, getNameAsync: getSetNamesAsync },
+    ],
     [Pages.fullModeLabel, { path: "/lexica/sets/full-mode", name: "Full Mode", validLink: false }],
-    [Pages.fullMode, { path: "/lexica/sets/full-mode/:setIds", validLink: true }],
+    [Pages.fullMode, { path: "/lexica/sets/full-mode/:setIds", validLink: true, getNameAsync: getSetNamesAsync }],
     [
       Pages.onlyOpenQuestionsLabel,
       { path: "/lexica/sets/only-open-questions-mode", name: "Only Open Questions Mode", validLink: false },
     ],
-    [Pages.onlyOpenQuestions, { path: "/lexica/sets/only-open-questions-mode/:setIds", validLink: true }],
+    [
+      Pages.onlyOpenQuestions,
+      { path: "/lexica/sets/only-open-questions-mode/:setIds", validLink: true, getNameAsync: getSetNamesAsync },
+    ],
     [Pages.about, { path: "/about", name: "About", validLink: true }],
   ]);
 
@@ -61,12 +76,33 @@ export class Urls {
   public static getPageByPath(path: string): IPageInfo | null {
     const found = [...Urls.pages]
       .map(([key, page]) => ({ key, page }))
-      .filter((element) => element.page.path.toLowerCase() === path.toLowerCase());
+      .filter((element) => Urls.isMatch(element.page.path, path));
     if (found.length === 0) {
       return null;
     }
 
     return found[0].page;
+  }
+
+  private static isMatch(path: string, actualPath: string): boolean {
+    const pathParts = path?.trim()?.toLowerCase()?.split("/") ?? [];
+    const actualPathParts = actualPath?.trim()?.toLowerCase()?.split("/") ?? [];
+
+    if (pathParts.length !== actualPathParts.length) {
+      return false;
+    }
+
+    for (let i = 0; i < pathParts.length; i++) {
+      if (pathParts[i].startsWith(":")) {
+        continue;
+      }
+
+      if (pathParts[i] !== actualPathParts[i]) {
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 
@@ -74,4 +110,5 @@ interface IPageInfo {
   path: string;
   name?: string;
   validLink: boolean;
+  getNameAsync?: (abortController: AbortController, value: string) => Promise<string>;
 }

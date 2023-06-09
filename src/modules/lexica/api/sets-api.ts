@@ -7,7 +7,7 @@ import { Set } from "../models/set";
 
 const baseUrl = import.meta.env.VITE_APP_LEXICA_API_URL ?? "";
 
-export function getSets(
+export function getSetsAsync(
   abortController: AbortController,
   urlPathParameters: UrlParameters,
   requestParameters: object = {}
@@ -33,7 +33,7 @@ export function getSets(
   });
 }
 
-export function getSet(
+export function getSetAsync(
   abortController: AbortController,
   urlPathParameters: UrlParameters,
   requestParameters: object = {}
@@ -41,4 +41,23 @@ export function getSet(
   const urlPath = "/sets/:setId";
 
   return sendGetRequestWithToken<Set>(abortController, baseUrl, urlPath, urlPathParameters, requestParameters);
+}
+
+export function getSetNamesAsync(abortController: AbortController, setIdsSerialized: string): Promise<string> {
+  const requests: Promise<AxiosResponse<Set> | void>[] = [];
+  setIdsSerialized
+    .split(",")
+    .map((setId) => setId.trim())
+    .forEach((setId) => requests.push(getSetAsync(abortController, { setId }, {})));
+
+  return Promise.all(requests).then((responses) => {
+    const names: string[] = [];
+    responses.forEach((response) => names.push(response?.data?.name ?? ""));
+    const name = names
+      .filter((name) => name.length > 0)
+      .sort()
+      .join(", ");
+
+    return name;
+  });
 }

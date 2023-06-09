@@ -17,7 +17,7 @@ import useProtectedListData from "@app/hooks/use-protected-list-data";
 import { ListInfo } from "@app/models/list-info";
 import { IListParameters, SortingOrder } from "@app/models/list-parameters";
 import CustomDataGridToolbar from "@table/components/custom-data-grid-toolbar";
-import { getSets } from "@lexica/api/sets-api";
+import { getSetsAsync } from "@lexica/api/sets-api";
 import { Set } from "@lexica/models/set";
 import { combineIds } from "@lexica/services/ids-parser";
 import LearningModeService from "@lexica/services/learning-mode-service";
@@ -62,7 +62,7 @@ export default function SetsList() {
     ],
     []
   );
-  const setsData = useProtectedListData<ListInfo<Set>>(getSets, {}, listParameters, refreshKey, () => {
+  const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, () => {
     setIsErrorOpen(true);
   });
 

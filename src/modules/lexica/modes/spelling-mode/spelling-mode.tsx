@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
-import { getSet } from "@lexica/api/sets-api";
+import { getSetAsync } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
 import { Set } from "@lexica/models/set";
@@ -45,7 +45,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
   const [continueButtonFocusTrigger, setContinueButtonFocusTrigger] = useState(0);
   const setData = useProtectedMultipleData<Set>(
     props.setIds.map((setId) => ({
-      getDataFunc: getSet,
+      getDataFunc: getSetAsync,
       urlParameters: { setId: setId.toString() },
       requestParameters: {},
     })),

@@ -2,7 +2,7 @@ import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button } from "@mui/material";
 import { useState } from "react";
 import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
-import { getSet } from "@lexica/api/sets-api";
+import { getSetAsync } from "@lexica/api/sets-api";
 import { Set } from "@lexica/models/set";
 import "./set-details.css";
 
@@ -15,7 +15,7 @@ export default function SetDetails(props: ISetDetailsProps) {
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const setData = useProtectedMultipleData<Set>(
     props.setIds.map((setId) => ({
-      getDataFunc: getSet,
+      getDataFunc: getSetAsync,
       urlParameters: { setId: setId.toString() },
       requestParameters: {},
     })),
