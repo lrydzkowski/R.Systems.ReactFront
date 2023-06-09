@@ -2,5 +2,8 @@
   "tabWidth": 2,
   "useTabs": false,
   "printWidth": 120,
-  "endOfLine": "crlf"
+  "endOfLine": "crlf",
+  "importOrder": ["<THIRD_PARTY_MODULES>", "^@app/(.*)$", "^@table/(.*)$", "^@lexica/(.*)$", "^[./]"],
+  "importOrderSeparation": false,
+  "importOrderSortSpecifiers": true
 }

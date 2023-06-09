@@ -1,22 +1,21 @@
-import HomePageCard from "app/components/home-page-card";
-import { Urls } from "app/routing/urls";
-import "./home-page.scoped.css";
+import HomePageCard from "@app/components/common/home-page-card";
+import { Pages, Urls } from "@app/router/urls";
+import "./home-page.css";
 
 export default function HomePage() {
   return (
     <>
-      <div className="cards">
-        <div className="card">
-          <HomePageCard
-            title="Lexica"
-            subtitle="English vocabulary learning web application."
-            redirectUrl={Urls.pages.sets.path}
-          />
+      <>
+        <div className="home-page--cards">
+          <div className="home-page--card">
+            <HomePageCard
+              title="Lexica"
+              subtitle="English vocabulary learning web application."
+              redirectUrl={Urls.getPath(Pages.sets)}
+            />
+          </div>
         </div>
-        {/* <div className="card">
-          <HomePageCard title="Tests" subtitle="Tests, PoC, and different ideas." redirectUrl={Urls.pages.test1.path} />
-        </div> */}
-      </div>
+      </>
     </>
   );
 }
