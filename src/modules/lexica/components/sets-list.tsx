@@ -122,8 +122,8 @@ export default function SetsList() {
           params.indexRelativeToCurrentPage % 2 === 0 ? "sets-list--even" : "sets-list--odd"
         }
         getRowId={(row: Set) => row.setId}
-        components={{ Toolbar: CustomDataGridToolbar }}
-        componentsProps={{
+        slots={{ toolbar: CustomDataGridToolbar }}
+        slotProps={{
           toolbar: {
             quickFilterProps: { debounceMs: 500 },
             buttons: (
