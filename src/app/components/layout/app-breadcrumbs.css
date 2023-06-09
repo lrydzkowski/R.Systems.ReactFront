@@ -1,0 +1,6 @@
+.app-breadcrumbs--content p {
+  color: rgba(0, 0, 0, 0.6);
+}
+.app-breadcrumbs--content a {
+  color: rgba(0, 0, 0, 1);
+}

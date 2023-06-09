@@ -1,5 +1,5 @@
 import { AuthenticationResult } from "@azure/msal-browser";
-import { loginRequest, publicClientApplication } from "app/auth-configuration";
+import { loginRequest, publicClientApplication } from "@app/auth/auth-configuration";
 
 export function getAccessToken(): Promise<string> {
   const account = publicClientApplication.getAllAccounts()[0];

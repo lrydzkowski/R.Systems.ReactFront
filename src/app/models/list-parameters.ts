@@ -1,24 +1,12 @@
-export interface ListParameters {
-  pagination: Pagination;
-  sorting: Sorting;
-  search: Search;
+export interface IListParameters {
+  page: number;
+  pageSize: number;
+  sortingFieldName: string;
+  sortingOrder: string;
+  searchQuery: string | null;
 }
 
-export interface Pagination {
-  firstIndex: number;
-  numberOfRows: number;
-}
-
-export interface Sorting {
-  fieldName: string;
-  order: SortingOrder;
-}
-
-export enum SortingOrder {
-  Ascending = 0,
-  Descending = 1,
-}
-
-export interface Search {
-  query: string;
+export class SortingOrder {
+  public static readonly ascending = "asc";
+  public static readonly descending = "desc";
 }

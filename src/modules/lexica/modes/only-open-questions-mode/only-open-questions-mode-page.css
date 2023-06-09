@@ -1,0 +1,7 @@
+.only-open-questions-mode--container h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+.only-open-questions-mode--container button {
+  width: 7rem;
+}
