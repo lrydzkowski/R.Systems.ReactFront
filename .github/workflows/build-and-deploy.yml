@@ -1,4 +1,5 @@
 name: Build and Deploy
+run-name: ${{ github.repository }} - ${{ github.run_id }}
 
 on:
   push:
@@ -21,7 +22,7 @@ jobs:
 
     steps:
       - name: Generate version tag
-        run: echo "VERSION_TAG=$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+        run: echo "VERSION_TAG=$(date -u +'%Y%m%d-%H%M%Sz')" >> $GITHUB_ENV
 
       - name: Show the version tag
         run: echo ${{ env.VERSION_TAG }}
