@@ -140,8 +140,9 @@ export default function SetsList() {
         slotProps={{
           toolbar: {
             quickFilterProps: { debounceMs: 500 },
+            header: <>Sets</>,
             buttons: (
-              <div className="sets-list--buttons">
+              <>
                 <Button
                   variant="text"
                   startIcon={<RefreshIcon />}
@@ -161,7 +162,7 @@ export default function SetsList() {
                 >
                   Open
                 </Button>
-              </div>
+              </>
             ),
           },
         }}

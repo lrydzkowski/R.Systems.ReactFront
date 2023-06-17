@@ -23,12 +23,6 @@
   order: -1;
 }
 
-.sets-list--buttons {
-  margin-right: 2rem;
-}
-.sets-list--buttons button {
-  margin-right: 0.5rem;
-}
 .sets-list--odd {
   background-color: #fdfdfd;
   z-index: 1;
