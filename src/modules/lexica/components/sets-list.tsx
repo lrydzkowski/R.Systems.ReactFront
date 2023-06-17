@@ -1,3 +1,4 @@
+import AddIcon from "@mui/icons-material/Add";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button } from "@mui/material";
@@ -16,6 +17,7 @@ import DialogError from "@app/components/common/dialog-error";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
 import { ListInfo } from "@app/models/list-info";
 import { IListParameters, SortingOrder } from "@app/models/list-parameters";
+import { Pages, Urls } from "@app/router/urls";
 import CustomDataGridToolbar from "@table/components/custom-data-grid-toolbar";
 import { getSetsAsync } from "@lexica/api/sets-api";
 import { Set } from "@lexica/models/set";
@@ -32,6 +34,7 @@ export default function SetsList() {
     sortingOrder: "desc",
     searchQuery: null,
   });
+  const [chosenId, setChosenId] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
@@ -68,8 +71,12 @@ export default function SetsList() {
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
+  const navigateToNewSetForm = () => {
+    navigate(Urls.getPath(Pages.newSet));
+  };
+
   const openSet = (setId: number) => {
-    setSelectedIds([setId]);
+    setChosenId(setId);
     setOpenChooseModeDialog(true);
   };
 
@@ -84,6 +91,8 @@ export default function SetsList() {
   const handleChooseModeDialogClose = (selectedMode: string | null) => {
     setOpenChooseModeDialog(false);
     if (selectedMode === null) {
+      setChosenId(0);
+
       return;
     }
 
@@ -92,11 +101,16 @@ export default function SetsList() {
       return;
     }
 
-    if (selectedIds.length === 0) {
+    const ids = [...selectedIds];
+    if (chosenId !== 0) {
+      ids.push(chosenId);
+    }
+
+    if (ids.length === 0) {
       return;
     }
 
-    navigate("/" + path.replace(":setIds", combineIds(selectedIds)));
+    navigate("/" + path.replace(":setIds", combineIds(ids)));
   };
 
   return (
@@ -135,6 +149,9 @@ export default function SetsList() {
                   disabled={setsData.processing}
                 >
                   Refresh
+                </Button>
+                <Button variant="text" startIcon={<AddIcon color="primary" />} onClick={() => navigateToNewSetForm()}>
+                  New
                 </Button>
                 <Button
                   variant="text"
