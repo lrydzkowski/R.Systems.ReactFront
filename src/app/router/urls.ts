@@ -5,6 +5,7 @@ export class Pages {
   public static readonly home = "home";
   public static readonly lexicaLabel = "lexicaLabel";
   public static readonly sets = "sets";
+  public static readonly newSet = "newSet";
   public static readonly setLabel = "setLabel";
   public static readonly set = "set";
   public static readonly spellingModeLabel = "spellingModeLabel";
@@ -22,6 +23,7 @@ export class Urls {
     [Pages.home, { path: "/home", name: "Home", validLink: true }],
     [Pages.lexicaLabel, { path: "/lexica", name: "Lexica", validLink: false }],
     [Pages.sets, { path: "/lexica/sets", name: "Sets", validLink: true }],
+    [Pages.newSet, { path: "/lexica/sets/new", name: "New set", validLink: true }],
     [Pages.setLabel, { path: "/lexica/sets/content", name: "Content", validLink: false }],
     [
       Pages.set,

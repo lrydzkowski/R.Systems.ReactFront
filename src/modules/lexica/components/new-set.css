@@ -1,0 +1,11 @@
+.new-set-page--container h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+.new-set-page--container form {
+  max-width: 500px;
+}
+.new-set-page--container form > div {
+  width: 100%;
+  margin-bottom: 1rem;
+}

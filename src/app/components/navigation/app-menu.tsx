@@ -13,7 +13,7 @@ export interface AppMenuProps {
 export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuProps) {
   const location = useLocation();
   const [openState, setOpenState] = useState<{ [key: string]: boolean }>({
-    lexica: false,
+    lexica: true,
   });
 
   const handleClick = (event: React.MouseEvent<HTMLElement>, key: string) => {
@@ -42,12 +42,19 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
         <ListItemButton component={NavLink} to={Urls.getPath(Pages.home)} onClick={handleMenuLinkClick}>
           <ListItemText primary={Urls.getName(Pages.home)} />
         </ListItemButton>
-        <ListItemButton onClick={(e) => handleClick(e, "lexica")} className={getNoLinkClass("lexica")}>
+        <ListItemButton className={getNoLinkClass("lexica")}>
           <ListItemText primary={Urls.getName(Pages.lexicaLabel)} />
-          {openState.lexica ? <ExpandLess /> : <ExpandMore />}
         </ListItemButton>
         <Collapse in={openState.lexica} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
+            <ListItemButton
+              className="app-menu--sub-menu-list-item-button"
+              component={NavLink}
+              to={Urls.getPath(Pages.newSet)}
+              onClick={handleMenuLinkClick}
+            >
+              <ListItemText primary={Urls.getName(Pages.newSet)} />
+            </ListItemButton>
             <ListItemButton
               className="app-menu--sub-menu-list-item-button"
               component={NavLink}
