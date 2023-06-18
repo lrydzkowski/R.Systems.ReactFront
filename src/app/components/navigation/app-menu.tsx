@@ -37,6 +37,9 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
         <ListItemButton component={NavLink} to={Urls.getPath(Pages.login)} onClick={handleMenuLinkClick}>
           <ListItemText primary={Urls.getName(Pages.login)} />
         </ListItemButton>
+        <ListItemButton component={NavLink} to={Urls.getPath(Pages.about)} onClick={handleMenuLinkClick}>
+          <ListItemText primary={Urls.getName(Pages.about)} />
+        </ListItemButton>
       </UnauthenticatedTemplate>
       <AuthenticatedTemplate>
         <ListItemButton component={NavLink} to={Urls.getPath(Pages.home)} onClick={handleMenuLinkClick}>

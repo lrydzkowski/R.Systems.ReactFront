@@ -105,11 +105,9 @@ export const router = createBrowserRouter([
       {
         path: Urls.getPathWithoutLeadingSlash(Pages.about),
         element: (
-          <RequireAuth>
-            <PageWithBreadcrumbs>
-              <AboutPage />
-            </PageWithBreadcrumbs>
-          </RequireAuth>
+          <PageWithBreadcrumbs>
+            <AboutPage />
+          </PageWithBreadcrumbs>
         ),
       },
       {
