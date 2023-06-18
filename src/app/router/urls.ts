@@ -23,7 +23,7 @@ export class Urls {
     [Pages.home, { path: "/home", name: "Home", validLink: true }],
     [Pages.lexicaLabel, { path: "/lexica", name: "Lexica", validLink: false }],
     [Pages.sets, { path: "/lexica/sets", name: "Sets", validLink: true }],
-    [Pages.newSet, { path: "/lexica/sets/new", name: "New set", validLink: true }],
+    [Pages.newSet, { path: "/lexica/new-set", name: "New set", validLink: true }],
     [Pages.setLabel, { path: "/lexica/sets/content", name: "Content", validLink: false }],
     [
       Pages.set,

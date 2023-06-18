@@ -1,11 +1,50 @@
+.new-set-page--container {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
 .new-set-page--container h2 {
   font-size: 1.2rem;
-  margin-bottom: 1rem;
+}
+.new-set-page--container .form {
+  display: flex;
+  flex-grow: 1;
+  overflow: auto;
 }
 .new-set-page--container form {
-  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 1000px;
+  margin-bottom: 50px;
 }
-.new-set-page--container form > div {
+.new-set-page--container form .form-body {
+  flex-grow: 1;
+  margin-bottom: 2rem;
+  padding-top: 1rem;
+  overflow: auto;
+}
+.new-set-page--container form .field > div {
   width: 100%;
+}
+.new-set-page--container form .name {
   margin-bottom: 1rem;
+  width: 12rem;
+}
+.new-set-page--container form .entry {
+  column-gap: 0.5rem;
+  display: flex;
+  margin-bottom: 1rem;
+}
+.new-set-page--container form .entry .word {
+  width: 12rem;
+}
+.new-set-page--container form .entry .word-type {
+  width: 12rem;
+}
+.new-set-page--container form .entry .translations {
+  flex-grow: 1;
+}
+.new-set-page--container form .entry .buttons {
+  width: 7rem;
 }
