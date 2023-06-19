@@ -94,7 +94,7 @@ export default function NewSet() {
                 )}
               />
             </div>
-            {fields.map((item, i) => (
+            {fields.map((_, i) => (
               <div className="entry" key={i}>
                 <div className="word field">
                   <Controller
