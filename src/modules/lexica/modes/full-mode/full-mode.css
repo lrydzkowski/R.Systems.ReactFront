@@ -22,16 +22,16 @@
   flex-grow: 1;
 }
 .full-mode--container .row .right-col {
-  display: flex;
   align-items: flex-end;
+  display: flex;
   flex-grow: 0;
   flex-shrink: 0;
   padding-left: 1rem;
   width: 7rem;
 }
 .full-mode--container .row .left-col.closed-question {
-  display: flex;
   align-items: flex-end;
+  display: flex;
   flex-grow: 0;
   flex-shrink: 0;
   width: 7rem;
@@ -41,12 +41,12 @@
   flex-grow: 1;
 }
 .full-mode--container .row .radio-buttons {
-  margin-left: 0.2rem;
   margin-bottom: 1rem;
+  margin-left: 0.2rem;
 }
 .full-mode--container .summary p.the-end {
-  font-size: 1.2rem;
   color: green;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
 }
 .full-mode--container .summary button {

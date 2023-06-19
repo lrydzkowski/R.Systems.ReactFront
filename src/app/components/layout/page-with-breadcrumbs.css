@@ -1,8 +1,8 @@
 .page-with-breadcrumbs--container {
   align-items: center;
   display: flex;
-  min-height: 2rem;
   margin-bottom: 1rem;
+  min-height: 2rem;
   word-break: break-all;
 }
 .page-with-breadcrumbs--divider {

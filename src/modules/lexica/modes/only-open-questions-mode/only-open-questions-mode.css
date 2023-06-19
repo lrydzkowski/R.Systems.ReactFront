@@ -19,16 +19,16 @@
   flex-grow: 1;
 }
 .only-open-questions-mode--container .row .right-col {
-  display: flex;
   align-items: flex-end;
+  display: flex;
   flex-grow: 0;
   flex-shrink: 0;
   padding-left: 1rem;
   width: 7rem;
 }
 .only-open-questions-mode--container .summary p.the-end {
-  font-size: 1.2rem;
   color: green;
+  font-size: 1.2rem;
   margin-bottom: 1rem;
 }
 .only-open-questions-mode--container .summary button {

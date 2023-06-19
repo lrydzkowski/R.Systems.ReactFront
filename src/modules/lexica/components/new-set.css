@@ -15,14 +15,16 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  max-width: 1000px;
   margin-bottom: 50px;
+  max-width: 1000px;
 }
 .new-set-page--container form .form-body {
+  border-bottom: 1px dashed #e0e0e0;
+  border-top: 1px dashed #e0e0e0;
   flex-grow: 1;
   margin-bottom: 2rem;
-  padding-top: 1rem;
   overflow: auto;
+  padding-top: 1rem;
 }
 .new-set-page--container form .field > div {
   width: 100%;
