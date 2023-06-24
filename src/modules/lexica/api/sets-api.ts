@@ -1,8 +1,10 @@
 import { AxiosResponse } from "axios";
 import { sendGetRequestWithToken } from "@app/api/services/send-get-request-with-token";
+import { sendPostRequestWithToken } from "@app/api/services/send-post-request-with-token";
 import { UrlParameters } from "@app/models/get-data";
 import { ListInfo } from "@app/models/list-info";
 import { formatDate } from "@app/services/data-formatter";
+import { ICreateSetRequest, ICreateSetResponse } from "@lexica/models/create-set-request";
 import { Set } from "../models/set";
 
 const baseUrl = import.meta.env.VITE_APP_LEXICA_API_URL ?? "";
@@ -60,4 +62,20 @@ export function getSetNamesAsync(abortController: AbortController, setIdsSeriali
 
     return name;
   });
+}
+
+export async function createSetAsync(
+  abortController: AbortController,
+  request: ICreateSetRequest
+): Promise<ICreateSetResponse | null> {
+  const urlPath = "/sets";
+
+  const response = await sendPostRequestWithToken<ICreateSetRequest, ICreateSetResponse>(
+    abortController,
+    request,
+    baseUrl,
+    urlPath
+  );
+
+  return response?.data ?? null;
 }

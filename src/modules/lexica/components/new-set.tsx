@@ -12,9 +12,17 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { AxiosError } from "axios";
+import { useEffect, useRef, useState } from "react";
 import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
+import { ErrorsHandler } from "@app/api/services/errors-handler";
+import { ErrorCodes } from "@app/models/error-codes";
+import { IErrorInfo } from "@app/models/error-info";
+import { Pages, Urls } from "@app/router/urls";
+import { createSetAsync } from "@lexica/api/sets-api";
+import { ICreateSetRequest } from "@lexica/models/create-set-request";
 import { WordType } from "@lexica/models/word-type";
 import "./new-set.css";
 
@@ -50,6 +58,11 @@ const defaultValues: SetFormInput = {
   ],
 };
 
+const serverValidationErrors: Map<string, string> = new Map<string, string>([
+  [ErrorCodes.unexpected, "An unexpected error has occured."],
+  ["SetName_UniqueValidator", "Set with the given name exists."],
+]);
+
 export default function NewSet() {
   const {
     handleSubmit,
@@ -61,12 +74,38 @@ export default function NewSet() {
   });
   const { fields, append, remove } = useFieldArray<SetFormInput>({ name: "entries", control });
   const nameFieldRef = useRef<HTMLInputElement>(null);
+  const [errorMessages, setErrorMessages] = useState<string[] | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     nameFieldRef.current?.focus();
   }, []);
 
-  const onSubmit: SubmitHandler<SetFormInput> = (data) => console.log(data);
+  const onSubmit: SubmitHandler<SetFormInput> = async (data: SetFormInput) => {
+    try {
+      setErrorMessages(null);
+      const request: ICreateSetRequest = mapFormDataToRequest(data);
+      await createSetAsync(new AbortController(), request);
+
+      navigate(Urls.getPath(Pages.sets));
+    } catch (error) {
+      setErrorMessages(ErrorsHandler.getErrorMessages(error, serverValidationErrors));
+    }
+  };
+
+  const mapFormDataToRequest = (data: SetFormInput): ICreateSetRequest => {
+    return {
+      setName: data.name,
+      entries: data.entries.map((entry) => ({
+        word: entry.word?.trim(),
+        wordType: entry.wordType,
+        translations: entry.translations
+          .split(" ")
+          .map((translation) => translation?.trim())
+          .filter((translation) => translation != null),
+      })),
+    };
+  };
 
   return (
     <div className="new-set-page--container">
@@ -175,6 +214,13 @@ export default function NewSet() {
               </div>
             ))}
           </div>
+          {errorMessages && (
+            <div className="error">
+              {errorMessages.map((errorMessage, index) => (
+                <p key={index}>{errorMessage}</p>
+              ))}
+            </div>
+          )}
           <div className="main-buttons">
             <Button variant="contained" type="submit" size="medium">
               Create

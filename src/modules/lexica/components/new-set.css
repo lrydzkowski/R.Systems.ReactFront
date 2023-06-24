@@ -6,6 +6,12 @@
 .new-set-page--container h2 {
   font-size: 1.2rem;
 }
+.new-set-page--container div.error {
+  margin-bottom: 2rem;
+}
+.new-set-page--container div.error p {
+  color: red;
+}
 .new-set-page--container .form {
   display: flex;
   flex-grow: 1;
