@@ -15,14 +15,14 @@
 .new-set-page--container .form {
   display: flex;
   flex-grow: 1;
+  max-width: 1000px;
   overflow: auto;
+  position: relative;
 }
 .new-set-page--container form {
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  margin-bottom: 50px;
-  max-width: 1000px;
 }
 .new-set-page--container form .form-body {
   border-bottom: 1px dashed #e0e0e0;
@@ -55,4 +55,19 @@
 }
 .new-set-page--container form .entry .buttons {
   width: 7rem;
+}
+.new-set-page--container .form .curtain {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+}
+.new-set-page--container .form .curtain .loading {
+  background-color: #fff;
+  height: 40px;
+  width: 40px;
+  z-index: 2;
 }
