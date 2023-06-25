@@ -1,4 +1,5 @@
 import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button } from "@mui/material";
@@ -24,6 +25,7 @@ import { Set } from "@lexica/models/set";
 import { combineIds } from "@lexica/services/ids-parser";
 import LearningModeService from "@lexica/services/learning-mode-service";
 import ChooseModeDialog from "./choose-mode-dialog";
+import DeleteSetConfirmationDialog from "./delete-set-confirmation-dialog";
 import "./sets-list.css";
 
 export default function SetsList() {
@@ -45,13 +47,19 @@ export default function SetsList() {
       {
         field: "actions",
         type: "actions",
-        width: 50,
+        width: 100,
         getActions: (params: { row: { setId: number } }) => [
           <GridActionsCellItem
             key="open"
             icon={<OpenInNewIcon color="primary" />}
             onClick={() => openSet(params.row.setId)}
             label="Open"
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteOutlinedIcon sx={{ color: "red" }} />}
+            onClick={() => deleteSet(params.row.setId)}
+            label="Delete"
           />,
         ],
       },
@@ -68,6 +76,7 @@ export default function SetsList() {
   const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, () => {
     setIsErrorOpen(true);
   });
+  const [isDeleteConfirmationDialogOpen, setIsDeleteConfirmationDialogOpen] = useState<boolean>(false);
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
@@ -80,12 +89,25 @@ export default function SetsList() {
     setOpenChooseModeDialog(true);
   };
 
+  const deleteSet = (setId: number) => {
+    setChosenId(setId);
+    setIsDeleteConfirmationDialogOpen(true);
+  };
+
   const openSets = () => {
     if (selectedIds.length === 0) {
       return;
     }
 
     setOpenChooseModeDialog(true);
+  };
+
+  const deleteSets = () => {
+    if (selectedIds.length === 0) {
+      return;
+    }
+
+    setIsDeleteConfirmationDialogOpen(true);
   };
 
   const handleChooseModeDialogClose = (selectedMode: string | null) => {
@@ -111,6 +133,28 @@ export default function SetsList() {
     }
 
     navigate("/" + path.replace(":setIds", combineIds(ids)));
+  };
+
+  const handleCloseDeleteSetConfirmationDialog = (agreed: boolean) => {
+    setIsDeleteConfirmationDialogOpen(false);
+    if (!agreed) {
+      setChosenId(0);
+
+      return;
+    }
+
+    const ids = [...selectedIds];
+    if (chosenId !== 0) {
+      ids.push(chosenId);
+    }
+
+    if (ids.length === 0) {
+      return;
+    }
+
+    console.log(ids);
+
+    return;
   };
 
   return (
@@ -151,7 +195,12 @@ export default function SetsList() {
                 >
                   Refresh
                 </Button>
-                <Button variant="text" startIcon={<AddIcon color="primary" />} onClick={() => navigateToNewSetForm()}>
+                <Button
+                  variant="text"
+                  startIcon={<AddIcon />}
+                  onClick={() => navigateToNewSetForm()}
+                  sx={{ color: "green" }}
+                >
                   New
                 </Button>
                 <Button
@@ -161,6 +210,15 @@ export default function SetsList() {
                   disabled={setsData.processing || selectedIds.length === 0}
                 >
                   Open
+                </Button>
+                <Button
+                  variant="text"
+                  startIcon={<DeleteOutlinedIcon />}
+                  onClick={() => deleteSets()}
+                  disabled={setsData.processing || selectedIds.length === 0}
+                  sx={{ color: "red" }}
+                >
+                  Delete
                 </Button>
               </>
             ),
@@ -210,6 +268,10 @@ export default function SetsList() {
         setIsErrorOpen={(state) => setIsErrorOpen(state)}
       ></DialogError>
       <ChooseModeDialog open={openChooseModeDialog} onClose={handleChooseModeDialogClose} />
+      <DeleteSetConfirmationDialog
+        isOpen={isDeleteConfirmationDialogOpen}
+        onClose={handleCloseDeleteSetConfirmationDialog}
+      />
     </>
   );
 }
