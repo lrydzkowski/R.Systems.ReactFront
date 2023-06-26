@@ -1,4 +1,5 @@
 import { AxiosResponse } from "axios";
+import { sendDeleteRequestWithToken } from "@app/api/services/send-delete-request-with-token";
 import { sendGetRequestWithToken } from "@app/api/services/send-get-request-with-token";
 import { sendPostRequestWithToken } from "@app/api/services/send-post-request-with-token";
 import { UrlParameters } from "@app/models/get-data";
@@ -78,4 +79,14 @@ export async function createSetAsync(
   );
 
   return response?.data ?? null;
+}
+
+export async function deleteSetsAsync(abortController: AbortController, setIds: number[]): Promise<void> {
+  const promises: Promise<AxiosResponse<void> | void>[] = [];
+  setIds.forEach((setId) => {
+    const urlPath = "/sets/:setId";
+    promises.push(sendDeleteRequestWithToken<void>(abortController, baseUrl, urlPath, { setId: setId.toString() }));
+  });
+
+  await Promise.all(promises);
 }
