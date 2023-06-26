@@ -51,7 +51,7 @@ export default function SetDetails(props: ISetDetailsProps) {
     }
   );
   const entries = useMemo(() => {
-    return setData.data?.flatMap((set) => set.entries);
+    return setData.data?.flatMap((set) => set.entries).map((entry: Entry, index: number) => ({ ...entry, id: index }));
   }, [setData]);
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
@@ -66,7 +66,6 @@ export default function SetDetails(props: ISetDetailsProps) {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "sets-list--even" : "sets-list--odd"
         }
-        getRowId={(row: Entry) => row.word}
         slots={{ toolbar: CustomDataGridToolbarWithoutFilter }}
         slotProps={{
           toolbar: {
