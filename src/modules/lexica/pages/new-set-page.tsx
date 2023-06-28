@@ -1,5 +1,5 @@
-import NewSet from "@lexica/components/new-set";
+import EditSet from "@lexica/components/edit-set";
 
 export default function NewSetPage() {
-  return <NewSet />;
+  return <EditSet setId={null} />;
 }

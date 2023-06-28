@@ -11,6 +11,7 @@ import NotFoundPage from "@app/pages/not-found-page";
 import FullModePage from "@lexica/modes/full-mode/full-mode-page";
 import OnlyOpenQuestionsModePage from "@lexica/modes/only-open-questions-mode/only-open-questions-mode-page";
 import SpellingModePage from "@lexica/modes/spelling-mode/spelling-mode-page";
+import EditSetPage from "@lexica/pages/edit-set-page";
 import NewSetPage from "@lexica/pages/new-set-page";
 import SetPage from "@lexica/pages/set-page";
 import SetsPage from "@lexica/pages/sets-page";
@@ -58,6 +59,16 @@ export const router = createBrowserRouter([
           <RequireAuth>
             <PageWithBreadcrumbs>
               <NewSetPage />
+            </PageWithBreadcrumbs>
+          </RequireAuth>
+        ),
+      },
+      {
+        path: Urls.getPathWithoutLeadingSlash(Pages.editSet),
+        element: (
+          <RequireAuth>
+            <PageWithBreadcrumbs>
+              <EditSetPage />
             </PageWithBreadcrumbs>
           </RequireAuth>
         ),

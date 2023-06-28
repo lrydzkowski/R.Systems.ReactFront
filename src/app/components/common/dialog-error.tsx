@@ -12,7 +12,7 @@ export default function DialogError(props: IDialogErrorProps) {
     <Dialog open={props.isErrorOpen}>
       <DialogTitle className="dialog-error--title">Error</DialogTitle>
       <DialogContent>
-        <DialogContentText className="alert-dialog-description">{props.errorMsg}</DialogContentText>
+        <DialogContentText className="dialog-error--description">{props.errorMsg}</DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button onClick={() => props.setIsErrorOpen(false)} autoFocus>

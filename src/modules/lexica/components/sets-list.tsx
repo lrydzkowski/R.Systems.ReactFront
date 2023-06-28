@@ -1,5 +1,6 @@
 import AddIcon from "@mui/icons-material/Add";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button } from "@mui/material";
@@ -16,6 +17,7 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DialogError from "@app/components/common/dialog-error";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
+import { IErrorWindowState } from "@app/models/error-window-state";
 import { ListInfo } from "@app/models/list-info";
 import { IListParameters, SortingOrder } from "@app/models/list-parameters";
 import { Pages, Urls } from "@app/router/urls";
@@ -40,8 +42,11 @@ export default function SetsList() {
   const [chosenId, setChosenId] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [errorWindowState, setErrorWindowState] = useState<IErrorWindowState>({
+    isOpen: false,
+    message: "",
+    onCloseEvent: null,
+  });
   const navigate = useNavigate();
   const [openChooseModeDialog, setOpenChooseModeDialog] = useState<boolean>(false);
   const columns = useMemo<GridColDef<Set>[]>(
@@ -49,7 +54,7 @@ export default function SetsList() {
       {
         field: "actions",
         type: "actions",
-        width: 100,
+        width: 150,
         getActions: (params: { row: { setId: number } }) => [
           <GridActionsCellItem
             key="open"
@@ -62,6 +67,12 @@ export default function SetsList() {
             icon={<DeleteOutlinedIcon sx={{ color: "red" }} />}
             onClick={() => deleteSet(params.row.setId)}
             label="Delete"
+          />,
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditOutlinedIcon color="primary" />}
+            onClick={() => editSet(params.row.setId)}
+            label="Edit"
           />,
         ],
       },
@@ -76,8 +87,11 @@ export default function SetsList() {
     []
   );
   const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, () => {
-    setIsErrorOpen(true);
-    setErrorMessage(setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInGettingList) ?? "");
+    setErrorWindowState({
+      isOpen: true,
+      message: setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInGettingList) ?? "",
+      onCloseEvent: null,
+    });
   });
   const [isDeleteConfirmationDialogOpen, setIsDeleteConfirmationDialogOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -166,11 +180,22 @@ export default function SetsList() {
       await deleteSetsAsync(new AbortController(), ids);
       setRefreshKey((x) => 1 - x);
     } catch (error) {
-      setIsErrorOpen(true);
-      setErrorMessage(setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInDeletingSets) ?? "");
+      setErrorWindowState({
+        isOpen: true,
+        message: setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInDeletingSets) ?? "",
+        onCloseEvent: null,
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const editSet = (setId: number) => {
+    if (!setId) {
+      return;
+    }
+
+    navigate(Urls.getPath(Pages.editSet).replace(":setId", setId.toString()));
   };
 
   return (
@@ -283,9 +308,9 @@ export default function SetsList() {
         }
       />
       <DialogError
-        isErrorOpen={isErrorOpen}
-        errorMsg={errorMessage}
-        setIsErrorOpen={(state) => setIsErrorOpen(state)}
+        isErrorOpen={errorWindowState.isOpen}
+        errorMsg={errorWindowState.message}
+        setIsErrorOpen={() => setErrorWindowState({ isOpen: false, message: "", onCloseEvent: null })}
       ></DialogError>
       <ChooseModeDialog open={openChooseModeDialog} onClose={handleChooseModeDialogClose} />
       <DeleteSetConfirmationDialog

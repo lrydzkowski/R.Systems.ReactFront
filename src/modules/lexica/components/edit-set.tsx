@@ -18,13 +18,22 @@ import { Controller, SubmitHandler, useFieldArray, useForm } from "react-hook-fo
 import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { ErrorsHandler } from "@app/api/services/errors-handler";
+import DialogError from "@app/components/common/dialog-error";
 import { ErrorCodes } from "@app/models/error-codes";
 import { IErrorHandlingInfo } from "@app/models/error-handling-info";
+import { IErrorWindowState } from "@app/models/error-window-state";
 import { Pages, Urls } from "@app/router/urls";
-import { createSetAsync } from "@lexica/api/sets-api";
+import { createSetAsync, getSetAsync } from "@lexica/api/sets-api";
 import { ICreateSetRequest } from "@lexica/models/create-set-request";
+import { EditSetErrorsKeys, editSetErrors } from "@lexica/models/edit-set-errors";
 import { WordType } from "@lexica/models/word-type";
-import "./new-set.css";
+import { mapToWordType } from "@lexica/services/mode-type-mapper";
+import { Set } from "../models/set";
+import "./edit-set.css";
+
+interface IEditSetProps {
+  setId: number | null;
+}
 
 const setSchema = yup
   .object({
@@ -64,7 +73,7 @@ const serverValidationErrors = new Map<string, IErrorHandlingInfo>([
   ["Entries_UniqueValidator", { message: "You cannot create a set with repeated words.", fieldName: null }],
 ]);
 
-export default function NewSet() {
+export default function EditSet(props: IEditSetProps) {
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -72,14 +81,60 @@ export default function NewSet() {
     formState: { errors },
     setError,
     setFocus,
+    setValue,
   } = useForm<SetFormInput>({
     defaultValues,
     resolver: yupResolver(setSchema),
   });
-  const { fields, append, remove } = useFieldArray<SetFormInput>({ name: "entries", control });
+  const { fields, append, remove, replace } = useFieldArray({ name: "entries", control });
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<Error | null>(null);
   const [errorMessages, setErrorMessages] = useState<string[] | null>(null);
+  const [errorWindowState, setErrorWindowState] = useState<IErrorWindowState>({
+    isOpen: false,
+    message: "",
+    onCloseEvent: () => null,
+  });
+
+  useEffect(() => {
+    if (props.setId === null) {
+      return;
+    }
+
+    const abortController = new AbortController();
+    const getSet = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getSetAsync(abortController, { setId: props.setId?.toString() ?? "" });
+        if (!response) {
+          return;
+        }
+
+        const data: Set = response.data;
+
+        setValue("name", data.name);
+        const entries = data.entries.map((entry) => ({
+          word: entry.word,
+          wordType: mapToWordType(entry.wordType),
+          translations: entry.translations.join(" "),
+        }));
+        replace(entries);
+        setIsLoading(false);
+      } catch (error) {
+        console.error(error);
+        setIsLoading(false);
+        setErrorWindowState({
+          isOpen: true,
+          message: editSetErrors.get(EditSetErrorsKeys.unexpectedErrorInGettingSet) ?? "",
+          onCloseEvent: () => navigate(Urls.getPath(Pages.sets)),
+        });
+      }
+    };
+
+    getSet();
+
+    return () => abortController.abort();
+  }, [props.setId, navigate]);
 
   useEffect(() => {
     setFocus("name");
@@ -135,7 +190,7 @@ export default function NewSet() {
   return (
     <div className="new-set-page--container">
       <Typography variant="subtitle1" component="h2">
-        New Set
+        {props.setId === null ? "New Set" : "Edit Set"}
       </Typography>
       <div className="form">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -161,8 +216,8 @@ export default function NewSet() {
                 }}
               />
             </div>
-            {fields.map((_, i) => (
-              <div className="entry" key={i}>
+            {fields.map((field, i) => (
+              <div className="entry" key={field.id}>
                 <div className="word field">
                   <Controller
                     name={`entries.${i}.word`}
@@ -255,7 +310,7 @@ export default function NewSet() {
           )}
           <div className="main-buttons">
             <Button variant="contained" type="submit" size="medium" disabled={isLoading}>
-              Create
+              {props.setId === null ? "Create" : "Update"}
             </Button>
           </div>
         </form>
@@ -267,6 +322,17 @@ export default function NewSet() {
           </div>
         )}
       </div>
+      <DialogError
+        isErrorOpen={errorWindowState.isOpen}
+        errorMsg={errorWindowState.message}
+        setIsErrorOpen={() => {
+          if (!errorWindowState.onCloseEvent) {
+            return;
+          }
+
+          errorWindowState.onCloseEvent();
+        }}
+      ></DialogError>
     </div>
   );
 }
