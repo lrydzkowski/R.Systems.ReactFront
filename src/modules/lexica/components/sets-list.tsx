@@ -229,7 +229,7 @@ export default function SetsList() {
             buttons: (
               <>
                 <Button variant="text" startIcon={<RefreshIcon />} onClick={handleRefresh} disabled={tableDisabled}>
-                  Refresh
+                  <span className="label">Refresh</span>
                 </Button>
                 <Button
                   variant="text"
@@ -238,7 +238,7 @@ export default function SetsList() {
                   sx={{ color: "green" }}
                   disabled={tableDisabled}
                 >
-                  New
+                  <span className="label">New</span>
                 </Button>
                 <Button
                   variant="text"
@@ -246,7 +246,7 @@ export default function SetsList() {
                   onClick={() => openSets()}
                   disabled={tableDisabled || selectedIds.length === 0}
                 >
-                  Open
+                  <span className="label">Open</span>
                 </Button>
                 <Button
                   variant="text"
@@ -255,7 +255,7 @@ export default function SetsList() {
                   disabled={tableDisabled || selectedIds.length === 0}
                   sx={{ color: "red" }}
                 >
-                  Delete
+                  <span className="label">Delete</span>
                 </Button>
               </>
             ),
