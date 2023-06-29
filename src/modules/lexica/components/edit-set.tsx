@@ -1,6 +1,8 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import ControlPointIcon from "@mui/icons-material/ControlPoint";
+import RefreshIcon from "@mui/icons-material/Refresh";
 import RemoveCircleOutlineIcon from "@mui/icons-material/RemoveCircleOutline";
+import SaveAsIcon from "@mui/icons-material/SaveAs";
 import {
   Button,
   CircularProgress,
@@ -23,9 +25,10 @@ import { ErrorCodes } from "@app/models/error-codes";
 import { IErrorHandlingInfo } from "@app/models/error-handling-info";
 import { IErrorWindowState } from "@app/models/error-window-state";
 import { Pages, Urls } from "@app/router/urls";
-import { createSetAsync, getSetAsync } from "@lexica/api/sets-api";
+import { createSetAsync, getSetAsync, updateSetAsync } from "@lexica/api/sets-api";
 import { ICreateSetRequest } from "@lexica/models/create-set-request";
 import { EditSetErrorsKeys, editSetErrors } from "@lexica/models/edit-set-errors";
+import { IUpdateSetRequest } from "@lexica/models/update-set-request";
 import { WordType } from "@lexica/models/word-type";
 import { mapToWordType } from "@lexica/services/mode-type-mapper";
 import { Set } from "../models/set";
@@ -95,6 +98,7 @@ export default function EditSet(props: IEditSetProps) {
     message: "",
     onCloseEvent: () => null,
   });
+  const [refreshKey, setRefreshKey] = useState<number>(0);
 
   useEffect(() => {
     if (props.setId === null) {
@@ -134,7 +138,7 @@ export default function EditSet(props: IEditSetProps) {
     getSet();
 
     return () => abortController.abort();
-  }, [props.setId, navigate]);
+  }, [props.setId, navigate, refreshKey]);
 
   useEffect(() => {
     setFocus("name");
@@ -162,8 +166,13 @@ export default function EditSet(props: IEditSetProps) {
 
     try {
       setErrorMessages(null);
-      const request: ICreateSetRequest = mapFormDataToRequest(data);
-      await createSetAsync(new AbortController(), request);
+      if (props.setId === null) {
+        const createRequest: ICreateSetRequest = mapFormDataToCreateRequest(data);
+        await createSetAsync(new AbortController(), createRequest);
+      } else {
+        const updateRequest: IUpdateSetRequest = mapFormDataToUpdateRequest(data);
+        await updateSetAsync(new AbortController(), updateRequest);
+      }
 
       navigate(Urls.getPath(Pages.sets));
     } catch (error) {
@@ -173,7 +182,7 @@ export default function EditSet(props: IEditSetProps) {
     }
   };
 
-  const mapFormDataToRequest = (data: SetFormInput): ICreateSetRequest => {
+  const mapFormDataToCreateRequest = (data: SetFormInput): ICreateSetRequest => {
     return {
       setName: data.name,
       entries: data.entries.map((entry) => ({
@@ -184,6 +193,15 @@ export default function EditSet(props: IEditSetProps) {
           .map((translation) => translation?.trim())
           .filter((translation) => translation != null),
       })),
+    };
+  };
+
+  const mapFormDataToUpdateRequest = (data: SetFormInput): IUpdateSetRequest => {
+    const request = mapFormDataToCreateRequest(data);
+
+    return {
+      ...request,
+      setId: props.setId as number,
     };
   };
 
@@ -309,9 +327,28 @@ export default function EditSet(props: IEditSetProps) {
             </div>
           )}
           <div className="main-buttons">
-            <Button variant="contained" type="submit" size="medium" disabled={isLoading}>
+            <Button
+              variant="contained"
+              type="submit"
+              size="medium"
+              endIcon={<SaveAsIcon />}
+              color="success"
+              disabled={isLoading}
+            >
               {props.setId === null ? "Create" : "Update"}
             </Button>
+            {props.setId !== null && (
+              <Button
+                variant="contained"
+                type="button"
+                size="medium"
+                endIcon={<RefreshIcon />}
+                disabled={isLoading}
+                onClick={() => setRefreshKey((x) => 1 - x)}
+              >
+                Refresh
+              </Button>
+            )}
           </div>
         </form>
         {isLoading && (

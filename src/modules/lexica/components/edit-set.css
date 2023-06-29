@@ -56,6 +56,9 @@
 .new-set-page--container form .entry .buttons {
   width: 7rem;
 }
+.new-set-page--container .form .main-buttons > button {
+  margin-right: 1rem;
+}
 .new-set-page--container .form .curtain {
   align-items: center;
   background-color: rgba(255, 255, 255, 0.5);
