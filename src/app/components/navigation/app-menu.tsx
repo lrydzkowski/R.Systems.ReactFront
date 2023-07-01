@@ -3,6 +3,7 @@ import { Collapse, List, ListItemButton, ListItemText } from "@mui/material";
 import { NavLink, useNavigate } from "react-router-dom";
 import { Pages, Urls } from "@app/router/urls";
 import "./app-menu.css";
+import NavigationHotkeys from "./navigation-hotkeys";
 
 export interface AppMenuProps {
   handleMenuLinkClick?: () => void;
@@ -60,6 +61,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
           <ListItemText primary={Urls.getName(Pages.about)} />
         </ListItemButton>
       </AuthenticatedTemplate>
+      <NavigationHotkeys></NavigationHotkeys>
     </List>
   );
 }
