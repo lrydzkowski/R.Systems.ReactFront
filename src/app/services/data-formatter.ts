@@ -11,7 +11,7 @@ export const formatDate = (date: string): string => {
     "-" +
     (dateObj.getMonth() + 1).toString().padStart(2, "0") +
     "-" +
-    (dateObj.getDay() + 1).toString().padStart(2, "0") +
+    dateObj.getDate().toString().padStart(2, "0") +
     " " +
     dateObj.getHours().toString().padStart(2, "0") +
     ":" +
