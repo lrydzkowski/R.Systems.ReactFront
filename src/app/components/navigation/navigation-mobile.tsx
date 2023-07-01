@@ -1,3 +1,4 @@
+import { useIsAuthenticated } from "@azure/msal-react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Fade, IconButton, Menu } from "@mui/material";
 import { useState } from "react";
@@ -5,6 +6,7 @@ import AppMenu from "./app-menu";
 import LogoutButton from "./logout-button";
 
 export default function NavigationMobile() {
+  const isAuthenticated = useIsAuthenticated();
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -28,7 +30,7 @@ export default function NavigationMobile() {
       >
         <AppMenu handleMenuLinkClick={handleClose} />
       </Menu>
-      <LogoutButton />
+      {isAuthenticated && <LogoutButton />}
     </>
   );
 }
