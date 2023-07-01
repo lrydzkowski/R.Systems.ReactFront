@@ -77,7 +77,7 @@ export class Question {
       .sort()
       .join(Question.separator);
 
-    if (givenAnswerToCompare === answerToCompare) {
+    if (givenAnswerToCompare.toLowerCase() === answerToCompare.toLowerCase()) {
       return true;
     }
 
