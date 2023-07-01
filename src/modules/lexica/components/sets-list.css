@@ -16,9 +16,6 @@
 .MuiDataGrid-columnHeader:focus-within {
   outline-offset: -2px !important;
 }
-.MuiDataGrid-main {
-  min-height: 15rem;
-}
 .MuiDataGrid-footerContainer {
   justify-content: left !important;
 }

@@ -236,68 +236,70 @@ export default function EditSet(props: IEditSetProps) {
             </div>
             {fields.map((field, i) => (
               <div className="entry" key={field.id}>
-                <div className="word field">
-                  <Controller
-                    name={`entries.${i}.word`}
-                    defaultValue={""}
-                    control={control}
-                    rules={{ required: true, maxLength: 200 }}
-                    render={({ field: { ref, ...newField } }) => (
-                      <TextField
-                        label="Word"
-                        variant="outlined"
-                        error={errors.entries && errors.entries[i]?.word ? true : false}
-                        helperText={errors.entries && errors.entries[i]?.word ? errors.entries[i]?.word?.message : ""}
-                        disabled={isLoading}
-                        {...newField}
-                        inputRef={ref}
-                      />
-                    )}
-                  />
-                </div>
-                <div className="word-type field">
-                  <Controller
-                    name={`entries.${i}.wordType`}
-                    defaultValue={WordType.Noun}
-                    control={control}
-                    render={({ field }) => (
-                      <FormControl fullWidth error={errors.entries && errors.entries[i]?.wordType ? true : false}>
-                        <InputLabel id="word-type-0-label">Word Type</InputLabel>
-                        <Select label="Word Type" labelId="word-type-0-label" {...field} disabled={isLoading}>
-                          <MenuItem value={WordType.Noun}>Noun</MenuItem>
-                          <MenuItem value={WordType.Verb}>Verb</MenuItem>
-                          <MenuItem value={WordType.Adjective}>Adjective</MenuItem>
-                          <MenuItem value={WordType.Adverb}>Adverb</MenuItem>
-                        </Select>
-                        {errors.entries && errors.entries[i]?.wordType && (
-                          <FormHelperText>errors.entries[i]?.wordType.message</FormHelperText>
-                        )}
-                      </FormControl>
-                    )}
-                  />
-                </div>
-                <div className="translations field">
-                  <Controller
-                    name={`entries.${i}.translations`}
-                    defaultValue={""}
-                    control={control}
-                    rules={{ required: true, maxLength: 200 }}
-                    render={({ field: { ref, ...newField } }) => (
-                      <TextField
-                        label="Translations"
-                        variant="outlined"
-                        error={errors.entries && errors.entries[i]?.translations ? true : false}
-                        helperText={
-                          errors.entries && errors.entries[i]?.translations
-                            ? errors.entries[i]?.translations?.message
-                            : ""
-                        }
-                        disabled={isLoading}
-                        {...newField}
-                        inputRef={ref}
-                      />
-                    )}
-                  />
+                <div className="entry-fields">
+                  <div className="word field">
+                    <Controller
+                      name={`entries.${i}.word`}
+                      defaultValue={""}
+                      control={control}
+                      rules={{ required: true, maxLength: 200 }}
+                      render={({ field: { ref, ...newField } }) => (
+                        <TextField
+                          label="Word"
+                          variant="outlined"
+                          error={errors.entries && errors.entries[i]?.word ? true : false}
+                          helperText={errors.entries && errors.entries[i]?.word ? errors.entries[i]?.word?.message : ""}
+                          disabled={isLoading}
+                          {...newField}
+                          inputRef={ref}
+                        />
+                      )}
+                    />
+                  </div>
+                  <div className="word-type field">
+                    <Controller
+                      name={`entries.${i}.wordType`}
+                      defaultValue={WordType.Noun}
+                      control={control}
+                      render={({ field }) => (
+                        <FormControl fullWidth error={errors.entries && errors.entries[i]?.wordType ? true : false}>
+                          <InputLabel id="word-type-0-label">Word Type</InputLabel>
+                          <Select label="Word Type" labelId="word-type-0-label" {...field} disabled={isLoading}>
+                            <MenuItem value={WordType.Noun}>Noun</MenuItem>
+                            <MenuItem value={WordType.Verb}>Verb</MenuItem>
+                            <MenuItem value={WordType.Adjective}>Adjective</MenuItem>
+                            <MenuItem value={WordType.Adverb}>Adverb</MenuItem>
+                          </Select>
+                          {errors.entries && errors.entries[i]?.wordType && (
+                            <FormHelperText>errors.entries[i]?.wordType.message</FormHelperText>
+                          )}
+                        </FormControl>
+                      )}
+                    />
+                  </div>
+                  <div className="translations field">
+                    <Controller
+                      name={`entries.${i}.translations`}
+                      defaultValue={""}
+                      control={control}
+                      rules={{ required: true, maxLength: 200 }}
+                      render={({ field: { ref, ...newField } }) => (
+                        <TextField
+                          label="Translations"
+                          variant="outlined"
+                          error={errors.entries && errors.entries[i]?.translations ? true : false}
+                          helperText={
+                            errors.entries && errors.entries[i]?.translations
+                              ? errors.entries[i]?.translations?.message
+                              : ""
+                          }
+                          disabled={isLoading}
+                          {...newField}
+                          inputRef={ref}
+                        />
+                      )}
+                    />
+                  </div>
                 </div>
                 <div className="buttons">
                   {i === fields.length - 1 && (
@@ -306,12 +308,19 @@ export default function EditSet(props: IEditSetProps) {
                       size="large"
                       onClick={() => append(defaultValues.entries[0], { shouldFocus: true })}
                       disabled={isLoading}
+                      className="add-button"
                     >
                       <ControlPointIcon fontSize="inherit" />
                     </IconButton>
                   )}
                   {i > 0 && (
-                    <IconButton color="error" size="large" onClick={() => remove(i)} disabled={isLoading}>
+                    <IconButton
+                      color="error"
+                      size="large"
+                      onClick={() => remove(i)}
+                      disabled={isLoading}
+                      className="remove-button"
+                    >
                       <RemoveCircleOutlineIcon fontSize="inherit" />
                     </IconButton>
                   )}
