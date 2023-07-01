@@ -4,7 +4,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
 import DialogError from "@app/components/common/dialog-error";
 import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
-import CustomDataGridToolbarWithFilter from "@table/components/custom-data-grid-toolbar-with-filter";
+import CustomDataGridToolbarWithoutFilter from "@table/components/custom-data-grid-toolbar-without-filter";
 import { getSetAsync } from "@lexica/api/sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Set } from "@lexica/models/set";
@@ -51,7 +51,7 @@ export default function SetDetails(props: ISetDetailsProps) {
     }
   );
   const entries = useMemo(() => {
-    return setData.data?.flatMap((set) => set.entries);
+    return setData.data?.flatMap((set) => set.entries).map((entry: Entry, index: number) => ({ ...entry, id: index }));
   }, [setData]);
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
@@ -66,13 +66,13 @@ export default function SetDetails(props: ISetDetailsProps) {
         getRowClassName={(params) =>
           params.indexRelativeToCurrentPage % 2 === 0 ? "sets-list--even" : "sets-list--odd"
         }
-        getRowId={(row: Entry) => row.word}
-        slots={{ toolbar: CustomDataGridToolbarWithFilter }}
+        slots={{ toolbar: CustomDataGridToolbarWithoutFilter }}
         slotProps={{
           toolbar: {
             quickFilterProps: { debounceMs: 500 },
+            header: <>Content</>,
             buttons: (
-              <div className="sets-list--buttons">
+              <>
                 <Button
                   variant="text"
                   startIcon={<RefreshIcon />}
@@ -81,7 +81,7 @@ export default function SetDetails(props: ISetDetailsProps) {
                 >
                   Refresh
                 </Button>
-              </div>
+              </>
             ),
           },
         }}

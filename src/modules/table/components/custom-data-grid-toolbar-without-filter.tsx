@@ -1,14 +1,13 @@
 import { Typography } from "@mui/material";
-import { GridToolbarContainer, GridToolbarQuickFilter, GridToolbarQuickFilterProps } from "@mui/x-data-grid";
-import "./custom-data-grid-toolbar.css";
+import { GridToolbarContainer } from "@mui/x-data-grid";
+import "./custom-data-grid-toolbar-without-filter.css";
 
-interface ICustomDataGridToolbarProps {
-  quickFilterProps: GridToolbarQuickFilterProps;
+interface ICustomDataGridToolbarWithoutFilterProps {
   header: JSX.Element;
   buttons: JSX.Element;
 }
 
-export default function CustomDataGridToolbar(props: ICustomDataGridToolbarProps) {
+export default function CustomDataGridToolbarWithoutFilter(props: ICustomDataGridToolbarWithoutFilterProps) {
   return (
     <GridToolbarContainer className="grid-toolbar">
       <Typography variant="subtitle1" component="h2">
@@ -17,7 +16,6 @@ export default function CustomDataGridToolbar(props: ICustomDataGridToolbarProps
       <div className="vertical-separator"></div>
       <div className="sets-list--buttons">{props.buttons}</div>
       <div className="vertical-separator"></div>
-      <GridToolbarQuickFilter {...props.quickFilterProps} />
     </GridToolbarContainer>
   );
 }

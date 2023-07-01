@@ -3,15 +3,16 @@ import { ErrorCodes } from "@app/models/error-codes";
 import { UrlInfo } from "@app/models/url-info";
 import { buildRequestConfig } from "./build-request-config";
 
-export function sendGetRequest<TData>(
+export function sendPostRequest<TRequestData, TResponseData>(
   abortController: AbortController,
+  request: TRequestData,
   baseUrl: string,
   urlPath: string,
   urlPathParameters: { [key: string]: string } = {},
   urlParameters: object = {},
   responseType: ResponseType = "json",
   accessToken: string | null = null
-): Promise<AxiosResponse<TData> | void> {
+): Promise<AxiosResponse<TResponseData> | void> {
   const requestConfig: AxiosRequestConfig = buildRequestConfig(
     abortController,
     accessToken,
@@ -20,7 +21,7 @@ export function sendGetRequest<TData>(
   );
   const fullUrl = new UrlInfo(baseUrl, urlPath, urlPathParameters).build();
 
-  return axios.get(fullUrl, requestConfig).catch((error: AxiosError) => {
+  return axios.post(fullUrl, request, requestConfig).catch((error: AxiosError) => {
     if (error.code === ErrorCodes.cancelled) {
       return;
     }

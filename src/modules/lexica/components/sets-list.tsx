@@ -1,3 +1,6 @@
+import AddIcon from "@mui/icons-material/Add";
+import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import { Button } from "@mui/material";
@@ -14,14 +17,18 @@ import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DialogError from "@app/components/common/dialog-error";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
+import { IErrorWindowState } from "@app/models/error-window-state";
 import { ListInfo } from "@app/models/list-info";
 import { IListParameters, SortingOrder } from "@app/models/list-parameters";
+import { Pages, Urls } from "@app/router/urls";
 import CustomDataGridToolbar from "@table/components/custom-data-grid-toolbar";
-import { getSetsAsync } from "@lexica/api/sets-api";
+import { deleteSetsAsync, getSetsAsync } from "@lexica/api/sets-api";
 import { Set } from "@lexica/models/set";
+import { SetsListErrorsKeys, setsListErrors } from "@lexica/models/sets-list-errors";
 import { combineIds } from "@lexica/services/ids-parser";
 import LearningModeService from "@lexica/services/learning-mode-service";
 import ChooseModeDialog from "./choose-mode-dialog";
+import DeleteSetConfirmationDialog from "./delete-set-confirmation-dialog";
 import "./sets-list.css";
 
 export default function SetsList() {
@@ -32,9 +39,14 @@ export default function SetsList() {
     sortingOrder: "desc",
     searchQuery: null,
   });
+  const [chosenId, setChosenId] = useState<number>(0);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [refreshKey, setRefreshKey] = useState<number>(0);
-  const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
+  const [errorWindowState, setErrorWindowState] = useState<IErrorWindowState>({
+    isOpen: false,
+    message: "",
+    onCloseEvent: null,
+  });
   const navigate = useNavigate();
   const [openChooseModeDialog, setOpenChooseModeDialog] = useState<boolean>(false);
   const columns = useMemo<GridColDef<Set>[]>(
@@ -42,13 +54,25 @@ export default function SetsList() {
       {
         field: "actions",
         type: "actions",
-        width: 50,
+        width: 150,
         getActions: (params: { row: { setId: number } }) => [
           <GridActionsCellItem
             key="open"
             icon={<OpenInNewIcon color="primary" />}
             onClick={() => openSet(params.row.setId)}
             label="Open"
+          />,
+          <GridActionsCellItem
+            key="delete"
+            icon={<DeleteOutlinedIcon sx={{ color: "red" }} />}
+            onClick={() => deleteSet(params.row.setId)}
+            label="Delete"
+          />,
+          <GridActionsCellItem
+            key="edit"
+            icon={<EditOutlinedIcon color="primary" />}
+            onClick={() => editSet(params.row.setId)}
+            label="Edit"
           />,
         ],
       },
@@ -63,14 +87,30 @@ export default function SetsList() {
     []
   );
   const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, () => {
-    setIsErrorOpen(true);
+    setErrorWindowState({
+      isOpen: true,
+      message: setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInGettingList) ?? "",
+      onCloseEvent: null,
+    });
   });
+  const [isDeleteConfirmationDialogOpen, setIsDeleteConfirmationDialogOpen] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const tableDisabled = setsData.processing || isLoading;
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
+  const navigateToNewSetForm = () => {
+    navigate(Urls.getPath(Pages.newSet));
+  };
+
   const openSet = (setId: number) => {
-    setSelectedIds([setId]);
+    setChosenId(setId);
     setOpenChooseModeDialog(true);
+  };
+
+  const deleteSet = (setId: number) => {
+    setChosenId(setId);
+    setIsDeleteConfirmationDialogOpen(true);
   };
 
   const openSets = () => {
@@ -81,9 +121,19 @@ export default function SetsList() {
     setOpenChooseModeDialog(true);
   };
 
+  const deleteSets = () => {
+    if (selectedIds.length === 0) {
+      return;
+    }
+
+    setIsDeleteConfirmationDialogOpen(true);
+  };
+
   const handleChooseModeDialogClose = (selectedMode: string | null) => {
     setOpenChooseModeDialog(false);
     if (selectedMode === null) {
+      setChosenId(0);
+
       return;
     }
 
@@ -92,11 +142,60 @@ export default function SetsList() {
       return;
     }
 
-    if (selectedIds.length === 0) {
+    let ids = [];
+    if (chosenId === 0) {
+      ids = [...selectedIds];
+    } else {
+      ids.push(chosenId);
+    }
+
+    if (ids.length === 0) {
       return;
     }
 
-    navigate("/" + path.replace(":setIds", combineIds(selectedIds)));
+    navigate("/" + path.replace(":setIds", combineIds(ids)));
+  };
+
+  const handleCloseDeleteSetConfirmationDialog = async (agreed: boolean) => {
+    try {
+      setIsDeleteConfirmationDialogOpen(false);
+      if (!agreed) {
+        setChosenId(0);
+
+        return;
+      }
+
+      let ids = [];
+      if (chosenId === 0) {
+        ids = [...selectedIds];
+      } else {
+        ids.push(chosenId);
+      }
+
+      if (ids.length === 0) {
+        return;
+      }
+
+      setIsLoading(true);
+      await deleteSetsAsync(new AbortController(), ids);
+      setRefreshKey((x) => 1 - x);
+    } catch (error) {
+      setErrorWindowState({
+        isOpen: true,
+        message: setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInDeletingSets) ?? "",
+        onCloseEvent: null,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const editSet = (setId: number) => {
+    if (!setId) {
+      return;
+    }
+
+    navigate(Urls.getPath(Pages.editSet).replace(":setId", setId.toString()));
   };
 
   return (
@@ -104,7 +203,7 @@ export default function SetsList() {
       <DataGrid
         rows={setsData.data?.data ?? []}
         rowCount={setsData.data?.count ?? 0}
-        loading={setsData.processing}
+        loading={tableDisabled}
         pageSizeOptions={[listParameters.pageSize]}
         pagination
         paginationModel={{ page: listParameters.page, pageSize: listParameters.pageSize }}
@@ -125,26 +224,40 @@ export default function SetsList() {
         slots={{ toolbar: CustomDataGridToolbar }}
         slotProps={{
           toolbar: {
-            quickFilterProps: { debounceMs: 500 },
+            quickFilterProps: { debounceMs: 500, disabled: tableDisabled },
+            header: <>Sets</>,
             buttons: (
-              <div className="sets-list--buttons">
+              <>
+                <Button variant="text" startIcon={<RefreshIcon />} onClick={handleRefresh} disabled={tableDisabled}>
+                  <span className="label">Refresh</span>
+                </Button>
                 <Button
                   variant="text"
-                  startIcon={<RefreshIcon />}
-                  onClick={handleRefresh}
-                  disabled={setsData.processing}
+                  startIcon={<AddIcon />}
+                  onClick={() => navigateToNewSetForm()}
+                  sx={{ color: "green" }}
+                  disabled={tableDisabled}
                 >
-                  Refresh
+                  <span className="label">New</span>
                 </Button>
                 <Button
                   variant="text"
                   startIcon={<OpenInNewIcon />}
                   onClick={() => openSets()}
-                  disabled={setsData.processing || selectedIds.length === 0}
+                  disabled={tableDisabled || selectedIds.length === 0}
                 >
-                  Open
+                  <span className="label">Open</span>
                 </Button>
-              </div>
+                <Button
+                  variant="text"
+                  startIcon={<DeleteOutlinedIcon />}
+                  onClick={() => deleteSets()}
+                  disabled={tableDisabled || selectedIds.length === 0}
+                  sx={{ color: "red" }}
+                >
+                  <span className="label">Delete</span>
+                </Button>
+              </>
             ),
           },
         }}
@@ -153,6 +266,10 @@ export default function SetsList() {
         sortingMode="server"
         sortingOrder={["desc", "asc"]}
         onSortModelChange={(model: GridSortModel) => {
+          if (tableDisabled) {
+            return;
+          }
+
           if (model.length === 0) {
             return;
           }
@@ -165,6 +282,10 @@ export default function SetsList() {
         }}
         filterMode="server"
         onFilterModelChange={(model: GridFilterModel) => {
+          if (tableDisabled) {
+            return;
+          }
+
           if (!model.quickFilterValues || model.quickFilterValues.length === 0) {
             setListParameters({
               ...listParameters,
@@ -187,11 +308,15 @@ export default function SetsList() {
         }
       />
       <DialogError
-        isErrorOpen={isErrorOpen}
-        errorMsg="An unexpected error has occurred in getting the list of sets."
-        setIsErrorOpen={(state) => setIsErrorOpen(state)}
+        isErrorOpen={errorWindowState.isOpen}
+        errorMsg={errorWindowState.message}
+        setIsErrorOpen={() => setErrorWindowState({ isOpen: false, message: "", onCloseEvent: null })}
       ></DialogError>
       <ChooseModeDialog open={openChooseModeDialog} onClose={handleChooseModeDialogClose} />
+      <DeleteSetConfirmationDialog
+        isOpen={isDeleteConfirmationDialogOpen}
+        onClose={handleCloseDeleteSetConfirmationDialog}
+      />
     </>
   );
 }

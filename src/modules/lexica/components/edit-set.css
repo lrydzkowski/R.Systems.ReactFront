@@ -1,0 +1,122 @@
+.new-set-page--container {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+}
+.new-set-page--container h2 {
+  font-size: 1.2rem;
+}
+.new-set-page--container div.error {
+  margin-bottom: 2rem;
+}
+.new-set-page--container div.error p {
+  color: red;
+}
+.new-set-page--container .form {
+  display: flex;
+  flex-grow: 1;
+  max-width: 1000px;
+  overflow: auto;
+  position: relative;
+}
+.new-set-page--container form {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+.new-set-page--container form .form-body {
+  border-bottom: 1px dashed #e0e0e0;
+  border-top: 1px dashed #e0e0e0;
+  flex-grow: 1;
+  margin-bottom: 2rem;
+  overflow: auto;
+  padding-top: 1rem;
+}
+.new-set-page--container form .field > div {
+  width: 100%;
+}
+.new-set-page--container form .name {
+  margin-bottom: 1rem;
+  width: calc(100% - 7.5rem);
+}
+.new-set-page--container form .entry {
+  align-items: end;
+  border-bottom: 1px dashed #e0e0e0;
+  column-gap: 0.5rem;
+  display: flex;
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.new-set-page--container form .entry:last-of-type {
+  border-bottom: 0px;
+}
+.new-set-page--container form .entry-fields {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  row-gap: 0.7rem;
+}
+.new-set-page--container form .entry .word {
+  width: 100%;
+}
+.new-set-page--container form .entry .word-type {
+  width: 100%;
+}
+.new-set-page--container form .entry .translations {
+  flex-grow: 1;
+}
+.new-set-page--container form .entry .buttons {
+  display: flex;
+  flex-direction: column;
+  width: 3.5rem;
+}
+.new-set-page--container .form .entry .buttons > button.remove-button {
+  order: -1;
+}
+.new-set-page--container .form .main-buttons > button {
+  margin-right: 1rem;
+}
+.new-set-page--container .form .curtain {
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.5);
+  display: flex;
+  height: 100%;
+  justify-content: center;
+  position: absolute;
+  width: 100%;
+}
+.new-set-page--container .form .curtain .loading {
+  background-color: #fff;
+  height: 40px;
+  width: 40px;
+  z-index: 2;
+}
+
+@media all and (min-width: 800px) {
+  .new-set-page--container form .name {
+    width: 12rem;
+  }
+  .new-set-page--container form .entry-fields {
+    column-gap: 0.5rem;
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+    row-gap: 0rem;
+  }
+  .new-set-page--container form .entry .word {
+    width: 12rem;
+  }
+  .new-set-page--container form .entry .word-type {
+    width: 12rem;
+  }
+  .new-set-page--container form .entry .translations {
+    flex-grow: 1;
+  }
+  .new-set-page--container form .entry .buttons {
+    flex-direction: row;
+    width: 7rem;
+  }
+  .new-set-page--container .form .entry .buttons > button.remove-button {
+    order: initial;
+  }
+}
