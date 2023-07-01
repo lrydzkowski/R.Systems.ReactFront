@@ -3,5 +3,8 @@ a.active {
   background-color: rgba(25, 118, 210, 0.08);
 }
 a.app-menu--sub-menu-list-item-button {
+  padding-left: 1.5rem;
+}
+a.app-menu--sub-menu-level-2-list-item-button {
   padding-left: 2rem;
 }

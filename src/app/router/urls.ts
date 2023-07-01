@@ -25,9 +25,9 @@ export class Urls {
     [Pages.home, { path: "/home", name: "Home", validLink: true }],
     [Pages.lexicaLabel, { path: "/lexica", name: "Lexica", validLink: false }],
     [Pages.sets, { path: "/lexica/sets", name: "Sets", validLink: true }],
-    [Pages.newSet, { path: "/lexica/new-set", name: "New set", validLink: true }],
-    [Pages.editSetLabel, { path: "/lexica/edit-set", name: "Edit set", validLink: false }],
-    [Pages.editSet, { path: "/lexica/edit-set/:setId", validLink: true, getNameAsync: getSetNamesAsync }],
+    [Pages.newSet, { path: "/lexica/sets/new-set", name: "New set", validLink: true }],
+    [Pages.editSetLabel, { path: "/lexica/sets/edit-set", name: "Edit set", validLink: false }],
+    [Pages.editSet, { path: "/lexica/sets/edit-set/:setId", validLink: true, getNameAsync: getSetNamesAsync }],
     [Pages.setLabel, { path: "/lexica/sets/content", name: "Content", validLink: false }],
     [
       Pages.set,
