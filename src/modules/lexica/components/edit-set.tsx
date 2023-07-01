@@ -189,7 +189,7 @@ export default function EditSet(props: IEditSetProps) {
         word: entry.word?.trim(),
         wordType: entry.wordType,
         translations: entry.translations
-          .split(" ")
+          .split(",")
           .map((translation) => translation?.trim())
           .filter((translation) => translation != null),
       })),
