@@ -14,7 +14,7 @@ import {
   GridRowId,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DialogError from "@app/components/common/dialog-error";
 import { useFocusHandler } from "@app/hooks/use-focus-handler";
