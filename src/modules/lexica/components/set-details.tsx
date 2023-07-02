@@ -1,5 +1,5 @@
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useMemo, useState } from "react";
 import DialogError from "@app/components/common/dialog-error";
@@ -74,6 +74,7 @@ export default function SetDetails(props: ISetDetailsProps) {
             buttons: (
               <>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<RefreshIcon />}
                   onClick={handleRefresh}
@@ -81,6 +82,15 @@ export default function SetDetails(props: ISetDetailsProps) {
                 >
                   Refresh
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={handleRefresh}
+                  disabled={setData.processing}
+                  color="primary"
+                  size="large"
+                >
+                  <RefreshIcon fontSize="inherit" />
+                </IconButton>
               </>
             ),
           },

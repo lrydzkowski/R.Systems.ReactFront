@@ -19,3 +19,46 @@
 .grid-toolbar button {
   margin-right: 0.5rem;
 }
+.grid-toolbar.MuiDataGrid-toolbarContainer {
+  margin-left: 0;
+}
+.grid-toolbar.MuiDataGrid-toolbarContainer .vertical-separator {
+  margin-left: 0px;
+  margin-right: 0px;
+}
+.grid-toolbar.MuiDataGrid-toolbarContainer .vertical-separator.second {
+  margin-right: 1rem;
+}
+.grid-toolbar.MuiDataGrid-toolbarContainer button.full-button {
+  display: none;
+}
+.grid-toolbar.MuiDataGrid-toolbarContainer button.small-button {
+  margin-right: 0;
+  padding-bottom: 0;
+  padding-top: 0;
+}
+.grid-toolbar.MuiDataGrid-toolbarContainer button.small-button {
+  display: inline-flex;
+}
+
+@media all and (min-width: 600px) {
+  .grid-toolbar.MuiDataGrid-toolbarContainer {
+    margin-left: 1rem;
+  }
+}
+
+@media all and (min-width: 850px) {
+  .grid-toolbar.MuiDataGrid-toolbarContainer .vertical-separator {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  .grid-toolbar.MuiDataGrid-toolbarContainer button {
+    margin-right: 0.5rem;
+  }
+  .grid-toolbar.MuiDataGrid-toolbarContainer button.full-button {
+    display: inline-flex;
+  }
+  .grid-toolbar.MuiDataGrid-toolbarContainer button.small-button {
+    display: none;
+  }
+}

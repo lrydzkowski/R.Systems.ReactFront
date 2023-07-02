@@ -1,9 +1,10 @@
 import AddIcon from "@mui/icons-material/Add";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -228,35 +229,80 @@ export default function SetsList() {
             header: <>Sets</>,
             buttons: (
               <>
-                <Button variant="text" startIcon={<RefreshIcon />} onClick={handleRefresh} disabled={tableDisabled}>
+                <Button
+                  className="full-button"
+                  variant="text"
+                  startIcon={<RefreshIcon />}
+                  onClick={handleRefresh}
+                  disabled={tableDisabled}
+                >
                   <span className="label">Refresh</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={handleRefresh}
+                  disabled={tableDisabled}
+                  color="primary"
+                  size="large"
+                >
+                  <RefreshIcon fontSize="inherit" />
+                </IconButton>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<AddIcon />}
-                  onClick={() => navigateToNewSetForm()}
+                  onClick={navigateToNewSetForm}
                   sx={{ color: "green" }}
                   disabled={tableDisabled}
                 >
                   <span className="label">New</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={navigateToNewSetForm}
+                  disabled={tableDisabled}
+                  sx={{ color: "green" }}
+                  size="large"
+                >
+                  <AddCircleOutlineIcon fontSize="inherit" />
+                </IconButton>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<OpenInNewIcon />}
-                  onClick={() => openSets()}
+                  onClick={openSets}
                   disabled={tableDisabled || selectedIds.length === 0}
                 >
                   <span className="label">Open</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={openSets}
+                  disabled={tableDisabled || selectedIds.length === 0}
+                  size="large"
+                  color="primary"
+                >
+                  <OpenInNewIcon fontSize="inherit" />
+                </IconButton>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<DeleteOutlinedIcon />}
-                  onClick={() => deleteSets()}
+                  onClick={deleteSets}
                   disabled={tableDisabled || selectedIds.length === 0}
                   sx={{ color: "red" }}
                 >
                   <span className="label">Delete</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={deleteSets}
+                  disabled={tableDisabled || selectedIds.length === 0}
+                  sx={{ color: "red" }}
+                  size="large"
+                >
+                  <DeleteOutlinedIcon fontSize="inherit" />
+                </IconButton>
               </>
             ),
           },
