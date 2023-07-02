@@ -4,6 +4,7 @@ import { Fade, IconButton, Menu } from "@mui/material";
 import { useState } from "react";
 import AppMenu from "./app-menu";
 import LogoutButton from "./logout-button";
+import "./navigation-mobile.css";
 
 export default function NavigationMobile() {
   const isAuthenticated = useIsAuthenticated();
@@ -26,7 +27,10 @@ export default function NavigationMobile() {
         open={open}
         onClose={handleClose}
         TransitionComponent={Fade}
-        PaperProps={{ sx: { width: "200px" } }}
+        slotProps={{
+          paper: { sx: { width: "200px" } },
+        }}
+        className="mobile-menu"
       >
         <AppMenu handleMenuLinkClick={handleClose} />
       </Menu>
