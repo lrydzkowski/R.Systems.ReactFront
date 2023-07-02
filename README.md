@@ -1,17 +1,25 @@
 # r-systems-react-front
 
-R.Systems front-end.
+React SPA (React 18 + Vite 4) acting as the web frontend for my different ideas connected with creating software.
 
-## Docker
+Currently it contains one module called Lexica. Lexica is the English vocabulary learning software.
 
-### Create image
+Back-end of this module: <https://github.com/lrydzkowski/R.Systems.Lexica>
 
-```powershell
-docker build -t r-systems-react-front -f .\Dockerfile .
-```
+## Video Presentation
 
-### Run container
+[![Video](https://img.youtube.com/vi/6aIvXA-pBfk/maxresdefault.jpg)](https://www.youtube.com/watch?v=6aIvXA-pBfk)
 
-```powershell
-docker run -d --name r-systems-react-front -p 8096:80 r-systems-react-front
-```
+## Screenshots
+
+![screenshot1.png](docs/screenshots/screenshot1.png)
+
+![screenshot2.png](docs/screenshots/screenshot2.png)
+
+![screenshot3.png](docs/screenshots/screenshot3.png)
+
+![screenshot4.png](docs/screenshots/screenshot4.png)
+
+![screenshot5.png](docs/screenshots/screenshot5.png)
+
+![screenshot6.png](docs/screenshots/screenshot6.png)
