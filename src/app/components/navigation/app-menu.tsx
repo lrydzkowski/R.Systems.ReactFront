@@ -40,6 +40,7 @@ export default function AppMenu({ handleMenuLinkClick = () => null }: AppMenuPro
               component={NavLink}
               to={Urls.getPath(Pages.sets)}
               onClick={handleMenuLinkClick}
+              end
             >
               <ListItemText primary={Urls.getName(Pages.sets)} />
             </ListItemButton>
