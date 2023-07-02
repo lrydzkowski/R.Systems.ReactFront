@@ -20,7 +20,7 @@
   margin-right: 0.5rem;
 }
 .grid-toolbar.MuiDataGrid-toolbarContainer {
-  margin-left: 0;
+  margin-left: 0 !important;
 }
 .grid-toolbar.MuiDataGrid-toolbarContainer .vertical-separator {
   margin-left: 0px;
@@ -43,7 +43,7 @@
 
 @media all and (min-width: 600px) {
   .grid-toolbar.MuiDataGrid-toolbarContainer {
-    margin-left: 1rem;
+    margin-left: 1rem !important;
   }
 }
 
