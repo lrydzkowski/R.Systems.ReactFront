@@ -99,6 +99,7 @@ export default function EditSet(props: IEditSetProps) {
     onCloseEvent: () => null,
   });
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [numOfEntries, setNumOfEntries] = useState<number>(0);
 
   useEffect(() => {
     if (props.setId === null) {
@@ -161,6 +162,10 @@ export default function EditSet(props: IEditSetProps) {
     }
   }, [submitError, setError]);
 
+  useEffect(() => {
+    setNumOfEntries(fields.length);
+  }, [fields]);
+
   const onSubmit: SubmitHandler<SetFormInput> = async (data: SetFormInput) => {
     setIsLoading(true);
 
@@ -208,7 +213,8 @@ export default function EditSet(props: IEditSetProps) {
   return (
     <div className="new-set-page--container">
       <Typography variant="subtitle1" component="h2">
-        {props.setId === null ? "New Set" : "Edit Set"}
+        {props.setId === null ? <span>New Set</span> : <span>Edit Set</span>}
+        <span className="entries-counter">(entries: {numOfEntries})</span>
       </Typography>
       <div className="form">
         <form onSubmit={handleSubmit(onSubmit)}>

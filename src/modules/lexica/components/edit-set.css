@@ -6,6 +6,10 @@
 .new-set-page--container h2 {
   font-size: 1.2rem;
 }
+.new-set-page--container h2 .entries-counter {
+  font-size: 1rem;
+  margin-left: 1rem;
+}
 .new-set-page--container div.error {
   margin-bottom: 2rem;
 }
