@@ -14,9 +14,11 @@ import {
   GridRowId,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DialogError from "@app/components/common/dialog-error";
+import { useFocusHandler } from "@app/hooks/use-focus-handler";
+import { useLoadingAnimationVisibility } from "@app/hooks/use-loading-animation-visibility";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
 import { IErrorWindowState } from "@app/models/error-window-state";
 import { ListInfo } from "@app/models/list-info";
@@ -97,6 +99,8 @@ export default function SetsList() {
   const [isDeleteConfirmationDialogOpen, setIsDeleteConfirmationDialogOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const tableDisabled = setsData.processing || isLoading;
+  const isLoadingAnimationVisible = useLoadingAnimationVisibility({ isLoading: tableDisabled });
+  useFocusHandler({ isLoading: tableDisabled });
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
@@ -204,7 +208,7 @@ export default function SetsList() {
       <DataGrid
         rows={setsData.data?.data ?? []}
         rowCount={setsData.data?.count ?? 0}
-        loading={tableDisabled}
+        loading={isLoadingAnimationVisible}
         pageSizeOptions={[listParameters.pageSize]}
         pagination
         paginationModel={{ page: listParameters.page, pageSize: listParameters.pageSize }}
@@ -225,7 +229,7 @@ export default function SetsList() {
         slots={{ toolbar: CustomDataGridToolbar }}
         slotProps={{
           toolbar: {
-            quickFilterProps: { debounceMs: 500, disabled: tableDisabled },
+            quickFilterProps: { debounceMs: 500, disabled: tableDisabled, autoFocus: true },
             header: <>Sets</>,
             buttons: (
               <>

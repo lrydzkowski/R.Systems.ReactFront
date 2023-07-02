@@ -21,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { ErrorsHandler } from "@app/api/services/errors-handler";
 import DialogError from "@app/components/common/dialog-error";
+import { useFocusHandler } from "@app/hooks/use-focus-handler";
+import { useLoadingAnimationVisibility } from "@app/hooks/use-loading-animation-visibility";
 import { ErrorCodes } from "@app/models/error-codes";
 import { IErrorHandlingInfo } from "@app/models/error-handling-info";
 import { IErrorWindowState } from "@app/models/error-window-state";
@@ -91,7 +93,6 @@ export default function EditSet(props: IEditSetProps) {
   });
   const { fields, append, remove, replace } = useFieldArray({ name: "entries", control });
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isLoadingAnimationVisible, setIsLoadingAnimationVisible] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<Error | null>(null);
   const [errorMessages, setErrorMessages] = useState<string[] | null>(null);
   const [errorWindowState, setErrorWindowState] = useState<IErrorWindowState>({
@@ -101,6 +102,8 @@ export default function EditSet(props: IEditSetProps) {
   });
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [numOfEntries, setNumOfEntries] = useState<number>(0);
+  const isLoadingAnimationVisible = useLoadingAnimationVisibility({ isLoading });
+  useFocusHandler({ isLoading });
 
   useEffect(() => {
     if (props.setId === null) {
@@ -145,20 +148,6 @@ export default function EditSet(props: IEditSetProps) {
   useEffect(() => {
     setFocus("name");
   }, [setFocus]);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setIsLoadingAnimationVisible(false);
-
-      return;
-    }
-
-    const timeoutId = setTimeout(() => {
-      setIsLoadingAnimationVisible(true);
-    }, 500);
-
-    return () => clearTimeout(timeoutId);
-  }, [isLoading]);
 
   useEffect(() => {
     if (submitError === null) {
