@@ -21,6 +21,8 @@ import { useNavigate } from "react-router-dom";
 import * as yup from "yup";
 import { ErrorsHandler } from "@app/api/services/errors-handler";
 import DialogError from "@app/components/common/dialog-error";
+import { useFocusHandler } from "@app/hooks/use-focus-handler";
+import { useLoadingAnimationVisibility } from "@app/hooks/use-loading-animation-visibility";
 import { ErrorCodes } from "@app/models/error-codes";
 import { IErrorHandlingInfo } from "@app/models/error-handling-info";
 import { IErrorWindowState } from "@app/models/error-window-state";
@@ -99,6 +101,9 @@ export default function EditSet(props: IEditSetProps) {
     onCloseEvent: () => null,
   });
   const [refreshKey, setRefreshKey] = useState<number>(0);
+  const [numOfEntries, setNumOfEntries] = useState<number>(0);
+  const isLoadingAnimationVisible = useLoadingAnimationVisibility({ isLoading });
+  useFocusHandler({ isLoading });
 
   useEffect(() => {
     if (props.setId === null) {
@@ -145,12 +150,6 @@ export default function EditSet(props: IEditSetProps) {
   }, [setFocus]);
 
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-  }, [isLoading]);
-
-  useEffect(() => {
     if (submitError === null) {
       return;
     }
@@ -160,6 +159,10 @@ export default function EditSet(props: IEditSetProps) {
       setErrorMessages(errors);
     }
   }, [submitError, setError]);
+
+  useEffect(() => {
+    setNumOfEntries(fields.length);
+  }, [fields]);
 
   const onSubmit: SubmitHandler<SetFormInput> = async (data: SetFormInput) => {
     setIsLoading(true);
@@ -208,7 +211,8 @@ export default function EditSet(props: IEditSetProps) {
   return (
     <div className="new-set-page--container">
       <Typography variant="subtitle1" component="h2">
-        {props.setId === null ? "New Set" : "Edit Set"}
+        {props.setId === null ? <span>New Set</span> : <span>Edit Set</span>}
+        <span className="entries-counter">(entries: {numOfEntries})</span>
       </Typography>
       <div className="form">
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -252,6 +256,7 @@ export default function EditSet(props: IEditSetProps) {
                           disabled={isLoading}
                           {...newField}
                           inputRef={ref}
+                          spellCheck={false}
                         />
                       )}
                     />
@@ -296,6 +301,7 @@ export default function EditSet(props: IEditSetProps) {
                           disabled={isLoading}
                           {...newField}
                           inputRef={ref}
+                          spellCheck={false}
                         />
                       )}
                     />
@@ -360,7 +366,7 @@ export default function EditSet(props: IEditSetProps) {
             )}
           </div>
         </form>
-        {isLoading && (
+        {isLoadingAnimationVisible && (
           <div className="curtain">
             <div className="loading">
               <CircularProgress />

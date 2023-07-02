@@ -1,9 +1,10 @@
 import AddIcon from "@mui/icons-material/Add";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import RefreshIcon from "@mui/icons-material/Refresh";
-import { Button } from "@mui/material";
+import { Button, IconButton } from "@mui/material";
 import {
   DataGrid,
   GridActionsCellItem,
@@ -13,9 +14,11 @@ import {
   GridRowId,
   GridSortModel,
 } from "@mui/x-data-grid";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DialogError from "@app/components/common/dialog-error";
+import { useFocusHandler } from "@app/hooks/use-focus-handler";
+import { useLoadingAnimationVisibility } from "@app/hooks/use-loading-animation-visibility";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
 import { IErrorWindowState } from "@app/models/error-window-state";
 import { ListInfo } from "@app/models/list-info";
@@ -96,6 +99,8 @@ export default function SetsList() {
   const [isDeleteConfirmationDialogOpen, setIsDeleteConfirmationDialogOpen] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const tableDisabled = setsData.processing || isLoading;
+  const isLoadingAnimationVisible = useLoadingAnimationVisibility({ isLoading: tableDisabled });
+  useFocusHandler({ isLoading: tableDisabled });
 
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
@@ -203,7 +208,7 @@ export default function SetsList() {
       <DataGrid
         rows={setsData.data?.data ?? []}
         rowCount={setsData.data?.count ?? 0}
-        loading={tableDisabled}
+        loading={isLoadingAnimationVisible}
         pageSizeOptions={[listParameters.pageSize]}
         pagination
         paginationModel={{ page: listParameters.page, pageSize: listParameters.pageSize }}
@@ -224,39 +229,84 @@ export default function SetsList() {
         slots={{ toolbar: CustomDataGridToolbar }}
         slotProps={{
           toolbar: {
-            quickFilterProps: { debounceMs: 500, disabled: tableDisabled },
+            quickFilterProps: { debounceMs: 500, disabled: tableDisabled, autoFocus: true },
             header: <>Sets</>,
             buttons: (
               <>
-                <Button variant="text" startIcon={<RefreshIcon />} onClick={handleRefresh} disabled={tableDisabled}>
+                <Button
+                  className="full-button"
+                  variant="text"
+                  startIcon={<RefreshIcon />}
+                  onClick={handleRefresh}
+                  disabled={tableDisabled}
+                >
                   <span className="label">Refresh</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={handleRefresh}
+                  disabled={tableDisabled}
+                  color="primary"
+                  size="large"
+                >
+                  <RefreshIcon fontSize="inherit" />
+                </IconButton>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<AddIcon />}
-                  onClick={() => navigateToNewSetForm()}
+                  onClick={navigateToNewSetForm}
                   sx={{ color: "green" }}
                   disabled={tableDisabled}
                 >
                   <span className="label">New</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={navigateToNewSetForm}
+                  disabled={tableDisabled}
+                  sx={{ color: "green" }}
+                  size="large"
+                >
+                  <AddCircleOutlineIcon fontSize="inherit" />
+                </IconButton>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<OpenInNewIcon />}
-                  onClick={() => openSets()}
+                  onClick={openSets}
                   disabled={tableDisabled || selectedIds.length === 0}
                 >
                   <span className="label">Open</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={openSets}
+                  disabled={tableDisabled || selectedIds.length === 0}
+                  size="large"
+                  color="primary"
+                >
+                  <OpenInNewIcon fontSize="inherit" />
+                </IconButton>
                 <Button
+                  className="full-button"
                   variant="text"
                   startIcon={<DeleteOutlinedIcon />}
-                  onClick={() => deleteSets()}
+                  onClick={deleteSets}
                   disabled={tableDisabled || selectedIds.length === 0}
                   sx={{ color: "red" }}
                 >
                   <span className="label">Delete</span>
                 </Button>
+                <IconButton
+                  className="small-button"
+                  onClick={deleteSets}
+                  disabled={tableDisabled || selectedIds.length === 0}
+                  sx={{ color: "red" }}
+                  size="large"
+                >
+                  <DeleteOutlinedIcon fontSize="inherit" />
+                </IconButton>
               </>
             ),
           },

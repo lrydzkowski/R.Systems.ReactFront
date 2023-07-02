@@ -19,7 +19,7 @@ export default function LoginPage() {
   return (
     <>
       <p className="login-page--p">Please sign in to continue</p>
-      <Button variant="outlined" size="large" onClick={handleLogin}>
+      <Button variant="outlined" size="large" onClick={handleLogin} autoFocus>
         Sign in
       </Button>
     </>

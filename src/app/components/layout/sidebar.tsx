@@ -1,5 +1,4 @@
-import { AccountInfo, InteractionStatus } from "@azure/msal-browser";
-import { useMsal } from "@azure/msal-react";
+import { useIsAuthenticated } from "@azure/msal-react";
 import { Divider } from "@mui/material";
 import LogoutButton from "@app/components/navigation/logout-button";
 import Navigation from "@app/components/navigation/navigation";
@@ -8,12 +7,7 @@ import Profile from "../navigation/profile";
 import "./sidebar.css";
 
 export default function Sidebar() {
-  const { inProgress, accounts } = useMsal();
-
-  let account: AccountInfo | null = null;
-  if (inProgress === InteractionStatus.None && accounts.length > 0) {
-    account = accounts[0];
-  }
+  const isAuthenticated = useIsAuthenticated();
 
   return (
     <>
@@ -29,7 +23,7 @@ export default function Sidebar() {
       <div className="sidebar--navigation">
         <Navigation />
       </div>
-      {account !== null && (
+      {isAuthenticated && (
         <>
           <Divider variant="middle" className="sidebar--user-info-divider" />
           <div className="sidebar--user-info">

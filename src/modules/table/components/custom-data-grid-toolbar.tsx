@@ -14,9 +14,9 @@ export default function CustomDataGridToolbar(props: ICustomDataGridToolbarProps
       <Typography variant="subtitle1" component="h2">
         {props.header}
       </Typography>
-      <div className="vertical-separator"></div>
+      <div className="vertical-separator first"></div>
       <div className="sets-list--buttons">{props.buttons}</div>
-      <div className="vertical-separator"></div>
+      <div className="vertical-separator second"></div>
       <GridToolbarQuickFilter {...props.quickFilterProps} />
     </GridToolbarContainer>
   );
