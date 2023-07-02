@@ -91,6 +91,7 @@ export default function EditSet(props: IEditSetProps) {
   });
   const { fields, append, remove, replace } = useFieldArray({ name: "entries", control });
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingAnimationVisible, setIsLoadingAnimationVisible] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<Error | null>(null);
   const [errorMessages, setErrorMessages] = useState<string[] | null>(null);
   const [errorWindowState, setErrorWindowState] = useState<IErrorWindowState>({
@@ -146,9 +147,17 @@ export default function EditSet(props: IEditSetProps) {
   }, [setFocus]);
 
   useEffect(() => {
-    if (isLoading) {
+    if (!isLoading) {
+      setIsLoadingAnimationVisible(false);
+
       return;
     }
+
+    const timeoutId = setTimeout(() => {
+      setIsLoadingAnimationVisible(true);
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
   }, [isLoading]);
 
   useEffect(() => {
@@ -368,7 +377,7 @@ export default function EditSet(props: IEditSetProps) {
             )}
           </div>
         </form>
-        {isLoading && (
+        {isLoadingAnimationVisible && (
           <div className="curtain">
             <div className="loading">
               <CircularProgress />
