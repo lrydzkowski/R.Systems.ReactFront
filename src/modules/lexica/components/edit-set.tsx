@@ -252,6 +252,7 @@ export default function EditSet(props: IEditSetProps) {
                           disabled={isLoading}
                           {...newField}
                           inputRef={ref}
+                          spellCheck={false}
                         />
                       )}
                     />
@@ -296,6 +297,7 @@ export default function EditSet(props: IEditSetProps) {
                           disabled={isLoading}
                           {...newField}
                           inputRef={ref}
+                          spellCheck={false}
                         />
                       )}
                     />
