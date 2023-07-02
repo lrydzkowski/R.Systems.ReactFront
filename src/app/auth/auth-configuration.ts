@@ -14,7 +14,7 @@ export const publicClientApplication = new PublicClientApplication({
   },
 });
 
-export const loginRequest = { scopes: getScopes() };
+export const loginRequest = { scopes: getScopes(), prompt: "select_account" };
 
 function getClientId(): string {
   const clientId = import.meta.env.VITE_AZURE_AD_CLIENT_ID ?? "";
