@@ -10,6 +10,7 @@ export default function AboutPage() {
     <div className="about-page">
       <Typography paragraph={true}>r-systems-react-front 1.0.0</Typography>
       <Typography paragraph={true}>Copyright © {year} Łukasz Rydzkowski</Typography>
+      <Typography paragraph={true}>Test</Typography>
       <Link href="https://github.com/lrydzkowski" target="_blank" rel="noreferrer">
         <IconButton size="large" style={{ color: "black" }}>
           <GitHubIcon fontSize="large" />
