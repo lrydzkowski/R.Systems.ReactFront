@@ -1,12 +1,11 @@
-import { AccountInfo, InteractionStatus } from "@azure/msal-browser";
-import { useMsal } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import AccountBoxIcon from "@mui/icons-material/AccountBox";
 import { Dialog, DialogTitle, IconButton } from "@mui/material";
 import { useState } from "react";
 import "./profile.css";
 
 export default function Profile() {
-  const { inProgress, accounts } = useMsal();
+  const { user } = useAuth0();
   const [isProfileWindowOpen, setIsProfileWindowOpen] = useState<boolean>(false);
 
   const handleProfileWindowOpening = () => {
@@ -17,11 +16,6 @@ export default function Profile() {
     setIsProfileWindowOpen(false);
   };
 
-  let account: AccountInfo | null = null;
-  if (inProgress === InteractionStatus.None && accounts.length > 0) {
-    account = accounts[0];
-  }
-
   return (
     <>
       <IconButton color="primary" onClick={handleProfileWindowOpening}>
@@ -30,7 +24,8 @@ export default function Profile() {
       <Dialog onClose={handleProfileWindowClosing} open={isProfileWindowOpen}>
         <DialogTitle>Profile</DialogTitle>
         <div className="profile--dialog-content">
-          <p>{account?.username}</p>
+          <p>{user?.name}</p>
+          <p>{user?.email}</p>
         </div>
       </Dialog>
     </>

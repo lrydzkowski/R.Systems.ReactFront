@@ -26,8 +26,8 @@ import { useLoadingAnimationVisibility } from "@app/hooks/use-loading-animation-
 import { ErrorCodes } from "@app/models/error-codes";
 import { IErrorHandlingInfo } from "@app/models/error-handling-info";
 import { IErrorWindowState } from "@app/models/error-window-state";
-import { Pages, Urls } from "@app/router/urls";
-import { createSetAsync, getSetAsync, updateSetAsync } from "@lexica/api/sets-api";
+import useUrls, { Pages } from "@app/router/use-urls";
+import useSetsApi from "@lexica/api/use-sets-api";
 import { ICreateSetRequest } from "@lexica/models/create-set-request";
 import { EditSetErrorsKeys, editSetErrors } from "@lexica/models/edit-set-errors";
 import { IUpdateSetRequest } from "@lexica/models/update-set-request";
@@ -79,6 +79,8 @@ const serverValidationErrors = new Map<string, IErrorHandlingInfo>([
 ]);
 
 export default function EditSet(props: IEditSetProps) {
+  const { getPath } = useUrls();
+  const { getSetAsync, createSetAsync, updateSetAsync } = useSetsApi();
   const navigate = useNavigate();
   const {
     handleSubmit,
@@ -135,7 +137,7 @@ export default function EditSet(props: IEditSetProps) {
         setErrorWindowState({
           isOpen: true,
           message: editSetErrors.get(EditSetErrorsKeys.unexpectedErrorInGettingSet) ?? "",
-          onCloseEvent: () => navigate(Urls.getPath(Pages.sets)),
+          onCloseEvent: () => navigate(getPath(Pages.sets)),
         });
       }
     };
@@ -177,7 +179,7 @@ export default function EditSet(props: IEditSetProps) {
         await updateSetAsync(new AbortController(), updateRequest);
       }
 
-      navigate(Urls.getPath(Pages.sets));
+      navigate(getPath(Pages.sets));
     } catch (error) {
       setSubmitError(error as Error);
     } finally {

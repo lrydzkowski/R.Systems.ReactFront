@@ -1,8 +1,10 @@
 import HomePageCard from "@app/components/common/home-page-card";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 import "./home-page.css";
 
 export default function HomePage() {
+  const { getPath } = useUrls();
+
   return (
     <>
       <>
@@ -11,7 +13,7 @@ export default function HomePage() {
             <HomePageCard
               title="Lexica"
               subtitle="English vocabulary learning web application."
-              redirectUrl={Urls.getPath(Pages.sets)}
+              redirectUrl={getPath(Pages.sets)}
             />
           </div>
         </div>

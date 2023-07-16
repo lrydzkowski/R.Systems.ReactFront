@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import DialogError from "@app/components/common/dialog-error";
 import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
 import CustomDataGridToolbarWithoutFilter from "@table/components/custom-data-grid-toolbar-without-filter";
-import { getSetAsync } from "@lexica/api/sets-api";
+import useSetsApi from "@lexica/api/use-sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Set } from "@lexica/models/set";
 import "./set-details.css";
@@ -15,6 +15,7 @@ interface ISetDetailsProps {
 }
 
 export default function SetDetails(props: ISetDetailsProps) {
+  const { getSetAsync } = useSetsApi();
   const [refreshKey, setRefreshKey] = useState<number>(0);
   const [isErrorOpen, setIsErrorOpen] = useState<boolean>(false);
   const columns = useMemo<GridColDef<Entry>[]>(

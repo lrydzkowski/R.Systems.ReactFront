@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
-import { getSetAsync } from "@lexica/api/sets-api";
+import useRecordingsApi from "@lexica/api/use-recordings-api";
+import useSetsApi from "@lexica/api/use-sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
 import { Set } from "@lexica/models/set";
-import getRecordings from "@lexica/services/get-recordings";
 import { playRecordings } from "@lexica/services/play-recordings";
 import OpenQuestionAnswer from "./components/open-question-answer";
 import OpenQuestionResult from "./components/open-question-result";
@@ -28,6 +28,8 @@ interface IModeState {
 }
 
 export default function SpellingMode(props: ISpellingModeProps) {
+  const { getSetAsync } = useSetsApi();
+  const { getRecordingsAsync } = useRecordingsApi();
   const [isPronunciationLoading, setIsPronunciationLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
   const [service, setService] = useState<SpellingModeService | null>(null);
@@ -88,7 +90,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
     const abortController = new AbortController();
 
     setIsPronunciationLoading(true);
-    getRecordings(modeState.currentQuestion.getAnswers())
+    getRecordingsAsync(modeState.currentQuestion.getAnswers())
       .then((recordings) => {
         setIsPronunciationLoading(false);
         if (recordings.length === 0) {
