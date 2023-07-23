@@ -24,7 +24,6 @@ export default function Profile() {
       <Dialog onClose={handleProfileWindowClosing} open={isProfileWindowOpen}>
         <DialogTitle>Profile</DialogTitle>
         <div className="profile--dialog-content">
-          <p>{user?.name}</p>
           <p>{user?.email}</p>
         </div>
       </Dialog>
