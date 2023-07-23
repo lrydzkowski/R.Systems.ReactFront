@@ -1,14 +1,15 @@
 import { useNavigate, useParams } from "react-router";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 import SetDetails from "@lexica/components/set-details";
 import { splitIds } from "@lexica/services/ids-parser";
 
 export default function SetPage() {
+  const { getPath } = useUrls();
   const { setIds } = useParams();
   const navigate = useNavigate();
 
   if (!setIds) {
-    navigate(Urls.getPath(Pages.sets));
+    navigate(getPath(Pages.sets));
   }
 
   return (

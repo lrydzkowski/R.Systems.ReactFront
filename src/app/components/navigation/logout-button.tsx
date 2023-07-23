@@ -1,15 +1,12 @@
-import { useMsal } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { IconButton } from "@mui/material";
-import { Pages, Urls } from "@app/router/urls";
 
 export default function LogoutButton() {
-  const { instance } = useMsal();
+  const { logout } = useAuth0();
 
   const handleLogout = () => {
-    instance.logoutRedirect({
-      postLogoutRedirectUri: Urls.getPath(Pages.login),
-    });
+    logout({ logoutParams: { returnTo: window.location.origin } });
   };
 
   return (

@@ -1,19 +1,14 @@
-import { useMsal } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "@mui/material";
-import { useLocation } from "react-router-dom";
-import { loginRequest } from "@app/auth/auth-configuration";
+import { getAuthorizationParams } from "@app/auth/auth0-configuration";
 import "./login-page.css";
 
 export default function LoginPage() {
-  const { instance } = useMsal();
-  const location = useLocation();
-
-  const from = location.state?.from?.pathname || "/home";
+  const { loginWithRedirect } = useAuth0();
+  const authorizationParams = getAuthorizationParams();
 
   const handleLogin = () => {
-    instance.loginRedirect({ ...loginRequest, redirectStartPage: from }).catch((e) => {
-      console.error(e);
-    });
+    loginWithRedirect({ authorizationParams });
   };
 
   return (

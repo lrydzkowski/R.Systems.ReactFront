@@ -1,18 +1,19 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 import EditSet from "@lexica/components/edit-set";
 
 export default function EditSetPage() {
+  const { getPath } = useUrls();
   const { setId } = useParams();
   const navigate = useNavigate();
 
   if (!setId) {
-    navigate(Urls.getPath(Pages.sets));
+    navigate(getPath(Pages.sets));
   }
 
   const parsedSetId: number = parseInt(setId as string, 10);
   if (isNaN(parsedSetId)) {
-    navigate(Urls.getPath(Pages.sets));
+    navigate(getPath(Pages.sets));
   }
 
   return <EditSet setId={parsedSetId} />;

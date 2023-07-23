@@ -3,12 +3,13 @@ import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { Breadcrumbs, Link, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Link as RouterLink, useLocation } from "react-router-dom";
-import { Urls } from "@app/router/urls";
+import useUrls from "@app/router/use-urls";
 import "./app-breadcrumbs.css";
 
 export default function AppBreadcrumbs() {
   const location = useLocation();
   const [breadcrumbs, setBreadcrumbs] = useState<IBreadcrumb[]>([]);
+  const { getPageByPath } = useUrls();
 
   useEffect(() => {
     const abortController = new AbortController();
@@ -19,7 +20,7 @@ export default function AppBreadcrumbs() {
         const last = index === pathNames.length - 1;
         const to = `/${pathNames.slice(0, index + 1).join("/")}`;
         let name = decodeURIComponent(pathNames[index]);
-        const pageInfo = Urls.getPageByPath(to);
+        const pageInfo = getPageByPath(to);
         if (pageInfo === null) {
           breadcrumbs.push({
             name,

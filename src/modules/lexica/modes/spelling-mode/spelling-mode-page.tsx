@@ -2,12 +2,13 @@ import { Typography } from "@mui/material";
 import Button from "@mui/material/Button";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 import { splitIds } from "@lexica/services/ids-parser";
 import SpellingMode from "./spelling-mode";
 import "./spelling-mode-page.css";
 
 export default function SpellingModePage() {
+  const { getPath } = useUrls();
   const { setIds } = useParams();
   const navigate = useNavigate();
   const [showStartButton, setShowStartButton] = useState<boolean>(true);
@@ -18,7 +19,7 @@ export default function SpellingModePage() {
   }, []);
 
   if (!setIds) {
-    navigate(Urls.getPath(Pages.sets));
+    navigate(getPath(Pages.sets));
   }
 
   return (

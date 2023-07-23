@@ -1,17 +1,11 @@
-import { InteractionStatus } from "@azure/msal-browser";
-import { useMsal } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { CssBaseline } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import "./app.css";
 import Sidebar from "./components/layout/sidebar";
 
 function App() {
-  const { inProgress } = useMsal();
-
-  let isLoading = true;
-  if (inProgress === InteractionStatus.None) {
-    isLoading = false;
-  }
+  const { isLoading } = useAuth0();
 
   return (
     <>

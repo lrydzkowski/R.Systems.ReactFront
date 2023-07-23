@@ -1,4 +1,4 @@
-import { useIsAuthenticated } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Divider } from "@mui/material";
 import LogoutButton from "@app/components/navigation/logout-button";
 import Navigation from "@app/components/navigation/navigation";
@@ -7,7 +7,7 @@ import Profile from "../navigation/profile";
 import "./sidebar.css";
 
 export default function Sidebar() {
-  const isAuthenticated = useIsAuthenticated();
+  const { isAuthenticated } = useAuth0();
 
   return (
     <>

@@ -1,25 +1,26 @@
-import { useIsAuthenticated } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { useMemo } from "react";
 import Hotkeys from "react-hot-keys";
 import { useNavigate } from "react-router-dom";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 
 export default function NavigationHotkeys() {
-  const isAuthenticated = useIsAuthenticated();
+  const { isAuthenticated } = useAuth0();
   const navigate = useNavigate();
+  const { getPath } = useUrls();
   const links = useMemo(() => {
     if (!isAuthenticated) {
       return new Map<string, string>([
-        ["1", Urls.getPath(Pages.login)],
-        ["2", Urls.getPath(Pages.about)],
+        ["1", getPath(Pages.login)],
+        ["2", getPath(Pages.about)],
       ]);
     }
 
     return new Map<string, string>([
-      ["1", Urls.getPath(Pages.home)],
-      ["2", Urls.getPath(Pages.sets)],
-      ["3", Urls.getPath(Pages.newSet)],
-      ["4", Urls.getPath(Pages.about)],
+      ["1", getPath(Pages.home)],
+      ["2", getPath(Pages.sets)],
+      ["3", getPath(Pages.newSet)],
+      ["4", getPath(Pages.about)],
     ]);
   }, [isAuthenticated]);
 

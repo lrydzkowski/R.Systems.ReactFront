@@ -1,24 +1,24 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse, ResponseType } from "axios";
 import { ErrorCodes } from "@app/models/error-codes";
 import { UrlInfo } from "@app/models/url-info";
+import { IRequestOptions } from "../models/request-options";
 import { buildRequestConfig } from "./build-request-config";
 
-export function sendGetRequest<TData>(
-  abortController: AbortController,
-  baseUrl: string,
-  urlPath: string,
-  urlPathParameters: { [key: string]: string } = {},
-  urlParameters: object = {},
-  responseType: ResponseType = "json",
-  accessToken: string | null = null
-): Promise<AxiosResponse<TData> | void> {
+export function sendGetRequestAsync<TResponseData>(
+  options: IRequestOptions
+): Promise<AxiosResponse<TResponseData> | void> {
+  const urlPathParameters = options.urlPathParameters ?? {};
+  const urlParameters = options.urlParameters ?? {};
+  const responseType = options.responseType ?? ("json" as ResponseType);
+  const accessToken = options.accessToken ?? null;
+
   const requestConfig: AxiosRequestConfig = buildRequestConfig(
-    abortController,
+    options.abortController,
     accessToken,
     urlParameters,
     responseType
   );
-  const fullUrl = new UrlInfo(baseUrl, urlPath, urlPathParameters).build();
+  const fullUrl = new UrlInfo(options.baseUrl, options.urlPath, urlPathParameters).build();
 
   return axios.get(fullUrl, requestConfig).catch((error: AxiosError) => {
     if (error.code === ErrorCodes.cancelled) {
