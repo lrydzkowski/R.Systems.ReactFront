@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, List, ListItemButton, ListItemText } from "@mui/material";
-import { LearningModes } from "@lexica/models/learning-modes";
+import useLearningModes from "@lexica/hooks/use-learning-modes";
 
 export interface ChooseModeDialogProps {
   open: boolean;
@@ -8,6 +8,7 @@ export interface ChooseModeDialogProps {
 
 export default function ChooseModeDialog(props: ChooseModeDialogProps) {
   const { onClose, open } = props;
+  const { learningModes } = useLearningModes();
 
   const handleClose = () => {
     onClose(null);
@@ -21,7 +22,7 @@ export default function ChooseModeDialog(props: ChooseModeDialogProps) {
     <Dialog onClose={handleClose} open={open}>
       <DialogTitle>Choose learning mode</DialogTitle>
       <List sx={{ pt: 0 }}>
-        {LearningModes.map((learningMode) => (
+        {learningModes.map((learningMode) => (
           <ListItemButton onClick={() => handleListItemClick(learningMode.key)} key={learningMode.key}>
             <ListItemText primary={learningMode.name} />
           </ListItemButton>

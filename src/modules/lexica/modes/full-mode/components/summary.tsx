@@ -1,16 +1,17 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 
 export interface ISummaryProps {
   onRepeatMode: () => void;
 }
 
 export default function Summary(props: ISummaryProps) {
+  const { getPath } = useUrls();
   const navigate = useNavigate();
 
   const redirectToList = (): void => {
-    navigate(Urls.getPath(Pages.sets));
+    navigate(getPath(Pages.sets));
   };
 
   return (

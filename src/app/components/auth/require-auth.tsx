@@ -1,17 +1,18 @@
-import { useIsAuthenticated } from "@azure/msal-react";
+import { useAuth0 } from "@auth0/auth0-react";
 import { Navigate, useLocation } from "react-router-dom";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 
 interface IRequireAuthProps {
   children: JSX.Element;
 }
 
 export default function RequireAuth(props: IRequireAuthProps) {
-  const isAuthenticated = useIsAuthenticated();
+  const { isAuthenticated } = useAuth0();
+  const { getPath } = useUrls();
   const location = useLocation();
 
   if (!isAuthenticated) {
-    return <Navigate to={Urls.getPath(Pages.login)} state={{ from: location }} replace />;
+    return <Navigate to={getPath(Pages.login)} state={{ from: location }} replace />;
   }
 
   return props.children;

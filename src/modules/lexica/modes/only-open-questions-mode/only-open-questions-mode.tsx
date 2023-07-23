@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useProtectedMultipleData } from "@app/hooks/use-protected-data";
-import { getSetAsync } from "@lexica/api/sets-api";
+import useRecordingsApi from "@lexica/api/use-recordings-api";
+import useSetsApi from "@lexica/api/use-sets-api";
 import { Entry } from "@lexica/models/entry";
 import { Question } from "@lexica/models/question";
 import { QuestionAbout } from "@lexica/models/question-about";
 import { Set } from "@lexica/models/set";
-import getRecordings from "@lexica/services/get-recordings";
 import { playRecordings } from "@lexica/services/play-recordings";
 import OpenQuestionAnswer from "./components/open-question-answer";
 import OpenQuestionResult from "./components/open-question-result";
@@ -30,6 +30,8 @@ interface IModeState {
 }
 
 export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps) {
+  const { getSetAsync } = useSetsApi();
+  const { getRecordingsAsync } = useRecordingsApi();
   const [error, setError] = useState<string>("");
   const [service, setService] = useState<OnlyOpenQuestionsModeService | null>(null);
   const [modeState, setModeState] = useState<IModeState>({
@@ -84,7 +86,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
     const abortController = new AbortController();
     if (modeState.currentQuestion?.getQuestionAbout() === QuestionAbout.Translations) {
-      getRecordings(modeState.currentQuestion.getQuestions())
+      getRecordingsAsync(modeState.currentQuestion.getQuestions())
         .then((recordings) => {
           playRecordings(recordings, abortController);
         })
@@ -107,7 +109,7 @@ export default function OnlyOpenQuestionsMode(props: IOnlyOpenQuestionsModeProps
 
     const abortController = new AbortController();
     if (modeState.currentQuestion?.getQuestionAbout() === QuestionAbout.Words) {
-      getRecordings(modeState.currentQuestion.getAnswers())
+      getRecordingsAsync(modeState.currentQuestion.getAnswers())
         .then((recordings) => {
           playRecordings(recordings, abortController);
         })

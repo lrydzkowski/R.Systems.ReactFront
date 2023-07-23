@@ -23,18 +23,21 @@ import useProtectedListData from "@app/hooks/use-protected-list-data";
 import { IErrorWindowState } from "@app/models/error-window-state";
 import { ListInfo } from "@app/models/list-info";
 import { IListParameters, SortingOrder } from "@app/models/list-parameters";
-import { Pages, Urls } from "@app/router/urls";
+import useUrls, { Pages } from "@app/router/use-urls";
 import CustomDataGridToolbar from "@table/components/custom-data-grid-toolbar";
-import { deleteSetsAsync, getSetsAsync } from "@lexica/api/sets-api";
+import useSetsApi from "@lexica/api/use-sets-api";
+import useLearningModes from "@lexica/hooks/use-learning-modes";
 import { Set } from "@lexica/models/set";
 import { SetsListErrorsKeys, setsListErrors } from "@lexica/models/sets-list-errors";
 import { combineIds } from "@lexica/services/ids-parser";
-import LearningModeService from "@lexica/services/learning-mode-service";
 import ChooseModeDialog from "./choose-mode-dialog";
 import DeleteSetConfirmationDialog from "./delete-set-confirmation-dialog";
 import "./sets-list.css";
 
 export default function SetsList() {
+  const { getLearningModePath } = useLearningModes();
+  const { getPath } = useUrls();
+  const { getSetsAsync, deleteSetsAsync } = useSetsApi();
   const [listParameters, setListParameters] = useState<IListParameters>({
     page: 0,
     pageSize: 25,
@@ -89,7 +92,8 @@ export default function SetsList() {
     ],
     []
   );
-  const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, () => {
+  const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, (error) => {
+    console.error(error);
     setErrorWindowState({
       isOpen: true,
       message: setsListErrors.get(SetsListErrorsKeys.unexpectedErrorInGettingList) ?? "",
@@ -105,7 +109,7 @@ export default function SetsList() {
   const handleRefresh = () => setRefreshKey((x) => 1 - x);
 
   const navigateToNewSetForm = () => {
-    navigate(Urls.getPath(Pages.newSet));
+    navigate(getPath(Pages.newSet));
   };
 
   const openSet = (setId: number) => {
@@ -142,7 +146,7 @@ export default function SetsList() {
       return;
     }
 
-    const path: string | null = LearningModeService.getPath(selectedMode);
+    const path: string | null = getLearningModePath(selectedMode);
     if (path === null) {
       return;
     }
@@ -200,7 +204,7 @@ export default function SetsList() {
       return;
     }
 
-    navigate(Urls.getPath(Pages.editSet).replace(":setId", setId.toString()));
+    navigate(getPath(Pages.editSet).replace(":setId", setId.toString()));
   };
 
   return (
