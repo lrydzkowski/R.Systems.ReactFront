@@ -1,6 +1,7 @@
 import { Navigate, RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "@app/app";
 import NotRequireAuth from "@app/components/auth/not-require-auth";
+import RequireAdmin from "@app/components/auth/require-admin";
 import RequireAuth from "@app/components/auth/require-auth";
 import PageWithBreadcrumbs from "@app/components/layout/page-with-breadcrumbs";
 import AboutPage from "@app/pages/about-page";
@@ -59,9 +60,11 @@ export const AppRouterProvider = (): JSX.Element => {
           path: getPathWithoutLeadingSlash(Pages.newSet),
           element: (
             <RequireAuth>
-              <PageWithBreadcrumbs>
-                <NewSetPage />
-              </PageWithBreadcrumbs>
+              <RequireAdmin>
+                <PageWithBreadcrumbs>
+                  <NewSetPage />
+                </PageWithBreadcrumbs>
+              </RequireAdmin>
             </RequireAuth>
           ),
         },
@@ -69,9 +72,11 @@ export const AppRouterProvider = (): JSX.Element => {
           path: getPathWithoutLeadingSlash(Pages.editSet),
           element: (
             <RequireAuth>
-              <PageWithBreadcrumbs>
-                <EditSetPage />
-              </PageWithBreadcrumbs>
+              <RequireAdmin>
+                <PageWithBreadcrumbs>
+                  <EditSetPage />
+                </PageWithBreadcrumbs>
+              </RequireAdmin>
             </RequireAuth>
           ),
         },

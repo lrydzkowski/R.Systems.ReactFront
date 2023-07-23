@@ -20,6 +20,7 @@ import DialogError from "@app/components/common/dialog-error";
 import { useFocusHandler } from "@app/hooks/use-focus-handler";
 import { useLoadingAnimationVisibility } from "@app/hooks/use-loading-animation-visibility";
 import useProtectedListData from "@app/hooks/use-protected-list-data";
+import useRoles from "@app/hooks/user-roles";
 import { IErrorWindowState } from "@app/models/error-window-state";
 import { ListInfo } from "@app/models/list-info";
 import { IListParameters, SortingOrder } from "@app/models/list-parameters";
@@ -35,6 +36,7 @@ import DeleteSetConfirmationDialog from "./delete-set-confirmation-dialog";
 import "./sets-list.css";
 
 export default function SetsList() {
+  const { isAdmin } = useRoles();
   const { getLearningModePath } = useLearningModes();
   const { getPath } = useUrls();
   const { getSetsAsync, deleteSetsAsync } = useSetsApi();
@@ -60,27 +62,37 @@ export default function SetsList() {
       {
         field: "actions",
         type: "actions",
-        width: 150,
-        getActions: (params: { row: { setId: number } }) => [
-          <GridActionsCellItem
-            key="open"
-            icon={<OpenInNewIcon color="primary" />}
-            onClick={() => openSet(params.row.setId)}
-            label="Open"
-          />,
-          <GridActionsCellItem
-            key="delete"
-            icon={<DeleteOutlinedIcon sx={{ color: "red" }} />}
-            onClick={() => deleteSet(params.row.setId)}
-            label="Delete"
-          />,
-          <GridActionsCellItem
-            key="edit"
-            icon={<EditOutlinedIcon color="primary" />}
-            onClick={() => editSet(params.row.setId)}
-            label="Edit"
-          />,
-        ],
+        width: isAdmin ? 150 : 50,
+        getActions: (params: { row: { setId: number } }) => {
+          const items = [
+            <GridActionsCellItem
+              key="open"
+              icon={<OpenInNewIcon color="primary" />}
+              onClick={() => openSet(params.row.setId)}
+              label="Open"
+            />,
+          ];
+          if (isAdmin) {
+            items.push(
+              <GridActionsCellItem
+                key="delete"
+                icon={<DeleteOutlinedIcon sx={{ color: "red" }} />}
+                onClick={() => deleteSet(params.row.setId)}
+                label="Delete"
+              />
+            );
+            items.push(
+              <GridActionsCellItem
+                key="edit"
+                icon={<EditOutlinedIcon color="primary" />}
+                onClick={() => editSet(params.row.setId)}
+                label="Edit"
+              />
+            );
+          }
+
+          return items;
+        },
       },
       { field: "setId", headerName: "Id", width: 70 },
       {
@@ -90,7 +102,7 @@ export default function SetsList() {
       },
       { field: "name", headerName: "Name", flex: 1, minWidth: 300 },
     ],
-    []
+    [isAdmin]
   );
   const setsData = useProtectedListData<ListInfo<Set>>(getSetsAsync, {}, listParameters, refreshKey, (error) => {
     console.error(error);
@@ -255,25 +267,29 @@ export default function SetsList() {
                 >
                   <RefreshIcon fontSize="inherit" />
                 </IconButton>
-                <Button
-                  className="full-button"
-                  variant="text"
-                  startIcon={<AddIcon />}
-                  onClick={navigateToNewSetForm}
-                  sx={{ color: "green" }}
-                  disabled={tableDisabled}
-                >
-                  <span className="label">New</span>
-                </Button>
-                <IconButton
-                  className="small-button"
-                  onClick={navigateToNewSetForm}
-                  disabled={tableDisabled}
-                  sx={{ color: "green" }}
-                  size="large"
-                >
-                  <AddCircleOutlineIcon fontSize="inherit" />
-                </IconButton>
+                {isAdmin && (
+                  <>
+                    <Button
+                      className="full-button"
+                      variant="text"
+                      startIcon={<AddIcon />}
+                      onClick={navigateToNewSetForm}
+                      sx={{ color: "green" }}
+                      disabled={tableDisabled}
+                    >
+                      <span className="label">New</span>
+                    </Button>
+                    <IconButton
+                      className="small-button"
+                      onClick={navigateToNewSetForm}
+                      disabled={tableDisabled}
+                      sx={{ color: "green" }}
+                      size="large"
+                    >
+                      <AddCircleOutlineIcon fontSize="inherit" />
+                    </IconButton>
+                  </>
+                )}
                 <Button
                   className="full-button"
                   variant="text"
@@ -292,25 +308,29 @@ export default function SetsList() {
                 >
                   <OpenInNewIcon fontSize="inherit" />
                 </IconButton>
-                <Button
-                  className="full-button"
-                  variant="text"
-                  startIcon={<DeleteOutlinedIcon />}
-                  onClick={deleteSets}
-                  disabled={tableDisabled || selectedIds.length === 0}
-                  sx={{ color: "red" }}
-                >
-                  <span className="label">Delete</span>
-                </Button>
-                <IconButton
-                  className="small-button"
-                  onClick={deleteSets}
-                  disabled={tableDisabled || selectedIds.length === 0}
-                  sx={{ color: "red" }}
-                  size="large"
-                >
-                  <DeleteOutlinedIcon fontSize="inherit" />
-                </IconButton>
+                {isAdmin && (
+                  <>
+                    <Button
+                      className="full-button"
+                      variant="text"
+                      startIcon={<DeleteOutlinedIcon />}
+                      onClick={deleteSets}
+                      disabled={tableDisabled || selectedIds.length === 0}
+                      sx={{ color: "red" }}
+                    >
+                      <span className="label">Delete</span>
+                    </Button>
+                    <IconButton
+                      className="small-button"
+                      onClick={deleteSets}
+                      disabled={tableDisabled || selectedIds.length === 0}
+                      sx={{ color: "red" }}
+                      size="large"
+                    >
+                      <DeleteOutlinedIcon fontSize="inherit" />
+                    </IconButton>
+                  </>
+                )}
               </>
             ),
           },
