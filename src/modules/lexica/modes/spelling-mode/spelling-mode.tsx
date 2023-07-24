@@ -213,6 +213,7 @@ export default function SpellingMode(props: ISpellingModeProps) {
             <OpenQuestionResult
               isCorrectAnswer={modeState.isCorrectAnswer}
               answer={modeState.currentQuestion?.getAnswer() ?? ""}
+              translation={modeState.currentQuestion?.getQuestion() ?? ""}
               onShowNextQuestion={showNextQuestion}
               continueButtonFocusTrigger={continueButtonFocusTrigger}
             />
