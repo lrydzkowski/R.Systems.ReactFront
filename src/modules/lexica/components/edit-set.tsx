@@ -127,7 +127,7 @@ export default function EditSet(props: IEditSetProps) {
         const entries = data.entries.map((entry) => ({
           word: entry.word,
           wordType: mapToWordType(entry.wordType),
-          translations: entry.translations.join(" "),
+          translations: entry.translations.join(", "),
         }));
         replace(entries);
         setIsLoading(false);
