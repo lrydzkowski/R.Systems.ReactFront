@@ -70,7 +70,7 @@ jobs:
       - name: Deploy
         uses: fjogeleit/http-request-action@v1
         with:
-          url: "https://rsystems.ddns.net/api/hooks/r-systems-react-front"
+          url: "https://r-systems-cloud.com/api/hooks/r-systems-react-front"
           method: "GET"
           customHeaders: '{"x-api-key": "${{ secrets.DEPLOY_API_KEY }}"}'
 
